@@ -13,7 +13,8 @@ services:
     environment:
       - DD_ENV=staging
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py collectstatic --no-input &&
+             python manage.py migrate &&
              python manage.py loaddata groups &&
              ddtrace-run daphne -b 0.0.0.0 -p 8000 crossroads.asgi:application"
     secrets:
