@@ -43,6 +43,9 @@ export const Navbar: React.FC<NavbarProps> = () => {
           <Link to="/give">
             <MenuTab name="Giving" pages={[]}></MenuTab>
           </Link>
+          <Link to="/login">
+            <MenuTab name="Log in" pages={[]}></MenuTab>
+          </Link>
         </Box>
       </Toolbar>
     </AppBar>

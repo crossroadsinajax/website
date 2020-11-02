@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import Auth from "./Auth";
 import Home from "./Home";
 import Giving from "./Giving";
 
@@ -35,6 +36,9 @@ const AppBase: React.FC<AppProps> = () => {
         <Switch>
           <Route path="/give">
             <Giving />
+          </Route>
+          <Route path="/login">
+            <Auth />
           </Route>
           <Route path="/">
             <Home />
