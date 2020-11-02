@@ -23,8 +23,10 @@ const useStyles = makeStyles({
   },
 });
 
-type NavbarProps = {};
-export const Navbar: React.FC<NavbarProps> = () => {
+type NavbarProps = {
+  user: any;
+};
+export const Navbar: React.FC<NavbarProps> = (props) => {
   const classes = useStyles();
   return (
     <AppBar className={classes.navbar}>
@@ -43,6 +45,11 @@ export const Navbar: React.FC<NavbarProps> = () => {
           <Link to="/give">
             <MenuTab name="Giving" pages={[]}></MenuTab>
           </Link>
+          {props.user && (
+            <Link to="/profile">
+              <MenuTab name={props.user.username} pages={[]}></MenuTab>
+            </Link>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

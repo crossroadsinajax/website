@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import Auth from "./Auth";
 import Home from "./Home";
 import Giving from "./Giving";
 
@@ -33,15 +34,20 @@ const AppBase: React.FC<AppProps> = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Helmet>
       <Router>
-        <Navbar></Navbar>
-        <Switch>
-          <Route path="/give">
-            <Giving />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+        <Navbar user={data?.currentUser}></Navbar>
+        <div style={{ marginTop: 75 }}>
+          <Switch>
+            <Route path="/give">
+              <Giving />
+            </Route>
+            <Route path="/login">
+              <Auth />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </div>
         <Footer />
       </Router>
     </React.Fragment>
