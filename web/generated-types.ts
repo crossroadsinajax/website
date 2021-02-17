@@ -15,11 +15,35 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /**
+   * The `Date` scalar type represents a Date
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  Date: any;
 };
 
 export type Query = {
   __typename?: "Query";
   currentUser?: Maybe<UserType>;
+  /** The ID of the object */
+  service?: Maybe<ServicePageNode>;
+  services?: Maybe<ServicePageNodeConnection>;
+};
+
+export type QueryServiceArgs = {
+  id: Scalars["ID"];
+};
+
+export type QueryServicesArgs = {
+  offset?: Maybe<Scalars["Int"]>;
+  before?: Maybe<Scalars["String"]>;
+  after?: Maybe<Scalars["String"]>;
+  first?: Maybe<Scalars["Int"]>;
+  last?: Maybe<Scalars["Int"]>;
+  id?: Maybe<Scalars["ID"]>;
+  title?: Maybe<Scalars["String"]>;
+  slug?: Maybe<Scalars["String"]>;
 };
 
 export type UserType = {
@@ -30,6 +54,55 @@ export type UserType = {
   lastName: Scalars["String"];
 };
 
+export type ServicePageNode = Node & {
+  __typename?: "ServicePageNode";
+  /** The ID of the object. */
+  id: Scalars["ID"];
+  /** The page title as you'd like it to be seen by the public */
+  title: Scalars["String"];
+  /** The name of the page as it will appear in URLs e.g http://domain.com/blog/[my-slug]/ */
+  slug: Scalars["String"];
+  date: Scalars["Date"];
+  description: Scalars["String"];
+  streamLink: Scalars["String"];
+};
+
+/** An object with an ID */
+export type Node = {
+  /** The ID of the object. */
+  id: Scalars["ID"];
+};
+
+export type ServicePageNodeConnection = {
+  __typename?: "ServicePageNodeConnection";
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<ServicePageNodeEdge>>;
+};
+
+/** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
+export type PageInfo = {
+  __typename?: "PageInfo";
+  /** When paginating forwards, are there more items? */
+  hasNextPage: Scalars["Boolean"];
+  /** When paginating backwards, are there more items? */
+  hasPreviousPage: Scalars["Boolean"];
+  /** When paginating backwards, the cursor to continue. */
+  startCursor?: Maybe<Scalars["String"]>;
+  /** When paginating forwards, the cursor to continue. */
+  endCursor?: Maybe<Scalars["String"]>;
+};
+
+/** A Relay edge containing a `ServicePageNode` and its cursor. */
+export type ServicePageNodeEdge = {
+  __typename?: "ServicePageNodeEdge";
+  /** The item at the end of the edge */
+  node?: Maybe<ServicePageNode>;
+  /** A cursor for use in pagination */
+  cursor: Scalars["String"];
+};
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type UserQuery = { __typename?: "Query" } & {
@@ -38,6 +111,50 @@ export type UserQuery = { __typename?: "Query" } & {
       UserType,
       "username" | "firstName" | "lastName"
     >
+  >;
+};
+
+export type ServicePageQueryVariables = Exact<{
+  slug: Scalars["String"];
+}>;
+
+export type ServicePageQuery = { __typename?: "Query" } & {
+  services?: Maybe<
+    { __typename?: "ServicePageNodeConnection" } & {
+      edges: Array<
+        Maybe<
+          { __typename?: "ServicePageNodeEdge" } & {
+            node?: Maybe<
+              { __typename?: "ServicePageNode" } & Pick<
+                ServicePageNode,
+                "id" | "slug" | "title" | "description" | "streamLink"
+              >
+            >;
+          }
+        >
+      >;
+    }
+  >;
+};
+
+export type ServicePagesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ServicePagesQuery = { __typename?: "Query" } & {
+  services?: Maybe<
+    { __typename?: "ServicePageNodeConnection" } & {
+      edges: Array<
+        Maybe<
+          { __typename?: "ServicePageNodeEdge" } & {
+            node?: Maybe<
+              { __typename?: "ServicePageNode" } & Pick<
+                ServicePageNode,
+                "slug" | "title" | "description"
+              >
+            >;
+          }
+        >
+      >;
+    }
   >;
 };
 
@@ -85,3 +202,126 @@ export function useUserLazyQuery(
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
+export const ServicePageDocument = gql`
+  query ServicePage($slug: String!) {
+    services(slug: $slug) {
+      edges {
+        node {
+          id
+          slug
+          title
+          description
+          streamLink
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useServicePageQuery__
+ *
+ * To run a query within a React component, call `useServicePageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useServicePageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useServicePageQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *   },
+ * });
+ */
+export function useServicePageQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ServicePageQuery,
+    ServicePageQueryVariables
+  >
+) {
+  return Apollo.useQuery<ServicePageQuery, ServicePageQueryVariables>(
+    ServicePageDocument,
+    baseOptions
+  );
+}
+export function useServicePageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ServicePageQuery,
+    ServicePageQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<ServicePageQuery, ServicePageQueryVariables>(
+    ServicePageDocument,
+    baseOptions
+  );
+}
+export type ServicePageQueryHookResult = ReturnType<typeof useServicePageQuery>;
+export type ServicePageLazyQueryHookResult = ReturnType<
+  typeof useServicePageLazyQuery
+>;
+export type ServicePageQueryResult = Apollo.QueryResult<
+  ServicePageQuery,
+  ServicePageQueryVariables
+>;
+export const ServicePagesDocument = gql`
+  query ServicePages {
+    services {
+      edges {
+        node {
+          slug
+          title
+          description
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useServicePagesQuery__
+ *
+ * To run a query within a React component, call `useServicePagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useServicePagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useServicePagesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useServicePagesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    ServicePagesQuery,
+    ServicePagesQueryVariables
+  >
+) {
+  return Apollo.useQuery<ServicePagesQuery, ServicePagesQueryVariables>(
+    ServicePagesDocument,
+    baseOptions
+  );
+}
+export function useServicePagesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ServicePagesQuery,
+    ServicePagesQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<ServicePagesQuery, ServicePagesQueryVariables>(
+    ServicePagesDocument,
+    baseOptions
+  );
+}
+export type ServicePagesQueryHookResult = ReturnType<
+  typeof useServicePagesQuery
+>;
+export type ServicePagesLazyQueryHookResult = ReturnType<
+  typeof useServicePagesLazyQuery
+>;
+export type ServicePagesQueryResult = Apollo.QueryResult<
+  ServicePagesQuery,
+  ServicePagesQueryVariables
+>;

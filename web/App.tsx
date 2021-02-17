@@ -4,10 +4,11 @@ import { gql } from "@apollo/client";
 import { Helmet } from "react-helmet";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
 import Auth from "./Auth";
 import Home from "./Home";
 import Giving from "./Giving";
+import { Service, Services } from "./Service";
+
 import { useUserQuery } from "./generated-types";
 import WebSocketProvider from "./Websocket";
 
@@ -39,6 +40,12 @@ const AppBase: React.FC<AppProps> = (props) => {
         <Navbar user={data?.currentUser} />
         <div style={{ marginTop: 75 }}>
           <Switch>
+            <Route path="/services">
+              <Services />
+            </Route>
+            <Route path="/service/:slug">
+              <Service />
+            </Route>
             <Route path="/give">
               <Giving />
             </Route>
@@ -50,7 +57,6 @@ const AppBase: React.FC<AppProps> = (props) => {
             </Route>
           </Switch>
         </div>
-        <Footer />
       </Router>
     </React.Fragment>
   );
