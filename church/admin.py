@@ -40,7 +40,12 @@ class UserCreateForm(UserCreationForm):
 class UserAdmin(DjangoUserAdmin):
     add_form = UserCreateForm
     fieldsets = DjangoUserAdmin.fieldsets + (
-        ("Authentication", dict(fields=("token",),)),
+        (
+            "Authentication",
+            dict(
+                fields=("token",),
+            ),
+        ),
     )
     actions = [bulletin_email, service_email]
 

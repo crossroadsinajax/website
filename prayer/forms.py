@@ -22,7 +22,10 @@ class PrayerRequestForm(forms.ModelForm):
         label="Prayer request",
         max_length=8192,
         widget=forms.Textarea(
-            attrs={"rows": 3, "placeholder": "Your prayer request or praise report",}
+            attrs={
+                "rows": 3,
+                "placeholder": "Your prayer request or praise report",
+            }
         ),
     )
     note = forms.CharField(
@@ -43,5 +46,8 @@ class PrayerRequestForm(forms.ModelForm):
     )
     provided_name = forms.CharField(label="Name", max_length=48, required=False)
     provided_name.widget.attrs.update(
-        {"rows": 1, "placeholder": "Name (optional)",}
+        {
+            "rows": 1,
+            "placeholder": "Name (optional)",
+        }
     )

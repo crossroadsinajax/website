@@ -11,7 +11,7 @@ COPY poetry.lock pyproject.toml /app/
 
 # Install packages globally
 RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev
+RUN poetry install
 
 # Can be overridden by a volume mount.
 COPY . /app

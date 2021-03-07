@@ -43,7 +43,10 @@ class ChatMessage(models.Model):
 
         for react in reacts:
             if react.type not in aggr:
-                aggr[react.type] = dict(count=0, reactors=[],)
+                aggr[react.type] = dict(
+                    count=0,
+                    reactors=[],
+                )
             count = aggr[react.type]["count"]
             aggr[react.type]["count"] = count + 1
             aggr[react.type]["reactors"].append(react.user.display_name)
@@ -165,7 +168,11 @@ class Chat(models.Model):
         if not user.is_member and not user.is_guest:
             raise exc.PermissionDenied("%r" % user)
 
-        cm = ChatMessage.objects.create(author=user, body=body, chat=self,)
+        cm = ChatMessage.objects.create(
+            author=user,
+            body=body,
+            chat=self,
+        )
         cm.add_tags(body)
         try:
             del self.messages_json
@@ -207,4 +214,7 @@ class Chat(models.Model):
         return []
 
     def __json__(self):
-        return dict(messages=self.messages_json, log=self.logs_json,)
+        return dict(
+            messages=self.messages_json,
+            log=self.logs_json,
+        )

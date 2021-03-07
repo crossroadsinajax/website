@@ -20,7 +20,9 @@ class ChatManager:
     @classmethod
     def get_or_create_room(cls, room):
         if room not in cls.rooms:
-            cls.rooms[room] = dict(users=dict(),)
+            cls.rooms[room] = dict(
+                users=dict(),
+            )
         return cls.rooms[room]
 
     @classmethod
@@ -79,7 +81,10 @@ class ChatConsumer(SubConsumer):
 
             # Send initial chat data
             await self.send_json(
-                {"type": "chat.init", "chat": chat_json,}
+                {
+                    "type": "chat.init",
+                    "chat": chat_json,
+                }
             )
 
             # Send update message
@@ -105,7 +110,9 @@ class ChatConsumer(SubConsumer):
             else:
                 # Send message to room group
                 msg_json = await dbstoa(msg.__json__)()
-                await self.group_send(self.group_name, {"type": "chat.message", **msg_json})
+                await self.group_send(
+                    self.group_name, {"type": "chat.message", **msg_json}
+                )
 
         # Delete chat message
         elif _type == "chat.message_delete":
@@ -116,7 +123,9 @@ class ChatConsumer(SubConsumer):
             except exc.PermissionDenied:
                 log.warning("", exc_info=True)
             else:
-                await self.group_send(self.group_name, {"type": "chat.message_delete", "msg_id": msg_id })
+                await self.group_send(
+                    self.group_name, {"type": "chat.message_delete", "msg_id": msg_id}
+                )
 
         elif _type == "chat.message_clear_all":
             msg_id = event["msg_id"]
@@ -126,13 +135,15 @@ class ChatConsumer(SubConsumer):
                     log.warning("%r tried to clear all messages", user)
                     return
 
-                msg =  models.ChatMessage.objects.get(pk=msg_id)
+                msg = models.ChatMessage.objects.get(pk=msg_id)
                 msgs = models.ChatMessage.objects.filter(author=msg.author)
                 return [m.id for m in msgs]
 
             msgs = await dbstoa(clear_all)()
             for mid in msgs:
-                await self.group_send(self.group_name, {"type": "chat.message_delete", "msg_id": mid })
+                await self.group_send(
+                    self.group_name, {"type": "chat.message_delete", "msg_id": mid}
+                )
 
         # React to a chat message
         elif _type == "chat.react":
@@ -145,7 +156,11 @@ class ChatConsumer(SubConsumer):
 
             await self.group_send(
                 self.group_name,
-                dict(type="chat.message_update", msg_id=msg_id, **msg_json,),
+                dict(
+                    type="chat.message_update",
+                    msg_id=msg_id,
+                    **msg_json,
+                ),
             )
 
         # Toggle a prayer request
@@ -167,7 +182,11 @@ class ChatConsumer(SubConsumer):
             msg_json = await dbstoa(msg.__json__)()
             await self.group_send(
                 self.group_name,
-                dict(type="chat.message_update", msg_id=msg_id, **msg_json,),
+                dict(
+                    type="chat.message_update",
+                    msg_id=msg_id,
+                    **msg_json,
+                ),
             )
 
         # User disconnect
@@ -186,7 +205,11 @@ class ChatConsumer(SubConsumer):
             )
 
     async def log(self, type, user=None, body=""):
-        log = await dbstoa(self.chat.add_log)(type=type, body=body, user=user,)
+        await dbstoa(self.chat.add_log)(
+            type=type,
+            body=body,
+            user=user,
+        )
 
         # Send log to room group
         # log_json = await database_sync_to_async(log.__json__)()

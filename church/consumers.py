@@ -1,9 +1,5 @@
 import logging
 
-from channels.db import database_sync_to_async as dbstoa
-from ddtrace import tracer
-
-from chat import models
 from crossroads.consumers import SubConsumer, registry
 
 

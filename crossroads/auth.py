@@ -1,6 +1,5 @@
 import logging
 
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 
@@ -27,8 +26,7 @@ class TokenBackend:
 
 
 class AuthenticationMiddleware:
-    """Authenticate a user via a token provided in the URL.
-    """
+    """Authenticate a user via a token provided in the URL."""
 
     TOKEN = "mem"  # Query param to use to authenticate with
 

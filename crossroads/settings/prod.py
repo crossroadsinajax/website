@@ -1,5 +1,4 @@
-import os
-from .base import *
+from .base import *  # noqa
 
 DEBUG = False
 
@@ -33,8 +32,6 @@ def read_secret(secret):
         return f.read().strip()
 
 
-# SECRET_KEY = read_secret("django_secret")
-SECRET_KEY = "adfasflkdasdflkaj"
+SECRET_KEY = read_secret("django_secret")
 
-# POSTMARK_API_KEY = read_secret("postmark_api_key")
-POSTMARK_API_KEY = "lasdkjas"
+POSTMARK_API_KEY = read_secret("postmark_api_key")

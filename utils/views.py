@@ -1,5 +1,7 @@
 import functools
 
+from django.core import exceptions
+
 
 def authenticated(f):
     @functools.wraps(f)

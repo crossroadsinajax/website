@@ -15,10 +15,17 @@ docker-compose up -d --build
 The app will run by default on port 8000. This can be configured in
 `docker-compose.override.yml`.
 
-## adding a dependency
+## adding a frontend dependency
 
 ```bash
 docker-compose run web yarn add <dep>
+docker-compose up -d --build
+```
+
+## adding a backend depedency
+
+```bash
+docker-compose run app poetry add <dep>
 docker-compose up -d --build
 ```
 
@@ -27,9 +34,13 @@ docker-compose up -d --build
 ```bash
 # format python code
 docker-compose run app black --exclude migrations .
+# lint python code
+docker-compose run app flake8
 
 # format ts/js code
 docker-compose run web yarn fmt
+# lint ts/js code
+docker-compose run web yarn lint
 
 # execute a shell in the server container
 docker-compose exec app fish

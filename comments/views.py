@@ -4,7 +4,6 @@ from django import http, shortcuts
 from django.core import exceptions as ex
 
 from comments import models as mods, forms
-from comments.templatetags.comments import register
 
 
 def authenticated(f):

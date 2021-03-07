@@ -1,4 +1,4 @@
-from .base import *
+from .base import *  # noqa
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -11,6 +11,6 @@ ALLOWED_HOSTS = ["0.0.0.0", "localhost"]
 
 
 try:
-    from .local import *
+    from .local import *  # noqa
 except ImportError:
     pass
