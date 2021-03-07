@@ -191,7 +191,7 @@ class EMAIL_TEMPLATE:
     SERVICE = "d-93ce2ee9a14b4ed7aa2248bb33a3767f"
 
 
-GRAPHENE = dict(SCHEMA="crossroads.schema.schema")
+GRAPHENE = dict(SCHEMA="crossroads.schema.schema", SCHEMA_OUTPUT="web/schema.json")
 
 POSTMARK_API_KEY = os.getenv("POSTMARK_API_KEY")
 POSTMARK_SENDER = "lynn@crossroadsajax.church"
