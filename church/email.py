@@ -1,8 +1,6 @@
 import base64
-import mimetypes
 import os
 
-from django.conf import settings
 from django.contrib.staticfiles import finders
 from postmark.core import PMMail
 

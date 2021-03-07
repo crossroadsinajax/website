@@ -11,7 +11,11 @@ from . import consumers
 application = ProtocolTypeRouter(
     {
         "websocket": AuthMiddlewareStack(
-            URLRouter([re_path(r"ws/", consumers.Consumer),])
+            URLRouter(
+                [
+                    re_path(r"ws/", consumers.Consumer),
+                ]
+            )
         ),
     }
 )

@@ -17,15 +17,24 @@ class UserEditForm(forms.ModelForm):
 
     first_name = forms.CharField(label="First name", max_length=48, required=True)
     first_name.widget.attrs.update(
-        {"rows": 1, "placeholder": "First name",}
+        {
+            "rows": 1,
+            "placeholder": "First name",
+        }
     )
     last_name = forms.CharField(label="Last name", max_length=48, required=True)
     last_name.widget.attrs.update(
-        {"rows": 1, "placeholder": "Last name",}
+        {
+            "rows": 1,
+            "placeholder": "Last name",
+        }
     )
     email = forms.EmailField(label="Email", max_length=100, required=True)
     email.widget.attrs.update(
-        {"rows": 1, "placeholder": "Email",}
+        {
+            "rows": 1,
+            "placeholder": "Email",
+        }
     )
     subscribe_daily_email = forms.BooleanField(
         label="Subscribe to daily email", required=False

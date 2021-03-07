@@ -4,8 +4,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-from church.models import User
-
 
 class PollResponse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)

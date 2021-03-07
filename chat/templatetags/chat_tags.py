@@ -1,8 +1,4 @@
 from django import template
-from django.core import exceptions
-
-from chat import models
-
 
 register = template.Library()
 

@@ -1,7 +1,6 @@
 import logging
 
 from channels.db import database_sync_to_async as dbstoa
-from ddtrace import tracer
 
 from crossroads.consumers import SubConsumer, registry
 from polls import models
@@ -36,7 +35,10 @@ class PollConsumer(SubConsumer):
 
             poll_json = await dbstoa(self.poll.__json__)()
             await self.send_json(
-                {"type": "polls.update", **poll_json,}
+                {
+                    "type": "polls.update",
+                    **poll_json,
+                }
             )
 
             responses = await dbstoa(models.PollResponse.objects.filter)(
@@ -45,7 +47,9 @@ class PollConsumer(SubConsumer):
             nresponses = await dbstoa(responses.count)()
             if nresponses > 0:
                 await self.send_json(
-                    {"type": "polls.disable",}
+                    {
+                        "type": "polls.disable",
+                    }
                 )
 
         elif _type == "polls.toggle":
@@ -55,7 +59,11 @@ class PollConsumer(SubConsumer):
 
             poll_json = await dbstoa(self.poll.__json__)()
             await self.group_send(
-                self.group_name, dict(type="polls.update", **poll_json,),
+                self.group_name,
+                dict(
+                    type="polls.update",
+                    **poll_json,
+                ),
             )
 
         elif _type == "polls.toggleResults":
@@ -64,7 +72,11 @@ class PollConsumer(SubConsumer):
 
             poll_json = await dbstoa(self.poll.__json__)()
             await self.group_send(
-                self.group_name, dict(type="polls.update", **poll_json,),
+                self.group_name,
+                dict(
+                    type="polls.update",
+                    **poll_json,
+                ),
             )
 
         elif _type == "polls.submit":
@@ -73,12 +85,18 @@ class PollConsumer(SubConsumer):
             await dbstoa(self.poll.add_response)(user, cpy)
 
             await self.send_json(
-                {"type": "polls.disable",}
+                {
+                    "type": "polls.disable",
+                }
             )
 
             poll_json = await dbstoa(self.poll.__json__)()
             await self.group_send(
-                self.group_name, dict(type="polls.update", **poll_json,),
+                self.group_name,
+                dict(
+                    type="polls.update",
+                    **poll_json,
+                ),
             )
 
     async def handle(self, user, event):

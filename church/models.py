@@ -1,6 +1,5 @@
 import secrets
 
-from django import forms
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -13,7 +12,6 @@ from wagtail.documents.models import Document
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
 from wagtailmedia.blocks import AbstractMediaChooserBlock
-from wagtailmedia.edit_handlers import MediaChooserPanel
 import yarl
 
 from prayer import models as pr_models
@@ -101,7 +99,7 @@ class User(AbstractUser):
         return guest.get_next_service_link()
 
     def get_services_link(self):
-        link = yarl.URL(f"https://crossroadsajax.church/services").with_query(
+        link = yarl.URL("https://crossroadsajax.church/services").with_query(
             dict(mem=self.token)
         )
         return str(link)
@@ -151,8 +149,7 @@ class IDListBlock(blocks.ListBlock):
 
 
 class IDStructBlock(blocks.StructBlock):
-    """
-    """
+    """"""
 
     def to_python(self, value):
         self.child_blocks["id"] = blocks.CharBlock(required=False)
@@ -275,7 +272,9 @@ class ServicePage(Page, ContentPageMixin):
     weekly_theme = models.CharField(max_length=128, default="", blank=True)
 
     bulletin = wtfields.StreamField(
-        [("bulletin_section", BulletinSectionBlock(name="Bulletin Section")),],
+        [
+            ("bulletin_section", BulletinSectionBlock(name="Bulletin Section")),
+        ],
         blank=True,
     )
 
@@ -404,7 +403,10 @@ class BasicPage(Page):
     show_last_updated = models.BooleanField(default=True)
 
     stream = wtfields.StreamField(
-        [("offering", OfferingBlock(name="Offering Section")),], blank=True,
+        [
+            ("offering", OfferingBlock(name="Offering Section")),
+        ],
+        blank=True,
     )
 
     content_panels = Page.content_panels + [

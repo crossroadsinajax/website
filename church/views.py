@@ -1,5 +1,3 @@
-import functools
-
 from django import http, shortcuts
 from django.core import exceptions
 from django.urls import reverse

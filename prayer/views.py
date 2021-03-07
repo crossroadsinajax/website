@@ -79,9 +79,7 @@ def prayer_request_react(request, pr_id, emoji):
         return http.HttpResponseRedirect(
             request.META.get("HTTP_REFERER") + "#prayer-requests"
         )
-    react = models.PrayerRequestReact.objects.create(
-        item=pr, type=emoji, user=request.user
-    )
+    models.PrayerRequestReact.objects.create(item=pr, type=emoji, user=request.user)
     return http.HttpResponseRedirect(
         request.META.get("HTTP_REFERER") + "#prayer-requests"
     )
