@@ -22,12 +22,22 @@ docker-compose run web yarn add <dep>
 docker-compose up -d --build
 ```
 
-## adding a backend depedency
+## adding a backend dependency
 
 ```bash
 docker-compose run app poetry add <dep>
 docker-compose up -d --build
 ```
+
+## generating graphql schema
+
+```bash
+# backend
+docker-compose exec app python manage.py graphql_schema
+# frontend
+docker-compose exec web yarn run gql
+```
+
 
 ## useful commands
 

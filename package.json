@@ -30,6 +30,11 @@
     "webpack-cli": "^4.1.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.1",
+    "@graphql-codegen/introspection": "1.18.1",
+    "@graphql-codegen/typescript": "1.21.0",
+    "@graphql-codegen/typescript-operations": "1.17.14",
+    "@graphql-codegen/typescript-react-apollo": "2.2.1",
     "@types/material-ui": "^0.21.7",
     "@types/node": "^14.0.14",
     "@types/react": "^16.9.41",
@@ -38,6 +43,7 @@
     "@typescript-eslint/parser": "^4.6.0",
     "@webpack-cli/serve": "^1.0.1",
     "add": "^2.0.6",
+    "apollo": "^2.32.5",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-react": "^7.21.5",
@@ -53,7 +59,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack serve --config webpack.dev.js --hot",
     "build": "webpack --config webpack.prod.js",
-    "fmt": "prettier --write web/"
+    "fmt": "prettier --write web/",
+    "lint": "eslint 'web/**'",
+    "gql": "graphql-codegen --config codegen.yml"
   },
   "repository": {
     "type": "git",
