@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -y git libjpeg-turbo-progs zlib1g-dev gcc fish
 RUN pip install poetry==1.1.4
