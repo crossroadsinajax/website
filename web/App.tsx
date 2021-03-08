@@ -34,7 +34,7 @@ const AppBase: React.FC<AppProps> = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Helmet>
       <Router>
-        <Navbar user={data?.currentUser}></Navbar>
+        <Navbar user={data?.currentUser} />
         <div style={{ marginTop: 75 }}>
           <Switch>
             <Route path="/give">
