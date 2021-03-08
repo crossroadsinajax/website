@@ -15,7 +15,8 @@ const Home: React.FC<HomeProps> = () => {
   return (
     <Container>
       <Box className={classes.root}>
-        <h1>crossroads</h1>
+        <h1>Hello</h1>
+        <h1>Hello</h1>
       </Box>
     </Container>
   );
