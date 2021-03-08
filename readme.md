@@ -48,3 +48,12 @@ docker-compose exec app fish
 # get the logs from the app
 docker-compose logs -f app web
 ```
+
+## useful links
+
+Note the trailing slashes in these URLs!
+
+- graphiql explorer: http://localhost:8000/gql/
+- wagtail admin http://localhost/admin/
+- django admin http://localhost/django-admin/
+
