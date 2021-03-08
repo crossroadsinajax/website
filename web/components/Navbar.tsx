@@ -5,6 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import { common } from "@material-ui/core/colors";
 import Toolbar from "@material-ui/core/Toolbar";
 import { UserType } from "~/generated-types";
+import { Maybe } from "~/types";
 import { MenuTab } from "./MenuTab";
 
 const useStyles = makeStyles({
@@ -25,7 +26,7 @@ const useStyles = makeStyles({
 });
 
 type NavbarProps = {
-  user: UserType | null | undefined; // FIXME: probably a better way to do this
+  user: Maybe<UserType>;
 };
 export const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const classes = useStyles();
