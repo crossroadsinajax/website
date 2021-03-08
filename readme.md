@@ -64,6 +64,6 @@ docker-compose logs -f app web
 Note the trailing slashes in these URLs!
 
 - graphiql explorer: http://localhost:8000/gql/
-- wagtail admin http://localhost/admin/
-- django admin http://localhost/django-admin/
+- wagtail admin http://localhost:8000/admin/
+- django admin http://localhost:8000/django-admin/
 
