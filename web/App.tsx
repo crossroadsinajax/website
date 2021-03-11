@@ -8,10 +8,12 @@ import { Footer } from "./components/Footer";
 import Auth from "./Auth";
 import Home from "./Home";
 import Giving from "./Giving";
-
 import { useUserQuery } from "./generated-types";
+import WebSocketProvider from "./Websocket";
 
-type AppProps = {};
+type AppProps = {
+  ws: WebSocketProvider;
+};
 
 gql`
   query User {
@@ -23,7 +25,7 @@ gql`
   }
 `;
 
-const AppBase: React.FC<AppProps> = () => {
+const AppBase: React.FC<AppProps> = (props) => {
   const { data, loading } = useUserQuery();
   console.log(loading, data);
 
@@ -44,7 +46,7 @@ const AppBase: React.FC<AppProps> = () => {
               <Auth />
             </Route>
             <Route path="/">
-              <Home />
+              <Home ws={props.ws} />
             </Route>
           </Switch>
         </div>

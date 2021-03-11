@@ -91,9 +91,6 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = "crossroads.wsgi.application"
-
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -180,7 +177,7 @@ BASE_URL = "https://crossroadsajax.church"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-ASGI_APPLICATION = "crossroads.routing.application"
+ASGI_APPLICATION = "crossroads.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 EMAIL_BACKEND = "postmark.django_backend.EmailBackend"

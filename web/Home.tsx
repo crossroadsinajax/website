@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Container, makeStyles } from "@material-ui/core";
+import WebSocketProvider from "./Websocket";
 
 const useStyles = makeStyles({
   root: {
@@ -8,14 +9,16 @@ const useStyles = makeStyles({
   },
 });
 
-type HomeProps = {};
+type HomeProps = {
+  ws: WebSocketProvider;
+};
 
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = (props) => {
   const classes = useStyles();
+  console.log(props);
   return (
     <Container>
       <Box className={classes.root}>
-        <h1>Hello</h1>
         <h1>Hello</h1>
       </Box>
     </Container>
