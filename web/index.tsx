@@ -11,6 +11,7 @@ import { onError } from "@apollo/client/link/error";
 import React from "react";
 import ReactDOM from "react-dom";
 import { App } from "./App";
+import WebsocketProvider from "./Websocket";
 
 import "./index.html";
 import { ThemeProvider, CssBaseline, createMuiTheme } from "@material-ui/core";
@@ -63,7 +64,9 @@ ReactDOM.render(
   <ApolloProvider client={client}>
     <ThemeProvider theme={theme}>
       <CssBaseline>
-        <App />
+        <WebsocketProvider url={"ws://localhost:8000/ws/"}>
+          {(props) => <App ws={props.ws} />}
+        </WebsocketProvider>
       </CssBaseline>
     </ThemeProvider>
   </ApolloProvider>,
