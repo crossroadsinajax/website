@@ -24,6 +24,8 @@ class AuthMutation(graphene.Mutation):
 
 
 class ServicePageNode(DjangoObjectType):
+    pk = graphene.Int(source="pk", required=True)
+
     class Meta:
         model = models.ServicePage
         only_fields = ["id", "title", "slug", "description", "date", "stream_link"]

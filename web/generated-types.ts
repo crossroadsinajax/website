@@ -65,6 +65,7 @@ export type ServicePageNode = Node & {
   date: Scalars["Date"];
   description: Scalars["String"];
   streamLink: Scalars["String"];
+  pk: Scalars["Int"];
 };
 
 /** An object with an ID */
@@ -127,7 +128,7 @@ export type ServicePageQuery = { __typename?: "Query" } & {
             node?: Maybe<
               { __typename?: "ServicePageNode" } & Pick<
                 ServicePageNode,
-                "id" | "slug" | "title" | "description" | "streamLink"
+                "id" | "pk" | "slug" | "title" | "description" | "streamLink"
               >
             >;
           }
@@ -208,6 +209,7 @@ export const ServicePageDocument = gql`
       edges {
         node {
           id
+          pk
           slug
           title
           description

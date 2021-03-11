@@ -245,39 +245,10 @@ socket.register('chat', {
     onmessage: function (event) {
         chatApp.updateType = event.type;
 
-        if (event.type === 'chat.message') {
-            chatApp.messages.push(event);
-        }
-        else if (event.type === 'chat.init') {
-            chatApp.messages.splice(0, chatApp.messages.length);
-            for (var i = 0; i < event.chat.messages.length; ++i) {
-                chatApp.messages.push(event.chat.messages[i]);
-            }
-        }
-        else if (event.type == 'chat.message_update') {
-            var index;
-            for (index = 0; index < chatApp.messages.length; index++)
-                if (chatApp.messages[index].id === event['msg_id'])
-                    break;
-            Vue.set(chatApp.messages, index, event);
-        }
-        else if (event.type == 'chat.users_update') {
+        if (event.type == 'chat.users_update') {
             chatApp.users.splice(0, chatApp.users.length);
             for (var i = 0; i < event.users.length; ++i) {
                 chatApp.users.push(event.users[i]);
-            }
-        }
-        else if (event.type == 'chat.message_delete') {
-            var index;
-            for (index = 0; index < chatApp.messages.length; index++) {
-                if (chatApp.messages[index].id === event['msg_id']) {
-                    break;
-                }
-            }
-            if (index < chatApp.messages.length) {
-                var msg = chatApp.messages[index];
-                msg.body = 'Deleted';
-                Vue.set(chatApp.messages, index, msg);
             }
         }
         else {

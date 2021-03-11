@@ -111,7 +111,7 @@ class ChatConsumer(SubConsumer):
                 # Send message to room group
                 msg_json = await dbstoa(msg.__json__)()
                 await self.group_send(
-                    self.group_name, {"type": "chat.message", **msg_json}
+                    self.group_name, {"type": "chat.message", "msg": msg_json}
                 )
 
         # Delete chat message
@@ -158,8 +158,7 @@ class ChatConsumer(SubConsumer):
                 self.group_name,
                 dict(
                     type="chat.message_update",
-                    msg_id=msg_id,
-                    **msg_json,
+                    msg=msg_json,
                 ),
             )
 

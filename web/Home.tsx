@@ -13,9 +13,8 @@ type HomeProps = {
   ws: WebSocketProvider;
 };
 
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC<HomeProps> = () => {
   const classes = useStyles();
-  console.log(props);
   return (
     <Container>
       <Box className={classes.root}>
