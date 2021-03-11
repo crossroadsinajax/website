@@ -1,7 +1,7 @@
 name: Post Deploy Dashboard
 on:
-  pull_request_review_comment:
-    types: [created, deleted]
+  pull_request_target:
+    types: [assigned, unassigned, labeled, unlabeled, opened, edited, closed, reopened, synchronize, ready_for_review, locked, unlocked, review_requested, review_request_removed]
 jobs:
   comment:
     name: Post Deploy Dashboard
@@ -10,5 +10,5 @@ jobs:
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@master
         with:
-          message: 'Please watch your deployment here: [Public Dashboard](https://p.datadoghq.com/sb/0aa0fbdbd-5b9d97c4e71bbe63860a7dce0928997a), [Private Dashboard](https://app.datadoghq.com/dashboard/y6w-ivc-yy7), [Prod Dashboard](https://app.datadoghq.com/dashboard/ud8-8k2-fe2)'
+          message: 'hello world'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
