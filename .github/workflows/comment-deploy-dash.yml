@@ -1,14 +1,15 @@
-name: Post Deploy Dashboard
-on:
-  pull_request_target:
-    types: [assigned, unassigned, labeled, unlabeled, opened, edited, closed, reopened, synchronize, ready_for_review, locked, unlocked, review_requested, review_request_removed]
+on: pull_request
+
 jobs:
-  comment:
-    name: Post Deploy Dashboard
+  example_comment_pr:
     runs-on: ubuntu-latest
+    name: An example job to comment a PR
     steps:
-      - name: Comment PR
-        uses: thollander/actions-comment-pull-request@master
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Comment PR with basic message
+        uses: ./
         with:
-          message: 'hello world'
+          message: 'Basic message'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
