@@ -9,4 +9,4 @@ jobs:
         uses: actions/checkout@v1
         with:
           message: 'Basic message'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
