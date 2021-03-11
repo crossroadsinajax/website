@@ -44,7 +44,7 @@ const AppBase: React.FC<AppProps> = (props) => {
               <Services />
             </Route>
             <Route path="/service/:slug">
-              <Service />
+              <Service ws={props.ws} />
             </Route>
             <Route path="/give">
               <Giving />

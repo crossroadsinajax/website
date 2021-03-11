@@ -4,5 +4,3 @@ WORKDIR /app
 
 COPY yarn.lock package.json /app/
 RUN yarn install
-
-COPY webpack.dev.js /app/
