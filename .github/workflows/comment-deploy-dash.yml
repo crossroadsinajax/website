@@ -2,10 +2,10 @@ name: Comment Deploy Dashboard
 on: pull_request
 
 jobs:
-  example_comment_pr:
+  comment_deploy_dashboard:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    name: An example job to comment a PR
+    name: Comment Deploy Dashboard
     steps:
       - name: Checkout
         uses: actions/checkout@v1
