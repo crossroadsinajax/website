@@ -19,6 +19,9 @@ declare global {
   /* eslint-disable no-unused-vars  */
   interface Window {
     CSRF_TOKEN: string;
+    SETTINGS: {
+      DEBUG: boolean;
+    };
   }
 }
 
