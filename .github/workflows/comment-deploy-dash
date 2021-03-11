@@ -1,7 +1,7 @@
 name: Post Deploy Dashboard
-  on:
-    pull_request_review_comment:
-      types: [created, deleted]
+on:
+  pull_request_review_comment:
+    types: [created, deleted]
 jobs:
   comment:
     name: Post Deploy Dashboard
