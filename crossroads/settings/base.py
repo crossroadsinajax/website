@@ -116,6 +116,12 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
 AUTH_USER_MODEL = "church.User"
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
