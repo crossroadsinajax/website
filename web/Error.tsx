@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
 const Error: React.FC<{}> = () => {
-  return <div>Something went wrong :(</div>;
-};
+	return <div>Something went wrong :(</div>
+}
 
-export { Error };
+export { Error }
