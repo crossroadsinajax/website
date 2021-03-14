@@ -39,8 +39,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user }) => {
           </Box>
         </Link>
         <Box className={classes.tabs}>
-          <Link to="/services">
-            <MenuTab name="Streams" pages={[]}></MenuTab>
+          <Link to="/gatherings">
+            <MenuTab name="Gatherings" pages={[]}></MenuTab>
           </Link>
           <MenuTab name="Connecting" pages={["Example 1", "Example 2"]} />
           <MenuTab name="Contact Us" pages={["Office", "Directions"]} />

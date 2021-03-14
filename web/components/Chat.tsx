@@ -231,7 +231,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               float: "left",
               clear: "both",
             }}
-          ></div>
+          />
         </div>
         <input
           type="text"

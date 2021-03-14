@@ -40,10 +40,10 @@ const AppBase: React.FC<AppProps> = (props) => {
         <Navbar user={data?.currentUser} />
         <div style={{ marginTop: 75 }}>
           <Switch>
-            <Route path="/services">
+            <Route path="/gatherings">
               <Services />
             </Route>
-            <Route path="/service/:slug">
+            <Route path="/gathering/:slug">
               <Service ws={props.ws} />
             </Route>
             <Route path="/give">
