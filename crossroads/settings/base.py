@@ -110,8 +110,11 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 60 * 60 * 5,  # 5 hours (arbitrary)
     }
 }
+
+SESSON_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 AUTH_USER_MODEL = "church.User"
 
