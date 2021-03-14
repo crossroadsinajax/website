@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "prayer",
     "polls",
     "channels",
-    "octicons",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",

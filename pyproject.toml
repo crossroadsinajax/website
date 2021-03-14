@@ -15,7 +15,6 @@ daphne = "^3.0"
 GitPython = "3.1"
 django-extensions = "2.2.9"
 channels = {git = "https://github.com/django/channels.git", rev = "main"}
-django-octicons = "^1.0.2"
 arrow = "^0.17.0"
 python-postmark = {git = "https://github.com/crossroadsinajax/python-postmark.git", rev = "0.5.3"}
 graphene = "^2.1.8"
