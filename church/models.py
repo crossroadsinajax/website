@@ -3,6 +3,7 @@ import secrets
 from django import forms
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django.utils.functional import cached_property
@@ -118,6 +119,11 @@ def invalidate_cached_properties(sender, instance, *args, **kwargs):
     for key, value in instance.__class__.__dict__.items():
         if isinstance(value, cached_property):
             instance.__dict__.pop(key, None)
+
+
+@receiver(models.signals.post_delete, sender=User)
+def invalidate_user_auth(sender, instance, *args, **kwargs):
+    cache.delete(instance.pk)
 
 
 class ServiceMediaBlock(AbstractMediaChooserBlock):
