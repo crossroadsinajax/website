@@ -33,7 +33,6 @@ jobs:
           SSH_PRIV_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           SSH_KNOWN_HOST: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
 
-
   deploy_staging:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/staging'

@@ -38,7 +38,6 @@ docker-compose exec app python manage.py graphql_schema
 docker-compose exec web yarn run gql
 ```
 
-
 ## useful commands
 
 ```bash
@@ -66,4 +65,3 @@ Note the trailing slashes in these URLs!
 - graphiql explorer: http://localhost:8000/gql/
 - wagtail admin http://localhost:8000/admin/
 - django admin http://localhost:8000/django-admin/
-
