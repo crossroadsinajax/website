@@ -8,13 +8,28 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 LOGGING = {
     "version": 1,
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} {levelname} [{name}:{lineno}] {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "root": {
             "handlers": ["console"],
             "level": "INFO",
         },
