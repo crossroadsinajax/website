@@ -1,4 +1,4 @@
-version: '3.7'
+version: '2.4'
 
 # Override the default docker-compose.yml with dev settings
 services:
