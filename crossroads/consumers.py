@@ -5,6 +5,7 @@ import logging
 import channels
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ddtrace import tracer
+from ddtrace.constants import SPAN_MEASURED_KEY
 
 
 log = logging.getLogger(__name__)
@@ -201,7 +202,6 @@ class Consumer(AsyncWebsocketConsumer):
             user = await channels.auth.get_user(self.scope)
             span.set_tag("user", user.username)
 
-            # TODO: Custom consumer middleware?
             consumer = self.subcons(event)
 
             if not consumer:
@@ -213,11 +213,22 @@ class Consumer(AsyncWebsocketConsumer):
             await consumer.receive(user, event)
 
     async def dispatch(self, event):
-        consumer = self.subcons(event)
+        with tracer.trace("ws.dispatch") as span:
+            span.set_tag(SPAN_MEASURED_KEY)
+            span.resource = event.get("type", span.resource)
 
-        if not consumer:
-            await super().dispatch(event)
-            return
+            consumer = self.subcons(event)
+            if not consumer:
+                span._ignore_exception(channels.exceptions.StopConsumer)
+                await super().dispatch(event)
+                return
 
-        user = await channels.auth.get_user(self.scope)
-        await consumer.handle(user, event)
+            span.set_tag("consumer.app_name", consumer.app_name)
+            span.set_tag("consumer.channel_name", consumer.channel_name)
+
+            with tracer.trace("get_user"):
+                user = await channels.auth.get_user(self.scope)
+            span.set_tag("user", str(user))
+
+            with tracer.trace("ws.handle"):
+                await consumer.handle(user, event)
