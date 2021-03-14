@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth import authenticate, login
+from django.core.cache import cache
 from django.http import HttpResponseRedirect
 
 from church.models import User
@@ -22,7 +23,12 @@ class TokenBackend:
             return
 
     def get_user(self, user_id):
-        return User.objects.get(pk=user_id)
+        if user_id in cache:
+            return cache.get(user_id)
+        else:
+            user = User.objects.get(pk=user_id)
+            cache.set(user_id, user)
+            return user
 
 
 class AuthenticationMiddleware:
