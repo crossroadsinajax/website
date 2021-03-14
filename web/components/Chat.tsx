@@ -122,15 +122,19 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   componentDidMount() {
-    // TODO: what if socket isn't open yet?
+    this.props.ws.registerOnOpen(this.onConnect)
+    this.props.ws.registerOnMessage(this.onMessage)
+  }
+
+  onConnect = () => {
     this.props.ws.send({
       type: "chat.connect",
       chat_id: this.props.id,
     })
-    this.props.ws.registerOnMessage(this.onMessage)
   }
 
   componentWillUnmount() {
+    this.props.ws.deregisterOnOpen(this.onConnect)
     this.props.ws.deregisterOnMessage(this.onMessage)
   }
 
