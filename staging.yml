@@ -1,4 +1,4 @@
-version: '2.4'
+version: "2.4"
 
 # Unfortunately we can't extend prod.yml as the volumes
 # will be combined rather than overridden.

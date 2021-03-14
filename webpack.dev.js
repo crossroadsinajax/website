@@ -1,7 +1,7 @@
-const path = require("path");
-const webpack = require("webpack");
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path")
+const webpack = require("webpack")
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
   mode: "development",
@@ -61,4 +61,4 @@ module.exports = {
       template: "./web/index.html",
     }),
   ],
-};
+}
