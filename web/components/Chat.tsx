@@ -124,9 +124,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   componentDidMount() {
     this.props.ws.registerOnOpen(this.onConnect)
     this.props.ws.registerOnMessage(this.onMessage)
+    console.debug("chat component mounted!")
   }
 
   onConnect = () => {
+    console.debug("chat connected!")
     this.props.ws.send({
       type: "chat.connect",
       chat_id: this.props.id,

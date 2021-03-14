@@ -43,6 +43,9 @@ export default class WebSocketProvider extends React.Component<
 
   registerOnOpen = (fn: () => void) => {
     this.onOpenHandlers.push(fn)
+    if (this.state.ws.readyState == this.state.ws.OPEN) {
+      fn()
+    }
   }
 
   deregisterOnOpen = (fn: () => void) => {
