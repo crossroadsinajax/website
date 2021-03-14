@@ -63,6 +63,7 @@ class ChatConsumer(SubConsumer):
         span = tracer.current_span()
 
         _type = event["type"]
+        span.resource = _type
 
         if _type == "chat.connect":
             self.chat_id = event["chat_id"]
@@ -96,7 +97,6 @@ class ChatConsumer(SubConsumer):
                     "users": ChatManager.user_list(self.chat_id),
                 },
             )
-            await self.log("user_connect", user=user)
 
         # New chat message
         elif _type == "chat.message":
@@ -191,7 +191,6 @@ class ChatConsumer(SubConsumer):
         # User disconnect
         elif _type == "chat.disconnect":
             ChatManager.deregister(self.chat_id, user)
-            await self.log("user_disconnect", user=user)
             await self.group_leave(self.group_name)
 
             # Update room with user count
@@ -202,19 +201,6 @@ class ChatConsumer(SubConsumer):
                     "users": ChatManager.user_list(self.chat_id),
                 },
             )
-
-    async def log(self, type, user=None, body=""):
-        await dbstoa(self.chat.add_log)(
-            type=type,
-            body=body,
-            user=user,
-        )
-
-        # Send log to room group
-        # log_json = await database_sync_to_async(log.__json__)()
-        # await self.channel_layer.group_send(
-        #     self.chat_group_name, {"type": "log", **log_json}
-        # )
 
     async def handle(self, user, event):
         await self.send_json(event)

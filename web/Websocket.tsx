@@ -77,6 +77,9 @@ export default class WebSocketProvider extends React.Component<
   }
 
   send = (message: any) => {
+    if (window.SETTINGS.DEBUG) {
+      console.log(message)
+    }
     this.state.ws.send(JSON.stringify(message))
   }
 
