@@ -1,11 +1,11 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
-import { gql } from "@apollo/client";
-import { Container } from "@material-ui/core";
-import { useServicePageQuery, useServicePagesQuery } from "./generated-types";
-import { Error } from "./Error";
-import Chat from "./components/Chat";
-import WebSocketProvider from "~Websocket";
+import React from "react"
+import { Link, useParams } from "react-router-dom"
+import { gql } from "@apollo/client"
+import { Container } from "@material-ui/core"
+import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
+import { Error } from "./Error"
+import Chat from "./components/Chat"
+import WebSocketProvider from "~Websocket"
 
 gql`
   query ServicePage($slug: String!) {
@@ -22,7 +22,7 @@ gql`
       }
     }
   }
-`;
+`
 
 gql`
   query ServicePages {
@@ -36,25 +36,25 @@ gql`
       }
     }
   }
-`;
+`
 
 type ServiceProps = {
-  ws: WebSocketProvider;
-};
+  ws: WebSocketProvider
+}
 
 const Service: React.FC<ServiceProps> = (props) => {
-  let { slug } = useParams();
+  let { slug } = useParams()
   const { data, loading } = useServicePageQuery({
     variables: {
       slug,
     },
-  });
+  })
 
   if (window.SETTINGS.DEBUG) {
-    console.log(loading, data);
+    console.log(loading, data)
   }
 
-  const page = data?.services?.edges?.[0]?.node;
+  const page = data?.services?.edges?.[0]?.node
 
   if (data && page != null) {
     return (
@@ -70,25 +70,25 @@ const Service: React.FC<ServiceProps> = (props) => {
         </div>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
       </Container>
-    );
+    )
   } else if (loading) {
-    return <h1>loading</h1>;
+    return <h1>loading</h1>
   } else {
-    return <Error />;
+    return <Error />
   }
-};
+}
 
-type ServicesProps = {};
+type ServicesProps = {}
 
 const Services: React.FC<ServicesProps> = () => {
   const { data, loading } = useServicePagesQuery({
     variables: {},
-  });
+  })
 
   if (window.SETTINGS.DEBUG) {
-    console.log(loading, data);
+    console.log(loading, data)
   }
-  const pages = data?.services?.edges;
+  const pages = data?.services?.edges
 
   if (data && pages) {
     return (
@@ -134,11 +134,11 @@ const Services: React.FC<ServicesProps> = () => {
           </ul>
         </React.Fragment>
       </Container>
-    );
+    )
   } else if (loading) {
-    return <h1>loading</h1>;
+    return <h1>loading</h1>
   } else {
-    return <Error />;
+    return <Error />
   }
-};
-export { Service, Services };
+}
+export { Service, Services }

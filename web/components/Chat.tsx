@@ -1,24 +1,24 @@
-import React from "react";
-import WebSocketProvider, { WSMessage } from "~Websocket";
+import React from "react"
+import WebSocketProvider, { WSMessage } from "~Websocket"
 
 type ChatMessage = {
-  author: string;
-  body: string;
-  created_at: number;
-  id: number;
+  author: string
+  body: string
+  created_at: number
+  id: number
   reacts: {
     [x: string]: {
-      count: number;
-      reactors: string[];
-    };
-  };
-  tags: string[];
-};
+      count: number
+      reactors: string[]
+    }
+  }
+  tags: string[]
+}
 
 const ChatReactSelector: React.FC<{
-  react: string;
-  msg: ChatMessage;
-  onReact: (msg: ChatMessage, react: string) => void;
+  react: string
+  msg: ChatMessage
+  onReact: (msg: ChatMessage, react: string) => void
 }> = ({ msg, react, onReact }) => {
   return (
     <div
@@ -31,22 +31,22 @@ const ChatReactSelector: React.FC<{
     >
       {react}
     </div>
-  );
-};
+  )
+}
 
 type ChatMessageProps = {
-  msg: ChatMessage;
-  onReact: (msg: ChatMessage, react: string) => void;
-  onDelete: (msg: ChatMessage) => void;
-};
+  msg: ChatMessage
+  onReact: (msg: ChatMessage, react: string) => void
+  onDelete: (msg: ChatMessage) => void
+}
 
 const ChatMessageRC: React.FC<ChatMessageProps> = ({
   msg,
   onReact,
   onDelete,
 }) => {
-  const possibleReacts = ["🙏", "🙌", "🤣", "👍"];
-  const msgReacts = possibleReacts.filter((r) => r in msg.reacts);
+  const possibleReacts = ["🙏", "🙌", "🤣", "👍"]
+  const msgReacts = possibleReacts.filter((r) => r in msg.reacts)
   return (
     <div
       style={{
@@ -97,28 +97,28 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 type ChatProps = {
-  ws: WebSocketProvider;
-  id: number;
-};
+  ws: WebSocketProvider
+  id: number
+}
 
 type ChatState = {
-  messages: ChatMessage[];
-  message: string;
-};
+  messages: ChatMessage[]
+  message: string
+}
 
 export default class Chat extends React.Component<ChatProps, ChatState> {
   state: ChatState = {
     messages: [],
     message: "",
-  };
-  private chatEnd: HTMLDivElement | null;
+  }
+  private chatEnd: HTMLDivElement | null
 
   constructor(props: ChatProps) {
-    super(props);
+    super(props)
   }
 
   componentDidMount() {
@@ -126,84 +126,84 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     this.props.ws.send({
       type: "chat.connect",
       chat_id: this.props.id,
-    });
-    this.props.ws.registerOnMessage(this.onMessage);
+    })
+    this.props.ws.registerOnMessage(this.onMessage)
   }
 
   componentWillUnmount() {
-    this.props.ws.deregisterOnMessage(this.onMessage);
+    this.props.ws.deregisterOnMessage(this.onMessage)
   }
 
   scrollToBottom = () => {
     this.chatEnd?.scrollIntoView({
       behavior: "smooth",
-    });
-  };
+    })
+  }
 
   onMessage = (msg: WSMessage) => {
     if (msg.type == "chat.init") {
       this.setState({
         messages: msg.chat.messages,
-      });
-      this.scrollToBottom();
+      })
+      this.scrollToBottom()
     } else if (msg.type == "chat.message") {
       this.setState({
         messages: this.state.messages.concat(msg.msg),
-      });
-      this.scrollToBottom();
+      })
+      this.scrollToBottom()
     } else if (msg.type == "chat.message_update") {
       const messages = this.state.messages.map((m) =>
         m.id === msg.msg.id ? msg.msg : m
-      );
+      )
       this.setState({
         messages: messages,
-      });
-      this.scrollToBottom();
+      })
+      this.scrollToBottom()
     } else if (msg.type == "chat.message_delete") {
-      const messages = this.state.messages.filter((m) => m.id != msg.msg_id);
+      const messages = this.state.messages.filter((m) => m.id != msg.msg_id)
       this.setState({
         messages: messages,
-      });
+      })
     }
-  };
+  }
 
   handleMessage = (e: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       message: e.currentTarget.value,
-    });
-  };
+    })
+  }
 
   sendMsg = () => {
     this.props.ws.send({
       type: "chat.message",
       body: this.state.message,
-    });
+    })
 
     this.setState({
       message: "",
-    });
-  };
+    })
+  }
 
   onReact = (msg: ChatMessage, react: string) => {
     this.props.ws.send({
       type: "chat.react",
       msg_id: msg.id,
       react: react,
-    });
-  };
+    })
+  }
 
   onKeyPress = (e: React.KeyboardEvent) => {
     if (e.charCode == 13) {
-      this.sendMsg();
+      this.sendMsg()
     }
-  };
+  }
 
   onDeleteMessage = (msg: ChatMessage) => {
     this.props.ws.send({
       type: "chat.message_delete",
       msg_id: msg.id,
-    });
-  };
+    })
+  }
 
   render() {
     return (
@@ -225,7 +225,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           ))}
           <div
             ref={(el) => {
-              this.chatEnd = el;
+              this.chatEnd = el
             }}
             style={{
               float: "left",
@@ -243,6 +243,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         />
         <button onClick={this.sendMsg}>send</button>
       </div>
-    );
+    )
   }
 }

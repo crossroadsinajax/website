@@ -8,8 +8,8 @@ import {
   Paper,
   ClickAwayListener,
   makeStyles,
-} from "@material-ui/core";
-import React from "react";
+} from "@material-ui/core"
+import React from "react"
 
 const useStyles = makeStyles({
   root: {},
@@ -18,49 +18,49 @@ const useStyles = makeStyles({
     paddingTop: "10px",
     paddingBottom: "10px",
   },
-});
+})
 
 type MenuTabProps = {
-  name: string;
-  pages: Array<string>;
-};
+  name: string
+  pages: Array<string>
+}
 
 export const MenuTab: React.FC<MenuTabProps> = ({ name, pages }) => {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = React.useState(false)
+  const anchorRef = React.useRef<HTMLButtonElement>(null)
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
+    setOpen((prevOpen) => !prevOpen)
+  }
 
   const handleClose = (event: React.MouseEvent<EventTarget>) => {
     if (
       anchorRef.current &&
       anchorRef.current.contains(event.target as HTMLElement)
     ) {
-      return;
+      return
     }
 
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   function handleListKeyDown(event: React.KeyboardEvent) {
     if (event.key === "Tab") {
-      event.preventDefault();
-      setOpen(false);
+      event.preventDefault()
+      setOpen(false)
     }
   }
 
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
+  const prevOpen = React.useRef(open)
   React.useEffect(() => {
     if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus();
+      anchorRef.current!.focus()
     }
 
-    prevOpen.current = open;
-  }, [open]);
+    prevOpen.current = open
+  }, [open])
 
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <Box>
       <Button
@@ -109,5 +109,5 @@ export const MenuTab: React.FC<MenuTabProps> = ({ name, pages }) => {
         )}
       </Popper>
     </Box>
-  );
-};
+  )
+}

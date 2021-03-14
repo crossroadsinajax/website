@@ -1,28 +1,28 @@
-import "react-hot-loader"; // Has to be imported before react + react-dom
+import "react-hot-loader" // Has to be imported before react + react-dom
 import {
   ApolloClient,
   ApolloProvider,
   ApolloLink,
   InMemoryCache,
   HttpLink,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { onError } from "@apollo/client/link/error";
-import React from "react";
-import ReactDOM from "react-dom";
-import { App } from "./App";
-import WebsocketProvider from "./Websocket";
+} from "@apollo/client"
+import { setContext } from "@apollo/client/link/context"
+import { onError } from "@apollo/client/link/error"
+import React from "react"
+import ReactDOM from "react-dom"
+import { App } from "./App"
+import WebsocketProvider from "./Websocket"
 
-import "./index.html";
-import { ThemeProvider, CssBaseline, createMuiTheme } from "@material-ui/core";
+import "./index.html"
+import { ThemeProvider, CssBaseline, createMuiTheme } from "@material-ui/core"
 
 declare global {
   /* eslint-disable no-unused-vars  */
   interface Window {
-    CSRF_TOKEN: string;
+    CSRF_TOKEN: string
     SETTINGS: {
-      DEBUG: boolean;
-    };
+      DEBUG: boolean
+    }
   }
 }
 
@@ -33,8 +33,8 @@ const authLink = setContext((_, { headers }) => {
       ...headers,
       authorization: window.CSRF_TOKEN ? `Bearer ${window.CSRF_TOKEN}` : "",
     },
-  };
-});
+  }
+})
 
 const client = new ApolloClient({
   link: authLink.concat(
@@ -45,20 +45,20 @@ const client = new ApolloClient({
             console.log(
               `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
             )
-          );
-        if (networkError) console.log(`[Network error]: ${networkError}`);
+          )
+        if (networkError) console.log(`[Network error]: ${networkError}`)
       }),
       new HttpLink({ uri: "/gql/" }),
     ])
   ),
   cache: new InMemoryCache(),
-});
+})
 
 const theme = createMuiTheme({
   palette: {
     type: "light",
   },
-});
+})
 
 ReactDOM.render(
   <ApolloProvider client={client}>
@@ -71,4 +71,4 @@ ReactDOM.render(
     </ThemeProvider>
   </ApolloProvider>,
   document.getElementById("react-app")
-);
+)

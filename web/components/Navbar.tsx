@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Box, makeStyles } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import { common } from "@material-ui/core/colors";
-import Toolbar from "@material-ui/core/Toolbar";
-import { UserType } from "~/generated-types";
-import { Maybe } from "~/types";
-import { MenuTab } from "./MenuTab";
+import React from "react"
+import { Link } from "react-router-dom"
+import { Box, makeStyles } from "@material-ui/core"
+import AppBar from "@material-ui/core/AppBar"
+import { common } from "@material-ui/core/colors"
+import Toolbar from "@material-ui/core/Toolbar"
+import { UserType } from "~/generated-types"
+import { Maybe } from "~/types"
+import { MenuTab } from "./MenuTab"
 
 const useStyles = makeStyles({
   navbar: {
@@ -23,13 +23,13 @@ const useStyles = makeStyles({
     color: common.black,
     display: "flex",
   },
-});
+})
 
 type NavbarProps = {
-  user: Maybe<UserType>;
-};
+  user: Maybe<UserType>
+}
 export const Navbar: React.FC<NavbarProps> = ({ user }) => {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <AppBar className={classes.navbar}>
       <Toolbar className={classes.toolbar}>
@@ -55,5 +55,5 @@ export const Navbar: React.FC<NavbarProps> = ({ user }) => {
         </Box>
       </Toolbar>
     </AppBar>
-  );
-};
+  )
+}

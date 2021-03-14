@@ -1,20 +1,20 @@
-import { hot } from "react-hot-loader/root"; // has to be imported before react and react-dom
-import React from "react";
-import { gql } from "@apollo/client";
-import { Helmet } from "react-helmet";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Navbar } from "./components/Navbar";
-import Auth from "./Auth";
-import Home from "./Home";
-import Giving from "./Giving";
-import { Service, Services } from "./Service";
+import { hot } from "react-hot-loader/root" // has to be imported before react and react-dom
+import React from "react"
+import { gql } from "@apollo/client"
+import { Helmet } from "react-helmet"
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import { Navbar } from "./components/Navbar"
+import Auth from "./Auth"
+import Home from "./Home"
+import Giving from "./Giving"
+import { Service, Services } from "./Service"
 
-import { useUserQuery } from "./generated-types";
-import WebSocketProvider from "./Websocket";
+import { useUserQuery } from "./generated-types"
+import WebSocketProvider from "./Websocket"
 
 type AppProps = {
-  ws: WebSocketProvider;
-};
+  ws: WebSocketProvider
+}
 
 gql`
   query User {
@@ -24,11 +24,11 @@ gql`
       lastName
     }
   }
-`;
+`
 
 const AppBase: React.FC<AppProps> = (props) => {
-  const { data, loading } = useUserQuery();
-  console.log(loading, data);
+  const { data, loading } = useUserQuery()
+  console.log(loading, data)
 
   return (
     <React.Fragment>
@@ -59,7 +59,7 @@ const AppBase: React.FC<AppProps> = (props) => {
         </div>
       </Router>
     </React.Fragment>
-  );
-};
+  )
+}
 
-export const App = hot(AppBase);
+export const App = hot(AppBase)

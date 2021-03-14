@@ -1,6 +1,6 @@
-import React from "react";
-import { Box, makeStyles, Typography } from "@material-ui/core";
-import { blueGrey } from "@material-ui/core/colors";
+import React from "react"
+import { Box, makeStyles, Typography } from "@material-ui/core"
+import { blueGrey } from "@material-ui/core/colors"
 
 const useStyles = makeStyles({
   root: {
@@ -13,12 +13,12 @@ const useStyles = makeStyles({
     position: "absolute",
     bottom: 0,
   },
-});
+})
 
-type FooterProps = {};
+type FooterProps = {}
 
 export const Footer: React.FC<FooterProps> = () => {
-  const classes = useStyles();
+  const classes = useStyles()
   return (
     <Box py={3} className={classes.root}>
       <Box>
@@ -30,5 +30,5 @@ export const Footer: React.FC<FooterProps> = () => {
         </Typography>
       </Box>
     </Box>
-  );
-};
+  )
+}
