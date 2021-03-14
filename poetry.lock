@@ -153,6 +153,7 @@ description = "Brings async, event-driven capabilities to Django. Django 2.2 and
 category = "main"
 optional = false
 python-versions = ">=3.6"
+develop = false
 
 [package.dependencies]
 asgiref = ">=3.2.10,<4"
@@ -161,6 +162,12 @@ Django = ">=2.2"
 
 [package.extras]
 tests = ["pytest", "pytest-django", "pytest-asyncio", "async-generator", "async-timeout", "coverage (>=4.5,<5.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/django/channels.git"
+reference = "main"
+resolved_reference = "22f4e4a0c3b313bd6bf83f32068b29ea5c9830f0"
 
 [[package]]
 name = "click"
@@ -1100,7 +1107,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a0997fc82b9eed08c38d4fa8475fa0e6f1d8771390cd918df2ee494643b52d4f"
+content-hash = "18cea238271fe7e3d3b8293150c3def07dc69aa5ef0b5612d4112532967e6826"
 
 [metadata.files]
 aniso8601 = [
@@ -1182,10 +1189,7 @@ cffi = [
     {file = "cffi-1.14.5-cp39-cp39-win_amd64.whl", hash = "sha256:f2d45f97ab6bb54753eab54fffe75aaf3de4ff2341c9daee1987ee1837636f1d"},
     {file = "cffi-1.14.5.tar.gz", hash = "sha256:fd78e5fee591709f32ef6edb9a015b4aa1a5022598e36227500c8f4e02328d9c"},
 ]
-channels = [
-    {file = "channels-3.0.3-py3-none-any.whl", hash = "sha256:3f15bdd2138bb4796e76ea588a0a344b12a7964ea9b2e456f992fddb988a4317"},
-    {file = "channels-3.0.3.tar.gz", hash = "sha256:056b72e51080a517a0f33a0a30003e03833b551d75394d6636c885d4edb8188f"},
-]
+channels = []
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
