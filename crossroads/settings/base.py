@@ -25,15 +25,16 @@ LOGGING = {
         },
     },
     "loggers": {
+        "crossroads": {"handlers": ["console"], "level": "INFO"},
         "django": {
             "handlers": ["console"],
             "level": "INFO",
         },
-        "root": {
-            "handlers": ["console"],
-            "level": "INFO",
-        },
         "ddtrace": {"handlers": ["console"], "level": "INFO"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
 }
 
