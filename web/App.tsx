@@ -11,6 +11,7 @@ import { Service, Services } from "./Service"
 import { useUserQuery } from "./generated-types"
 import WebSocketProvider from "./Websocket"
 import { Error } from "./Error"
+import { AboutUs, Beliefs, Becoming, Contact } from "./About"
 
 type AppProps = {
   ws: WebSocketProvider
@@ -48,8 +49,20 @@ const AppBase: React.FC<AppProps> = (props) => {
               <Route path="/gathering/:slug">
                 <Service ws={props.ws} />
               </Route>
-              <Route path="/give">
+              <Route path="/give/">
                 <Giving />
+              </Route>
+              <Route path="/contact/">
+                <Contact />
+              </Route>
+              <Route path="/about/becoming-a-christian">
+                <Becoming />
+              </Route>
+              <Route path="/about/beliefs">
+                <Beliefs />
+              </Route>
+              <Route path="/about/">
+                <AboutUs />
               </Route>
               <Route path="/login">
                 <Auth />
