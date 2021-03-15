@@ -42,14 +42,27 @@ export const Navbar: React.FC<NavbarProps> = ({ user }) => {
           <Link to="/gatherings">
             <MenuTab name="Gatherings" pages={[]}></MenuTab>
           </Link>
-          <MenuTab name="Connecting" pages={["Example 1", "Example 2"]} />
-          <MenuTab name="Contact Us" pages={["Office", "Directions"]} />
+          <MenuTab
+            name="About us"
+            pages={[
+              ["Our beliefs", "/about/beliefs"],
+              ["Becoming a Christian", "/about/become-a-christian"],
+            ]}
+          />
           <Link to="/give">
             <MenuTab name="Giving" pages={[]} />
+          </Link>
+          <Link to="/contact">
+            <MenuTab name="Contact Us" pages={[]} />
           </Link>
           {user && (
             <Link to="/profile">
               <MenuTab name={user.username} pages={[]} />
+            </Link>
+          )}
+          {!user && (
+            <Link to="/login">
+              <MenuTab name="Log in" pages={[]} />
             </Link>
           )}
         </Box>

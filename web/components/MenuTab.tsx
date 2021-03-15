@@ -10,6 +10,7 @@ import {
   makeStyles,
 } from "@material-ui/core"
 import React from "react"
+import { Link } from "react-router-dom"
 
 const useStyles = makeStyles({
   root: {},
@@ -22,7 +23,7 @@ const useStyles = makeStyles({
 
 type MenuTabProps = {
   name: string
-  pages: Array<string>
+  pages: Array<[string, string]>
 }
 
 export const MenuTab: React.FC<MenuTabProps> = ({ name, pages }) => {
@@ -93,14 +94,15 @@ export const MenuTab: React.FC<MenuTabProps> = ({ name, pages }) => {
                   id="menu-list-grow"
                   onKeyDown={handleListKeyDown}
                 >
-                  {pages.map((page, i) => (
-                    <MenuItem
-                      key={i}
-                      className={classes.menuItem}
-                      onClick={handleClose}
-                    >
-                      {page}
-                    </MenuItem>
+                  {pages.map(([name, to], i) => (
+                    <Link key={i} to={to}>
+                      <MenuItem
+                        className={classes.menuItem}
+                        onClick={handleClose}
+                      >
+                        {name}
+                      </MenuItem>
+                    </Link>
                   ))}
                 </MenuList>
               </ClickAwayListener>
