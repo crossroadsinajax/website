@@ -6,7 +6,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python
+      - name: setup python
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
@@ -17,11 +17,14 @@ jobs:
       - name: Install Dependencies
         run: pipenv install --dev
 
-      - name: Format
-        run: pipenv run black --check --exclude migrations .
+      - name: install riot
+        run: pip install riot
 
-      - name: Lint
-        run: pipenv run flake8
+      - name: check formatting
+        run: riot run -s check_fmt
+
+      - name: linting
+        run: riot run -s lint
   web:
     runs-on: ubuntu-latest
 

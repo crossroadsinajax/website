@@ -1,3 +1,18 @@
+[tool.black]
+exclude = '''
+
+(
+  /(
+      \.eggs
+    | \.git
+    | \.mypy_cache
+    | \.riot
+    | \.venv
+  )/
+  | migrations
+)
+'''
+
 [tool.poetry]
 name = "crossroads"
 version = "0.1.0"
