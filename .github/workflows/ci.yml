@@ -11,17 +11,17 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: Install Pipenv
+        run: pip install pipenv
 
       - name: Install Dependencies
-        run: poetry install
+        run: pipenv install
 
       - name: Format
-        run: poetry run black --check --exclude migrations .
+        run: pipenv run black --check --exclude migrations .
 
       - name: Lint
-        run: poetry run flake8
+        run: pipenv run flake8
   web:
     runs-on: ubuntu-latest
 
