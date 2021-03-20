@@ -9,4 +9,6 @@ ignore =
 exclude =
   .git,
   __pycache__,
-  migrations
+  migrations,
+  .venv,
+  .riot,

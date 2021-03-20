@@ -6,22 +6,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Python
+      - name: setup python
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: install riot
+        run: pip install riot
 
-      - name: Install Dependencies
-        run: poetry install
+      - name: check formatting
+        run: riot run -s check_fmt
 
-      - name: Format
-        run: poetry run black --check --exclude migrations .
-
-      - name: Lint
-        run: poetry run flake8
+      - name: linting
+        run: riot run -s lint
   web:
     runs-on: ubuntu-latest
 
