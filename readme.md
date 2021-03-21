@@ -48,6 +48,8 @@ docker-compose exec web yarn run gql
 docker-compose run app riot run -s fmt
 # lint python code
 docker-compose run app riot run -s lint
+# lint yaml
+docker-compose run app riot run -s yaml_lint
 
 # format ts/js code
 docker-compose run web yarn fmt
