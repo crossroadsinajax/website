@@ -41,9 +41,20 @@ docker-compose exec app python manage.py graphql_schema
 docker-compose exec web yarn run gql
 ```
 
+## running migrations
+
+```bash
+# create migrations
+docker-compose exec app python manage.py makemigrations
+# apply migrations
+docker-compose exec app python manage.py migrate
+```
+
 ## useful commands
 
 ```bash
+# get a python django shell
+docker-compose exec app python manage.py shell_plus
 # format python code
 docker-compose run app riot run -s fmt
 # lint python code
