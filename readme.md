@@ -25,7 +25,10 @@ docker-compose up -d --build
 ## adding a backend dependency
 
 ```bash
-docker-compose run app poetry add <dep>
+docker-compose run app pipenv install <dep><version>
+# example 
+# docker-compose run app pipenv install numpy~=1.20.0
+
 docker-compose up -d --build
 ```
 
