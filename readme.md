@@ -45,9 +45,9 @@ docker-compose exec web yarn run gql
 
 ```bash
 # format python code
-docker-compose run app black --exclude migrations .
+docker-compose run app riot run -s check_fmt
 # lint python code
-docker-compose run app flake8
+docker-compose run app riot run -s lint
 
 # format ts/js code
 docker-compose run web yarn fmt
