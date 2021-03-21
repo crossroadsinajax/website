@@ -11,8 +11,8 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: install riot
-        run: pip install riot
+      - name: install deps
+        run: pip install -r requirements.txt
 
       - name: check formatting
         run: riot run -s check_fmt
