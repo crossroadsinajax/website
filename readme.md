@@ -26,7 +26,7 @@ docker-compose up -d --build
 
 ```bash
 docker-compose run app pipenv install <dep><version>
-# example 
+# example
 # docker-compose run app pipenv install numpy~=1.20.0
 
 docker-compose up -d --build
