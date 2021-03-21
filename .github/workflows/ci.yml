@@ -25,6 +25,9 @@ jobs:
 
       - name: linting
         run: riot run -s lint
+
+      - name: yaml linting
+        run: riot run -s yaml_lint
   web:
     runs-on: ubuntu-latest
 
