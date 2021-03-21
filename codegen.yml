@@ -1,3 +1,4 @@
+---
 overwrite: true
 schema: "web/schema.json"
 documents: "**/*.tsx"
