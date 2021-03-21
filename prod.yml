@@ -1,3 +1,4 @@
+---
 version: "2.4"
 
 # GIT_TAG must be defined in .env

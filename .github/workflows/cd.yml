@@ -1,5 +1,6 @@
+---
 name: continuous delivery
-on: [push]
+on: [push] # yamllint disable-line
 jobs:
   deploy_prod:
     runs-on: ubuntu-latest
@@ -27,7 +28,9 @@ jobs:
           eval $(ssh-agent)
           ssh-add "$HOME/.ssh/docker"
           echo "crossroadsajax.church $SSH_KNOWN_HOST" >> ~/.ssh/known_hosts
-          docker --host "ssh://kyle@crossroadsajax.church" stack deploy --compose-file <(docker-compose -f prod.yml config) --with-registry-auth prod
+          docker --host "ssh://kyle@crossroadsajax.church" \
+            stack deploy --compose-file <(docker-compose \
+            -f prod.yml config) --with-registry-auth prod
         shell: bash
         env:
           SSH_PRIV_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
@@ -56,7 +59,9 @@ jobs:
           eval $(ssh-agent)
           ssh-add "$HOME/.ssh/docker"
           echo "crossroadsajax.church $SSH_KNOWN_HOST" >> ~/.ssh/known_hosts
-          docker --host "ssh://kyle@crossroadsajax.church" stack deploy --compose-file <(docker-compose -f staging.yml config) --with-registry-auth staging
+          docker --host "ssh://kyle@crossroadsajax.church" \
+            stack deploy --compose-file <(docker-compose \
+            -f staging.yml config) --with-registry-auth staging
         shell: bash
         env:
           SSH_PRIV_KEY: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}

@@ -1,5 +1,6 @@
+---
 name: continuous integration
-on: [push]
+on: [push] # yamllint disable-line
 jobs:
   server:
     runs-on: ubuntu-latest
