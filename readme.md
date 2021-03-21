@@ -45,7 +45,7 @@ docker-compose exec web yarn run gql
 
 ```bash
 # format python code
-docker-compose run app riot run -s check_fmt
+docker-compose run app riot run -s fmt
 # lint python code
 docker-compose run app riot run -s lint
 
