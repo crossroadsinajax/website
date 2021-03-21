@@ -48,7 +48,7 @@ venv = Venv(
                 ),
                 Venv(
                     name="yaml_lint",
-                    command="yamllint `find . -type f -name \"*.yml\"`",
+                    command='yamllint `find . -type f -name "*.yml"`',
                 ),
             ],
         ),
