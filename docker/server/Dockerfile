@@ -11,6 +11,7 @@ COPY Pipfile.lock Pipfile /app/
 
 # Install packages
 RUN pipenv install --dev
+RUN pip install riot
 
 # Can be overridden by a volume mount.
 COPY . /app
