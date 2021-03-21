@@ -25,12 +25,17 @@ class AuthMutation(graphene.Mutation):
 
 class ServicePageNode(DjangoObjectType):
     pk = graphene.Int(source="pk", required=True)
+    bulletin = graphene.JSONString(required=True)
 
     class Meta:
         model = models.ServicePage
         only_fields = ["id", "title", "slug", "description", "date", "stream_link"]
         filter_fields = ["id", "title", "slug"]
         interfaces = (relay.Node,)
+
+    def resolve_bulletin(self, info, **kwargs):
+        return { "test": "value" }
+
 
 
 class Query(graphene.ObjectType):
