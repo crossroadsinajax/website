@@ -37,5 +37,20 @@ venv = Venv(
                 ),
             ],
         ),
+        Venv(
+            pkgs={
+                "yamllint": "==1.26.*",
+            },
+            venvs=[
+                Venv(
+                    name="yamllint",
+                    command="yamllint {cmdargs}",
+                ),
+                Venv(
+                    name="yaml_lint",
+                    command="yamllint `find . -type f -name \"*.yml\"`",
+                ),
+            ],
+        ),
     ],
 )
