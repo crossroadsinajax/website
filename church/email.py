@@ -88,8 +88,8 @@ def send_daily_reading(users):
                 first_name=user.first_name,
                 title=page.title,
                 date=page.date.strftime("%A %B %d, %Y"),
-                page_link=link,
-                guest_page_link=guest_link,
+                page_link=str(link),
+                guest_page_link=str(guest_link),
             ),
         )
         m.send()
