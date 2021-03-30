@@ -63,7 +63,7 @@ def send_service(users):
 
 
 def send_daily_reading(users):
-    page = DailyReadingPage.objects.live().order_by("-date")
+    page = DailyReadingPage.objects.live().order_by("-date").first()
     guest = User.objects.get(username="guest")
     guest_link = yarl.URL(
         f"https://crossroadsajax.church{page.url}"
