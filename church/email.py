@@ -5,8 +5,9 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from postmark.core import PMMail
+import yarl
 
-from church.models import ServicePage, User
+from church.models import DailyReadingPage, ServicePage, User
 
 
 def _find_attachments(date: str):
@@ -56,6 +57,39 @@ def send_service(users):
                 guest_stream_link=guest_next_service_link,
                 services_link=user.get_services_link(),
                 foreword=service_page.description,  # Note that this is HTML
+            ),
+        )
+        m.send()
+
+
+def send_daily_reading(users):
+    page = DailyReadingPage.objects.live().order_by("-date")
+    guest = User.objects.get(username="guest")
+    guest_link = yarl.URL(
+        f"https://crossroadsajax.church{page.url}"
+    ).with_query(dict(mem=guest.token))
+
+    for user in users:
+        # Skip sending to users without emails
+        if not user.email:
+            continue
+
+        link = yarl.URL(
+            f"https://crossroadsajax.church{page.url}"
+        ).with_query(dict(mem=user.token))
+
+        m = PMMail(
+            to=f"{user.first_name} {user.last_name} <{user.email}>",
+            sender="Abigail Jallim abby@crossroadsajax.church",
+            template_id="22851084",
+            template_model=dict(
+                company_name="Crossroads Church",
+                company_address="520 Westney Rd S, Ajax, ON L1S 6W6",
+                first_name=user.first_name,
+                title=page.title,
+                date=service_page.date.strftime("%A %B %d, %Y"),
+                page_link=link,
+                guest_page_link=guest_link,
             ),
         )
         m.send()
