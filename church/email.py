@@ -87,7 +87,7 @@ def send_daily_reading(users):
                 company_address="520 Westney Rd S, Ajax, ON L1S 6W6",
                 first_name=user.first_name,
                 title=page.title,
-                date=service_page.date.strftime("%A %B %d, %Y"),
+                date=page.date.strftime("%A %B %d, %Y"),
                 page_link=link,
                 guest_page_link=guest_link,
             ),
