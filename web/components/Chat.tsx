@@ -216,7 +216,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       <div>
         <div
           style={{
-            height: "400px",
+            height: "600px",
             overflowY: "scroll",
             wordBreak: "break-word",
           }}

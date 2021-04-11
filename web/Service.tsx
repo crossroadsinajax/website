@@ -1,7 +1,10 @@
 import React from "react"
 import { Link, useParams } from "react-router-dom"
 import { gql } from "@apollo/client"
-import { Container } from "@material-ui/core"
+import Col from "react-bootstrap/Col"
+import Container from "react-bootstrap/Container"
+import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
+import Row from "react-bootstrap/Row"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 import { Error } from "./Error"
 import Chat from "./components/Chat"
@@ -58,16 +61,23 @@ const Service: React.FC<ServiceProps> = (props) => {
 
   if (data && page != null) {
     return (
-      <Container>
-        <div style={{ display: "flex" }}>
-          <div style={{ width: "70%" }}>
-            <h1>{page.title}</h1>
-            <h2>{page.streamLink}</h2>
-          </div>
-          <div style={{ width: "30%" }}>
+      <Container fluid>
+        <Row>
+          <Col md={9}>
+            <ResponsiveEmbed aspectRatio="16by9">
+              <iframe
+                allowFullScreen
+                className="embed-responsive-item"
+                src={page.streamLink}
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              ></iframe>
+            </ResponsiveEmbed>
+          </Col>
+          <Col md={3}>
             <Chat id={page.pk} ws={props.ws} />
-          </div>
-        </div>
+          </Col>
+        </Row>
+        <h2>{page.title}</h2>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
       </Container>
     )

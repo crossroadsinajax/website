@@ -1,5 +1,5 @@
 import React from "react"
-import { Container } from "@material-ui/core"
+import Container from "react-bootstrap/Container"
 
 type AuthProps = {}
 

@@ -14,7 +14,6 @@ import { App } from "./App"
 import WebsocketProvider from "./Websocket"
 
 import "./index.html"
-import { ThemeProvider, CssBaseline, createMuiTheme } from "@material-ui/core"
 
 declare global {
   /* eslint-disable no-unused-vars  */
@@ -54,21 +53,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const theme = createMuiTheme({
-  palette: {
-    type: "light",
-  },
-})
-
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline>
-        <WebsocketProvider url={"ws://localhost:8000/ws/"}>
-          {(props) => <App ws={props.ws} />}
-        </WebsocketProvider>
-      </CssBaseline>
-    </ThemeProvider>
+    <WebsocketProvider url={"ws://localhost:8000/ws/"}>
+      {(props) => <App ws={props.ws} />}
+    </WebsocketProvider>
   </ApolloProvider>,
   document.getElementById("react-app")
 )
