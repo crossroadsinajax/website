@@ -62,7 +62,6 @@
 
     <body class="{% block body_class %}{% endblock %}">
         {% wagtailuserbar %}
-        {% include "navbar.html" %}
         {% block content %}{% endblock %}
         <script>
           new universalParallax().init();

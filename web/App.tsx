@@ -1,9 +1,12 @@
 import { hot } from "react-hot-loader/root" // has to be imported before react and react-dom
 import React from "react"
+import { Link } from "react-router-dom"
 import { gql } from "@apollo/client"
 import { Helmet } from "react-helmet"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import { Navbar } from "./components/Navbar"
+import NavDropdown from "react-bootstrap/NavDropdown"
+import Navbar from "react-bootstrap/Navbar"
+import Nav from "react-bootstrap/Nav"
 import Auth from "./Auth"
 import Home from "./Home"
 import Giving from "./Giving"
@@ -12,6 +15,8 @@ import { useUserQuery } from "./generated-types"
 import WebSocketProvider from "./Websocket"
 import { Error } from "./Error"
 import { AboutUs, Beliefs, Becoming, Contact } from "./About"
+import { UserType } from "~/generated-types"
+import { Maybe } from "~/types"
 
 type AppProps = {
   ws: WebSocketProvider
@@ -27,6 +32,55 @@ gql`
   }
 `
 
+type HeaderProps = {
+  user: Maybe<UserType>
+}
+
+const Header: React.FC<HeaderProps> = (props) => {
+  const { user } = props
+  return (
+    <Navbar expand="lg" fixed="top" bg="light" style={{ padding: "0rem 1rem" }}>
+      <Navbar.Brand>
+        <Link to="/">
+          <img src="/static/img/crossroads.png" style={{ maxWidth: "100px" }} />
+        </Link>
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="ml-auto">
+          <Nav.Link as={Link} to="/gatherings">
+            Gatherings
+          </Nav.Link>
+          <NavDropdown title="About us" id="about-nav-dropdown">
+            <NavDropdown.Item as={Link} to="/about/beliefs">
+              Our beliefs
+            </NavDropdown.Item>
+            <NavDropdown.Item as={Link} to="/about/become-a-christian">
+              Becoming a Christian
+            </NavDropdown.Item>
+          </NavDropdown>
+          <Nav.Link as={Link} to="/give">
+            Giving
+          </Nav.Link>
+          <Nav.Link as={Link} to="/contact">
+            Contact us
+          </Nav.Link>
+          {user && (
+            <Nav.Link as={Link} to="/profile">
+              {user.username}
+            </Nav.Link>
+          )}
+          {!user && (
+            <Nav.Link as={Link} to="/login">
+              Log in
+            </Nav.Link>
+          )}
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
+  )
+}
+
 const AppBase: React.FC<AppProps> = (props) => {
   const { data, loading } = useUserQuery()
 
@@ -38,9 +92,15 @@ const AppBase: React.FC<AppProps> = (props) => {
         <Helmet>
           <title>Crossroads</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+            integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+            crossOrigin="anonymous"
+          />
         </Helmet>
         <Router>
-          <Navbar user={data.currentUser} />
+          <Header user={data.currentUser} />
           <div style={{ marginTop: 75 }}>
             <Switch>
               <Route path="/gatherings">
