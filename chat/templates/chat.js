@@ -1,43 +1,6 @@
 
 var socket = socket || window.socket;
 
-String.prototype.hashCode = function () {
-    var hash = 0;
-    for (var i = 0; i < this.length; i++) {
-        var character = this.charCodeAt(i);
-        hash = ((hash << 5) - hash) + character;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-};
-
-colours = [
-    '#00ffff',
-    '#000000',
-    '#0000ff',
-    '#a52a2a',
-    '#00ffff',
-    '#00008b',
-    '#008b8b',
-    '#006400',
-    '#bdb76b',
-    '#8b008b',
-    '#556b2f',
-    '#ff8c00',
-    '#9932cc',
-    '#8b0000',
-    '#9400d3',
-    '#008000',
-    '#4b0082',
-    '#808000',
-    '#ffa500',
-    '#ffc0cb',
-    '#800080',
-    '#800080',
-    '#ff0000',
-    '#ffff00'
-];
-
 Vue.component('chat-message', {
     props: ['id', 'type', 'author', 'body', 'date', 'emojis', 'reacts'],
     delimiters: ['[[', ']]'],
@@ -72,17 +35,6 @@ Vue.component('chat-message', {
             var username = '{{ user.username }}';
             var reacts = this.$props.reacts;
             return emoji in reacts && reacts[emoji].reactors.includes(username);
-        },
-        colour: function (str) {
-            return colours[Math.abs(str.hashCode()) % (colours.length - 1)];
-        },
-        datefmt: function (sec) {
-            var now = moment();
-            var ts = moment.unix(sec);
-            if (now.day() != ts.day()) {
-                return ts.format('DD/MM/YY hh:mma');
-            }
-            return moment.unix(sec).format('hh:mma');
         },
         onReact: function (emoji) {
             this.$emit('react', this.$props.id, emoji);

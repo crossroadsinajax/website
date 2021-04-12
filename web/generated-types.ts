@@ -25,7 +25,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: "Query"
-  currentUser?: Maybe<UserType>
+  currentUser: UserType
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
@@ -52,6 +52,7 @@ export type UserType = {
   username: Scalars["String"]
   firstName: Scalars["String"]
   lastName: Scalars["String"]
+  isChatmod: Scalars["Boolean"]
 }
 
 export type ServicePageNode = Node & {
@@ -107,11 +108,9 @@ export type ServicePageNodeEdge = {
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
-  currentUser?: Maybe<
-    { __typename?: "UserType" } & Pick<
-      UserType,
-      "username" | "firstName" | "lastName"
-    >
+  currentUser: { __typename?: "UserType" } & Pick<
+    UserType,
+    "username" | "firstName" | "lastName" | "isChatmod"
   >
 }
 
@@ -128,7 +127,13 @@ export type ServicePageQuery = { __typename?: "Query" } & {
             node?: Maybe<
               { __typename?: "ServicePageNode" } & Pick<
                 ServicePageNode,
-                "id" | "pk" | "slug" | "title" | "description" | "streamLink"
+                | "date"
+                | "id"
+                | "pk"
+                | "slug"
+                | "title"
+                | "description"
+                | "streamLink"
               >
             >
           }
@@ -165,6 +170,7 @@ export const UserDocument = gql`
       username
       firstName
       lastName
+      isChatmod
     }
   }
 `
@@ -208,6 +214,7 @@ export const ServicePageDocument = gql`
     services(slug: $slug) {
       edges {
         node {
+          date
           id
           pk
           slug

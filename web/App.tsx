@@ -29,6 +29,7 @@ gql`
       username
       firstName
       lastName
+      isChatmod
     }
   }
 `
@@ -114,7 +115,7 @@ const AppBase: React.FC<AppProps> = (props) => {
               <Services />
             </Route>
             <Route path="/gathering/:slug">
-              <Service ws={props.ws} />
+              <Service user={data.currentUser} ws={props.ws} />
             </Route>
             <Route path="/give/">
               <Giving />

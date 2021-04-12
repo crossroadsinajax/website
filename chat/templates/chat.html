@@ -19,9 +19,6 @@
                 <template v-if="type === 'q'">Remove #question tag</template>
                 <template v-else>Tag as #question</template>
             </a>
-            <a class="dropdown-item" v-on:click="$emit('delete-message', $props.id)" style="color: red">
-                Delete
-            </a>
             <a class="dropdown-item" v-on:click="$emit('clear-messages', $props.id)" style="color: red">
                 Clear all messages from user
             </a>
