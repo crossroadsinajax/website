@@ -4,6 +4,7 @@ import { gql } from "@apollo/client"
 import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
+import ReactPlayer from "react-player/youtube"
 import Row from "react-bootstrap/Row"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 import { Error } from "./Error"
@@ -73,12 +74,13 @@ const Service: React.FC<ServiceProps> = (props) => {
             }}
           >
             <ResponsiveEmbed aspectRatio="16by9">
-              <iframe
-                allowFullScreen
-                className="embed-responsive-item"
-                src={page.streamLink}
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              ></iframe>
+              <ReactPlayer
+                width="100%"
+                height="100%"
+                url={page.streamLink}
+                playing={true}
+                controls={true}
+              ></ReactPlayer>
             </ResponsiveEmbed>
           </Col>
           <Col
