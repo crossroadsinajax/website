@@ -7,6 +7,8 @@ from church import models
 
 
 class UserType(DjangoObjectType):
+    is_chatmod = graphene.Boolean(source="is_chatmod", required=True)
+
     class Meta:
         model = models.User
         fields = ["username", "first_name", "last_name"]
@@ -34,15 +36,14 @@ class ServicePageNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    current_user = graphene.Field(UserType)
+    current_user = graphene.Field(UserType, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
 
     def resolve_current_user(self, info, **kwargs):
-        if info.context.user.is_authenticated:
-            return info.context.user
-        else:
-            return None
+        # Always return a user.
+        # When a user is not authenticated then an AnonymousUser will be returned.
+        return info.context.user
 
 
 schema = graphene.Schema(query=Query)

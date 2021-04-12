@@ -9,12 +9,14 @@ import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 import { Error } from "./Error"
 import Chat from "./components/Chat"
 import WebSocketProvider from "~Websocket"
+import { UserType } from "~/generated-types"
 
 gql`
   query ServicePage($slug: String!) {
     services(slug: $slug) {
       edges {
         node {
+          date
           id
           pk
           slug
@@ -43,6 +45,7 @@ gql`
 
 type ServiceProps = {
   ws: WebSocketProvider
+  user: UserType
 }
 
 const Service: React.FC<ServiceProps> = (props) => {
@@ -63,7 +66,12 @@ const Service: React.FC<ServiceProps> = (props) => {
     return (
       <Container fluid>
         <Row>
-          <Col md={9}>
+          <Col
+            md={9}
+            style={{
+              paddingRight: "unset",
+            }}
+          >
             <ResponsiveEmbed aspectRatio="16by9">
               <iframe
                 allowFullScreen
@@ -73,11 +81,18 @@ const Service: React.FC<ServiceProps> = (props) => {
               ></iframe>
             </ResponsiveEmbed>
           </Col>
-          <Col md={3}>
-            <Chat id={page.pk} ws={props.ws} />
+          <Col
+            md={3}
+            style={{
+              paddingLeft: "5px",
+              minHeight: "400px",
+            }}
+          >
+            <Chat user={props.user} id={page.pk} ws={props.ws} />
           </Col>
         </Row>
         <h2>{page.title}</h2>
+        <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
       </Container>
     )
