@@ -11,6 +11,7 @@ import { Error } from "./Error"
 import Chat from "./components/Chat"
 import WebSocketProvider from "~Websocket"
 import { UserType } from "~/generated-types"
+import { Maybe } from "~/types"
 
 gql`
   query ServicePage($slug: String!) {
@@ -46,7 +47,7 @@ gql`
 
 type ServiceProps = {
   ws: WebSocketProvider
-  user: UserType
+  user: Maybe<UserType>
 }
 
 const Service: React.FC<ServiceProps> = (props) => {
@@ -90,7 +91,9 @@ const Service: React.FC<ServiceProps> = (props) => {
               minHeight: "400px",
             }}
           >
-            <Chat user={props.user} id={page.pk} ws={props.ws} />
+            {props.user && (
+              <Chat user={props.user} id={page.pk} ws={props.ws} />
+            )}
           </Col>
         </Row>
         <h2>{page.title}</h2>

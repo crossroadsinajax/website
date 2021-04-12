@@ -1,3 +1,5 @@
+from typing import Optional
+
 import graphene
 from graphene import relay
 from graphene_django.types import DjangoObjectType
@@ -36,14 +38,13 @@ class ServicePageNode(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    current_user = graphene.Field(UserType, required=True)
+    current_user = graphene.Field(UserType)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
 
-    def resolve_current_user(self, info, **kwargs):
-        # Always return a user.
-        # When a user is not authenticated then an AnonymousUser will be returned.
-        return info.context.user
+    def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
+        user = info.context.user
+        return user if user.is_authenticated else None
 
 
 schema = graphene.Schema(query=Query)
