@@ -39,8 +39,8 @@ const Home: React.FC<HomeProps> = () => {
         <Col lg="4">
           <h2>Join us</h2>
           <p className="lead">
-            We meet every Sunday, 10:30am at Bolton C. Falby Public School. We&apos;d
-            love to have you join us.
+            We meet every Sunday, 10:30am at Bolton C. Falby Public School.
+            We&apos;d love to have you join us.
           </p>
           <p>
             <a className="btn btn-secondary" href="#" role="button">
