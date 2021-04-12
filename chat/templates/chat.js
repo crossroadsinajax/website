@@ -9,9 +9,6 @@ Vue.component('chat-message', {
             hover: false
         };
     },
-    components: {
-        'popper': VuePopper
-    },
     computed: {
         emojis: function () {
             return this.$props.emojis.reverse();
@@ -101,9 +98,6 @@ var chatApp = new Vue({
         },
         getReacts: function (msg) {
             return msg.reacts;
-        },
-        colour: function (str) {
-            return colours[Math.abs(str.hashCode()) % (colours.length - 1)];
         },
         react: function (id, emoji) {
             socket.send(JSON.stringify({

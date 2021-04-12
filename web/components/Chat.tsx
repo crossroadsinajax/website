@@ -152,6 +152,8 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
           >
             Delete message
           </Dropdown.Item>
+          <Dropdown.Item>Tag or untag as #pr</Dropdown.Item>
+          <Dropdown.Item>Delete all messages from user</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     )
