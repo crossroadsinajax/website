@@ -25,7 +25,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: "Query"
-  currentUser: UserType
+  currentUser?: Maybe<UserType>
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
@@ -36,7 +36,6 @@ export type QueryServiceArgs = {
 }
 
 export type QueryServicesArgs = {
-  offset?: Maybe<Scalars["Int"]>
   before?: Maybe<Scalars["String"]>
   after?: Maybe<Scalars["String"]>
   first?: Maybe<Scalars["Int"]>
@@ -108,9 +107,11 @@ export type ServicePageNodeEdge = {
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
-  currentUser: { __typename?: "UserType" } & Pick<
-    UserType,
-    "username" | "firstName" | "lastName" | "isChatmod"
+  currentUser?: Maybe<
+    { __typename?: "UserType" } & Pick<
+      UserType,
+      "username" | "firstName" | "lastName" | "isChatmod"
+    >
   >
 }
 
