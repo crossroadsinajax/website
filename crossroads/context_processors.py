@@ -14,5 +14,6 @@ def settings_processor(request):
         RUM_CLIENT_TOKEN=settings.RUM_CLIENT_TOKEN,
         RUM_ENV=settings.RUM_ENV,
         RUM_SERVICE=settings.RUM_SERVICE,
+        RUM_VERSION=settings.RUM_VERSION,
         version=settings.VERSION,
     )
