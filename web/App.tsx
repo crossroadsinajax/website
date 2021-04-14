@@ -8,7 +8,7 @@ import Container from "react-bootstrap/Container"
 import NavDropdown from "react-bootstrap/NavDropdown"
 import Navbar from "react-bootstrap/Navbar"
 import Nav from "react-bootstrap/Nav"
-import Auth from "./Auth"
+import { Auth, Signup } from "./Auth"
 import Home from "./Home"
 import Giving from "./Giving"
 import { Service, Services } from "./Service"
@@ -75,9 +75,14 @@ const Header: React.FC<HeaderProps> = (props) => {
               Contact us
             </Nav.Link>
             {user && (
-              <Nav.Link as={Link} to="/profile">
-                {user.username}
-              </Nav.Link>
+              <NavDropdown title={user.username} id="profile-dropdown">
+                <NavDropdown.Item as={Link} to="/profile/">
+                  Profile
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/logout">
+                  Log out
+                </NavDropdown.Item>
+              </NavDropdown>
             )}
             {!user && (
               <Nav.Link as={Link} to="/login">
@@ -140,6 +145,9 @@ const AppBase: React.FC<AppProps> = (props) => {
             </Route>
             <Route path="/login">
               <Auth />
+            </Route>
+            <Route path="/signup">
+              <Signup />
             </Route>
             <Route path="/">
               <Home ws={props.ws} />

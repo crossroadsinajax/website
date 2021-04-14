@@ -1,15 +1,35 @@
+import { gql } from "@apollo/client"
 import React from "react"
+import { Link } from "react-router-dom"
 import Container from "react-bootstrap/Container"
 import { Parallax } from "react-parallax"
 import Col from "react-bootstrap/Col"
 import Row from "react-bootstrap/Row"
 import WebSocketProvider from "./Websocket"
+import { useHomePageQuery } from "./generated-types"
+
+gql`
+  query HomePage {
+    currentService {
+      title
+      slug
+    }
+  }
+`
 
 type HomeProps = {
   ws: WebSocketProvider
 }
 
 const Home: React.FC<HomeProps> = () => {
+  const { data, loading } = useHomePageQuery()
+
+  if (loading || !data) {
+    return <h1>Loading...</h1>
+  }
+
+  const { currentService } = data
+
   return (
     <Container fluid>
       <Parallax bgImage="/static/img/church.jpg" strength={-100}>
@@ -39,13 +59,15 @@ const Home: React.FC<HomeProps> = () => {
         <Col lg="4">
           <h2>Join us</h2>
           <p className="lead">
-            We meet every Sunday, 10:30am at Bolton C. Falby Public School.
-            We&apos;d love to have you join us.
+            We meet virtually every Sunday, 10:30am and throughout the week
+            right here on our website. We&apos;d love to have you join us!
           </p>
           <p>
-            <a className="btn btn-secondary" href="#" role="button">
-              View directions &raquo;
-            </a>
+            <Link to="/signup">
+              <a className="btn btn-secondary" href="#" role="button">
+                Sign up &raquo;
+              </a>
+            </Link>
           </p>
         </Col>
         <Col lg="4">
@@ -55,21 +77,25 @@ const Home: React.FC<HomeProps> = () => {
             in Community, Live like Jesus, and Feel His Love.
           </p>
           <p>
-            <a className="btn btn-secondary" href="#" role="button">
-              View details &raquo;
-            </a>
+            <Link to="/about/">
+              <a className="btn btn-secondary" href="#" role="button">
+                Learn more &raquo;
+              </a>
+            </Link>
           </p>
         </Col>
         <Col lg="4">
-          <h2>Services</h2>
+          <h2>Gatherings</h2>
           <p className="lead">
-            We support and run our services digitally just as we do in real
-            life. Click below to view this week&apos;s service:
+            Click below to view this week&apos;s service{" "}
+            <b>{currentService.title}</b>:
           </p>
           <p>
-            <a className="btn btn-secondary" href="" role="button">
-              View service &raquo;
-            </a>
+            <Link to={`gathering/${currentService.slug}`}>
+              <a className="btn btn-secondary" role="button">
+                View service
+              </a>
+            </Link>
           </p>
         </Col>
       </Row>
