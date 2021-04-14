@@ -4,9 +4,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "crossroadsajax.church",
-    "crossroadsinajax.xyz",
-    "192.168.2.125",
 ]
+
 
 LOGGING = {
     "version": 1,

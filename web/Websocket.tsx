@@ -61,7 +61,7 @@ export default class WebSocketProvider extends React.Component<
   }
 
   onOpen = () => {
-    if (window.SETTINGS.DEBUG) {
+    if (!window.SETTINGS.PROD) {
       console.log("connected!")
     }
     for (let handler of this.onOpenHandlers) {
@@ -71,7 +71,7 @@ export default class WebSocketProvider extends React.Component<
 
   onMessage = (event: MessageEvent) => {
     const msg = JSON.parse(event.data)
-    if (window.SETTINGS.DEBUG) {
+    if (!window.SETTINGS.PROD) {
       console.log(msg)
     }
     for (let handler of this.onMessageHandlers) {
@@ -80,7 +80,7 @@ export default class WebSocketProvider extends React.Component<
   }
 
   send = (message: any) => {
-    if (window.SETTINGS.DEBUG) {
+    if (!window.SETTINGS.PROD) {
       console.log(message)
     }
     this.state.ws.send(JSON.stringify(message))

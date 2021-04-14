@@ -58,7 +58,7 @@ const Service: React.FC<ServiceProps> = (props) => {
     },
   })
 
-  if (window.SETTINGS.DEBUG) {
+  if (!window.SETTINGS.PROD) {
     console.log(loading, data)
   }
 
@@ -115,7 +115,7 @@ const Services: React.FC<ServicesProps> = () => {
     variables: {},
   })
 
-  if (window.SETTINGS.DEBUG) {
+  if (!window.SETTINGS.PROD) {
     console.log(loading, data)
   }
   const pages = data?.services?.edges

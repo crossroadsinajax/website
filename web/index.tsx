@@ -20,7 +20,7 @@ declare global {
   interface Window {
     CSRF_TOKEN: string
     SETTINGS: {
-      DEBUG: boolean
+      PROD: boolean
     }
   }
 }
@@ -53,9 +53,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
+const WS_PROTO = window.location.protocol == "https:" ? "wss" : "ws"
+const WS_URL = `${WS_PROTO}://${window.location.host}/ws/`
+
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <WebsocketProvider url={"ws://localhost:8000/ws/"}>
+    <WebsocketProvider url={WS_URL}>
       {(props) => <App ws={props.ws} />}
     </WebsocketProvider>
   </ApolloProvider>,
