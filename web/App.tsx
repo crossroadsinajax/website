@@ -97,10 +97,10 @@ const AppBase: React.FC<AppProps> = (props) => {
     return (
       <React.Fragment>
         <Helmet>
-          <title>Crossroads</title>
+          <title>Crossroads Community Church</title>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="description" content="" />
+          <meta name="description" content="Welcome to Crossroads Community Church!" />
           <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
