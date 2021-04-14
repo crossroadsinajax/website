@@ -26,6 +26,7 @@ export type Scalars = {
 export type Query = {
   __typename?: "Query"
   currentUser?: Maybe<UserType>
+  currentService: ServicePageNode
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
@@ -112,6 +113,15 @@ export type UserQuery = { __typename?: "Query" } & {
       UserType,
       "username" | "firstName" | "lastName" | "isChatmod"
     >
+  >
+}
+
+export type HomePageQueryVariables = Exact<{ [key: string]: never }>
+
+export type HomePageQuery = { __typename?: "Query" } & {
+  currentService: { __typename?: "ServicePageNode" } & Pick<
+    ServicePageNode,
+    "title" | "slug"
   >
 }
 
@@ -210,6 +220,57 @@ export function useUserLazyQuery(
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>
+export const HomePageDocument = gql`
+  query HomePage {
+    currentService {
+      title
+      slug
+    }
+  }
+`
+
+/**
+ * __useHomePageQuery__
+ *
+ * To run a query within a React component, call `useHomePageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHomePageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHomePageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useHomePageQuery(
+  baseOptions?: Apollo.QueryHookOptions<HomePageQuery, HomePageQueryVariables>
+) {
+  return Apollo.useQuery<HomePageQuery, HomePageQueryVariables>(
+    HomePageDocument,
+    baseOptions
+  )
+}
+export function useHomePageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    HomePageQuery,
+    HomePageQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<HomePageQuery, HomePageQueryVariables>(
+    HomePageDocument,
+    baseOptions
+  )
+}
+export type HomePageQueryHookResult = ReturnType<typeof useHomePageQuery>
+export type HomePageLazyQueryHookResult = ReturnType<
+  typeof useHomePageLazyQuery
+>
+export type HomePageQueryResult = Apollo.QueryResult<
+  HomePageQuery,
+  HomePageQueryVariables
+>
 export const ServicePageDocument = gql`
   query ServicePage($slug: String!) {
     services(slug: $slug) {

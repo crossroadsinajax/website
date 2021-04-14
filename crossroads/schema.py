@@ -39,12 +39,16 @@ class ServicePageNode(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
+    current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
 
     def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
         user = info.context.user
         return user if user.is_authenticated else None
+
+    def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
+        return models.ServicePage.current_service_page()
 
 
 schema = graphene.Schema(query=Query)
