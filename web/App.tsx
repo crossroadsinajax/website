@@ -58,6 +58,9 @@ const Header: React.FC<HeaderProps> = (props) => {
               Gatherings
             </Nav.Link>
             <NavDropdown title="About us" id="about-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/about/">
+                Who we are
+              </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/about/beliefs">
                 Our beliefs
               </NavDropdown.Item>
@@ -100,7 +103,10 @@ const AppBase: React.FC<AppProps> = (props) => {
           <title>Crossroads Community Church</title>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="description" content="Welcome to Crossroads Community Church!" />
+          <meta
+            name="description"
+            content="Welcome to Crossroads Community Church!"
+          />
           <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
@@ -123,7 +129,7 @@ const AppBase: React.FC<AppProps> = (props) => {
             <Route path="/contact/">
               <Contact />
             </Route>
-            <Route path="/about/becoming-a-christian">
+            <Route path="/about/become-a-christian">
               <Becoming />
             </Route>
             <Route path="/about/beliefs">

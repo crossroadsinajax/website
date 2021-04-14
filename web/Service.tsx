@@ -147,10 +147,14 @@ const Services: React.FC<ServicesProps> = () => {
           During COVID-19 we are meeting online only, through our website at
           10:30 a.m. EST on Sunday mornings, every Sunday morning! Please feel
           free to join us using the links on the Service links page or contact
-          kyle@verhoog.ca for access! Our Ministry Centre is closed, but our
-          ministry continues. In partnership with Johanne’s House, Southside
-          Foodbank, John Howard Society, and other tremendous organizations, we
-          seek to serve the Ajax community uninterrupted.
+          &nbsp;
+          <a href="mailto:kyle@crossroadsajax.church">
+            kyle@crossroadsajax.church
+          </a>
+          &nbsp; for access! Our Ministry Centre is closed, but our ministry
+          continues. In partnership with Johanne’s House, Southside Foodbank,
+          John Howard Society, and other tremendous organizations, we seek to
+          serve the Ajax community uninterrupted.
         </p>
         <React.Fragment>
           <ul>
