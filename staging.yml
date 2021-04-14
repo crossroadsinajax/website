@@ -63,8 +63,9 @@ services:
       service: datadog
     image: ghcr.io/crossroadsinajax/datadog-agent:staging
     environment:
-      - DD_LOG_LEVEL=WARNING
       - DD_API_KEY_FILE=/run/secrets/datadog_api_key
+      - DD_ENV=staging
+      - DD_LOG_LEVEL=WARNING
     secrets:
       - datadog_api_key
 
