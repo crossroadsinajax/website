@@ -10,5 +10,9 @@ def settings_processor(request):
                 PROD=not settings.DEBUG,
             )
         ),
+        RUM_APP_ID=settings.RUM_APP_ID,
+        RUM_CLIENT_TOKEN=settings.RUM_CLIENT_TOKEN,
+        RUM_ENV=settings.RUM_ENV,
+        RUM_SERVICE=settings.RUM_SERVICE,
         version=settings.VERSION,
     )

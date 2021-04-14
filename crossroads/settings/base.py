@@ -221,3 +221,7 @@ POSTMARK_TRACK_OPENS = False
 repo = git.Repo(search_parent_directories=True)
 VERSION = repo.head.object.hexsha[0:6]
 ddtrace.config.version = VERSION
+
+RUM_SERVICE = ddtrace.config.service
+RUM_ENV = ddtrace.config.env
+RUM_VERSION = ddtrace.config.version
