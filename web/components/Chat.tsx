@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react"
+import styled from "styled-components"
 import moment from "moment"
 import Dropdown from "react-bootstrap/Dropdown"
 import Overlay from "react-bootstrap/Overlay"
@@ -62,13 +63,6 @@ const ChatReactSelector: React.FC<{
   )
 }
 
-type ChatMessageProps = {
-  user: UserType
-  msg: ChatMessage
-  onReact: (msg: ChatMessage, react: string) => void
-  onDelete: (msg: ChatMessage) => void
-}
-
 const datefmt = (created: number) => {
   const now = moment()
   const ts = moment.unix(created)
@@ -78,6 +72,7 @@ const datefmt = (created: number) => {
   return ts.format("hh:mma")
 }
 
+// TODO: move to server side
 const colours = [
   "#00ffff",
   "#000000",
@@ -119,84 +114,110 @@ const authorColour = (name: string) => {
   return colours[Math.abs(hashCode(name)) % (colours.length - 1)]
 }
 
+const _WarningDropdownMenuItem = styled(Dropdown.Item)`
+  color: red;
+`
+
+const ChatMessageModControls: React.FC<{
+  msg: ChatMessage
+  onDelete: (msg: ChatMessage) => void
+  onToggleTag: (msg: ChatMessage, tag: string) => void
+}> = ({ msg, onDelete, onToggleTag }) => {
+  return (
+    <Dropdown>
+      <Dropdown.Toggle
+        variant="warning"
+        className="float-right"
+        id={msg.id + "-dropdown"}
+        style={{ marginTop: "4px" }}
+      />
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={() => onToggleTag(msg, "pr")}>
+          {msg.tags.includes("pr") ? "Untag" : "Tag"}
+          {" as #pr"}
+        </Dropdown.Item>
+        <_WarningDropdownMenuItem onClick={() => onDelete(msg)}>
+          Delete message
+        </_WarningDropdownMenuItem>
+        <_WarningDropdownMenuItem onClick={() => onDelete(msg)}>
+          Delete all messages from user
+        </_WarningDropdownMenuItem>
+      </Dropdown.Menu>
+    </Dropdown>
+  )
+}
+
+const _ChatMessageCard = styled.div<{
+  tags: string[]
+}>`
+  background-color: ${({ tags }) =>
+    (tags.includes("pr") && "#f6efe2") ||
+    (tags.includes("q") && "#d2f8d2") ||
+    ""};
+  font-size: 14px;
+  border-width: 0px 0px 1px 1px;
+  border-radius: unset;
+`
+
+const _ChatMessageTopRightControls = styled.div<{
+  hover: boolean
+}>`
+  height: 1px;
+  visibility: ${(props) => (props.hover ? "" : "hidden")};
+`
+
+const _ChatMessageEmojiSelector = styled.span`
+  cursor: pointer;
+  filter: grayscale(100%);
+  padding-top: 3px;
+  padding-right: 5px;
+  font-size: 1rem;
+`
+
+type ChatMessageProps = {
+  user: UserType
+  msg: ChatMessage
+  onReact: (msg: ChatMessage, react: string) => void
+  onDelete: (msg: ChatMessage) => void
+  onToggleTag: (msg: ChatMessage, tag: string) => void
+}
+
 const ChatMessageRC: React.FC<ChatMessageProps> = ({
   user,
   msg,
   onReact,
   onDelete,
+  onToggleTag,
 }) => {
   const [hover, toggleHover] = useState(false)
   const possibleReacts = ["🙏", "🙌", "🤣", "👍"]
   const msgReacts = possibleReacts.filter((r) => r in msg.reacts)
 
-  let modControls
-  if (!user.isChatmod) {
-    modControls = null
-  } else {
-    modControls = (
-      <Dropdown>
-        <Dropdown.Toggle
-          variant="warning"
-          className="float-right"
-          id={msg.id + "-dropdown"}
-          style={{
-            marginTop: "4px",
-          }}
-        ></Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item
-            onClick={() => onDelete(msg)}
-            style={{
-              color: "red",
-            }}
-          >
-            Delete message
-          </Dropdown.Item>
-          <Dropdown.Item>Tag or untag as #pr</Dropdown.Item>
-          <Dropdown.Item>Delete all messages from user</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    )
-  }
-
   return (
-    <div
+    <_ChatMessageCard
       className="card"
+      tags={msg.tags}
       onMouseEnter={() => toggleHover(true)}
       onMouseLeave={() => toggleHover(false)}
-      style={{
-        fontSize: "14px",
-        // backgroundColor: backgroundColor,
-        borderWidth: "0px 0px 1px 1px",
-        borderRadius: "unset",
-      }}
     >
-      <div
-        className="float-right"
-        style={{
-          height: "1px",
-          display: hover ? "" : "none",
-        }}
-      >
-        {user.isChatmod && modControls}
-
+      <_ChatMessageTopRightControls className="float-right" hover={hover}>
+        {user.isChatmod && (
+          <ChatMessageModControls
+            msg={msg}
+            onDelete={onDelete}
+            onToggleTag={onToggleTag}
+          />
+        )}
         {possibleReacts.reverse().map((react, i) => (
-          <span
+          <_ChatMessageEmojiSelector
             key={react + i}
             className="float-right"
             onClick={() => onReact(msg, react)}
-            style={{
-              cursor: "pointer",
-              filter: "grayscale(100%)",
-              paddingTop: "3px",
-              paddingRight: "5px",
-              fontSize: "1rem",
-            }}
           >
             {react}
-          </span>
+          </_ChatMessageEmojiSelector>
         ))}
-      </div>
+      </_ChatMessageTopRightControls>
 
       <div
         className="card-body"
@@ -228,7 +249,7 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
           ))}
         </footer>
       </div>
-    </div>
+    </_ChatMessageCard>
   )
 }
 
@@ -374,9 +395,17 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
+  onToggleTag = (msg: ChatMessage, tag: string) => {
+    this.props.ws.send({
+      type: "chat.toggle_tag",
+      msg_id: msg.id,
+      tag: tag,
+    })
+  }
+
   render() {
     return (
-      <div className="d-flex flex-column h-100">
+      <div className="d-flex flex-column flex-grow-1">
         <div
           className="row form-control flex-grow-1"
           style={{
@@ -395,15 +424,12 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               msg={msg}
               onReact={this.onReact}
               onDelete={this.onDeleteMessage}
+              onToggleTag={this.onToggleTag}
             />
           ))}
           <div
             ref={(el) => {
               this.chatEnd = el
-            }}
-            style={{
-              float: "left",
-              clear: "both",
             }}
           />
         </div>
