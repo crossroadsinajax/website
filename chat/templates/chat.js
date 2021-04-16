@@ -18,9 +18,6 @@ Vue.component('chat-message', {
             if (type === 'chat') {
                 return '';
             }
-            else if (type === 'pr') {
-                return '#f6efe2';
-            }
             else if (type === 'q') {
                 return '#d2f8d2';
             }
@@ -65,46 +62,6 @@ var chatApp = new Vue({
             this.prevShowNewPopup = false;
             var log = document.querySelector('#chat-log-{{chat_id}}');
             log.scrollTop = log.scrollHeight;
-        },
-        toggleTag: function (id, tag) {
-            socket.send(JSON.stringify({
-                'type': 'chat.toggle_pr',
-                'msg_id': id,
-                'tag': tag
-            }));
-        },
-        deleteMsg: function (id) {
-            socket.send(JSON.stringify({
-                'type': 'chat.message_delete',
-                'msg_id': id
-            }));
-        },
-        clearMsgs: function (id) {
-            socket.send(JSON.stringify({
-                'type': 'chat.message_clear_all',
-                'msg_id': id
-            }));
-        },
-        getType: function (msg) {
-            if (msg.tags.includes('pr')) {
-                return 'pr';
-            }
-            else if (msg.tags.includes('q')) {
-                return 'q';
-            }
-            else {
-                return 'chat';
-            }
-        },
-        getReacts: function (msg) {
-            return msg.reacts;
-        },
-        react: function (id, emoji) {
-            socket.send(JSON.stringify({
-                'type': 'chat.react',
-                'msg_id': id,
-                'react': emoji
-            }));
         },
         send: function () {
             var body = this.message;

@@ -121,7 +121,9 @@ class ChatConsumer(SubConsumer):
             try:
                 await dbstoa(self.chat.delete_message)(user=user, msg_id=msg_id)
             except exc.PermissionDenied:
-                log.warning("", exc_info=True)
+                log.warning(
+                    "user %r tried to delete message %r", user, msg_id, exc_info=True
+                )
             else:
                 await self.group_send(
                     self.group_name, {"type": "chat.message_delete", "msg_id": msg_id}
@@ -162,29 +164,20 @@ class ChatConsumer(SubConsumer):
                 ),
             )
 
-        # Toggle a prayer request
-        elif _type == "chat.toggle_pr":
+        elif _type == "chat.toggle_tag":
             if not await dbstoa(user.has_perm)("chat.change_chatmessage"):
-                log.info("user %r tried to toggle pr without permissions", user)
+                log.warning("user %r tried to toggle pr without permissions", user)
                 return
 
             msg_id = event["msg_id"]
-            tag = event["tag"]
-            if tag == "pr":
-                msg = await dbstoa(models.ChatMessage.toggle_tag)("#pr", msg_id)
-            elif tag == "q":
-                msg = await dbstoa(models.ChatMessage.toggle_tag)("#q", msg_id)
-            else:
-                log.error("user %r tried to toggle pr without permissions", user)
-                return
-
+            tag = f"#{event['tag']}"
+            msg = await dbstoa(models.ChatMessage.toggle_tag)(tag, msg_id)
             msg_json = await dbstoa(msg.__json__)()
             await self.group_send(
                 self.group_name,
                 dict(
                     type="chat.message_update",
-                    msg_id=msg_id,
-                    **msg_json,
+                    msg=msg_json,
                 ),
             )
 
