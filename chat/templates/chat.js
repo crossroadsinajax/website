@@ -30,9 +30,6 @@ Vue.component('chat-message', {
             var reacts = this.$props.reacts;
             return emoji in reacts && reacts[emoji].reactors.includes(username);
         },
-        onReact: function (emoji) {
-            this.$emit('react', this.$props.id, emoji);
-        }
     },
     template: '#chat-message-template'
 });
@@ -47,64 +44,20 @@ var chatApp = new Vue({
         users: [],
         message: '',
         updateType: '',
-        view: window.location.hash.substr(1) || 'chat',
         prevShowNewPopup: false
     },
     methods: {
-        fmtTooltip: function (reactors) {
-            return reactors.join(', ');
-        },
-        changeTab: function (view) {
-            this.view = view;
-            this.updateType = 'change_tab';
-        },
         popupClick: function () {
             this.prevShowNewPopup = false;
             var log = document.querySelector('#chat-log-{{chat_id}}');
             log.scrollTop = log.scrollHeight;
         },
-        send: function () {
-            var body = this.message;
-            if (!body) {
-                return;
-            }
-            if (this.view === 'pr') {
-                body += ' #prayerrequest';
-            }
-            else if (this.view === 'q') {
-                body += ' #q';
-            }
-            socket.send(JSON.stringify({
-                'type': 'chat.message',
-                'body': body
-            }));
-            this.message = '';
-        }
     },
     computed: {
         numViewers: function () {
             return this.users.reduce(function (acc, x) {
                 return acc + x.count;
             }, 0);
-        },
-        displaymessages: function () {
-          if (this.view === 'chat') {
-                return this.messages;
-            }
-            else if (this.view === 'pr') {
-                return this.messages.filter(function (x) {
-                    return x.tags.includes('pr');
-                });
-            }
-            else if (this.view === 'q') {
-                return this.messages.filter(function (x) {
-                    return x.tags.includes('q');
-                });
-            }
-            else if (this.view === 'viewers') {
-                return [];
-            }
-            return this.messages;
         },
         showNewPopup: function () {
             if (this.updateType !== 'chat.message') {
