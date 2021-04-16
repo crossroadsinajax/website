@@ -232,6 +232,45 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
   )
 }
 
+type ChatInputProps = {
+  onSubmit: (msg: string) => void
+}
+
+const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
+  const [input, setInput] = useState("")
+
+  const submit = (input: string) => {
+    onSubmit(input)
+    setInput("")
+  }
+
+  return (
+    <>
+      <input
+        className="form-control"
+        type="text"
+        autoComplete="off"
+        placeholder="type your message here"
+        onChange={(e) => setInput(e.currentTarget.value)}
+        value={input}
+        onKeyPress={(e) => {
+          if (e.charCode == 13) {
+            submit(input)
+          }
+        }}
+      />
+      <button
+        className="btn btn-primary form-control"
+        onClick={() => {
+          submit(input)
+        }}
+      >
+        send
+      </button>
+    </>
+  )
+}
+
 type ChatProps = {
   ws: WebSocketProvider
   user: UserType
@@ -310,22 +349,13 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     }
   }
 
-  handleMessage = (e: React.FormEvent<HTMLInputElement>) => {
-    this.setState({
-      message: e.currentTarget.value,
-    })
-  }
-
-  sendMsg = () => {
-    if (!this.state.message) {
+  sendMsg = (msg: string) => {
+    if (!msg) {
       return
     }
     this.props.ws.send({
       type: "chat.message",
-      body: this.state.message,
-    })
-    this.setState({
-      message: "",
+      body: msg,
     })
   }
 
@@ -335,12 +365,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       msg_id: msg.id,
       react: react,
     })
-  }
-
-  onKeyPress = (e: React.KeyboardEvent) => {
-    if (e.charCode == 13) {
-      this.sendMsg()
-    }
   }
 
   onDeleteMessage = (msg: ChatMessage) => {
@@ -390,21 +414,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             marginRight: "unset",
           }}
         >
-          <input
-            className="form-control"
-            type="text"
-            autoComplete="off"
-            placeholder="type your message here"
-            onChange={this.handleMessage}
-            value={this.state.message}
-            onKeyPress={this.onKeyPress}
-          />
-          <button
-            className="btn btn-primary form-control"
-            onClick={this.sendMsg}
-          >
-            send
-          </button>
+          <ChatInput onSubmit={this.sendMsg} />
         </div>
       </div>
     )
