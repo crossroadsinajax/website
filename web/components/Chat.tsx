@@ -1,13 +1,13 @@
-import React, { useRef, useState } from "react"
-import styled from "styled-components"
 import moment from "moment"
+import React, { useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
 import Tab from "react-bootstrap/Tab"
 import Tooltip from "react-bootstrap/Tooltip"
-import WebSocketProvider, { WSMessage } from "~Websocket"
+import styled from "styled-components"
 import { UserType } from "~/generated-types"
+import WebSocketProvider, { WSMessage } from "~Websocket"
 
 type ChatMessage = {
   author: string

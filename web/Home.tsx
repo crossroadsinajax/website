@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client"
 import React from "react"
-import { Link } from "react-router-dom"
 import Button from "react-bootstrap/Button"
+import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
-import { ParallaxProvider, ParallaxBanner } from "react-scroll-parallax"
-import Col from "react-bootstrap/Col"
 import Row from "react-bootstrap/Row"
+import { Link } from "react-router-dom"
+import { ParallaxProvider, ParallaxBanner } from "react-scroll-parallax"
+
 import WebSocketProvider from "./Websocket"
 import { useHomePageQuery } from "./generated-types"
 

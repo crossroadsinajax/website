@@ -1,17 +1,18 @@
-import React from "react"
-import { Link, useParams } from "react-router-dom"
 import { gql } from "@apollo/client"
+import React from "react"
 import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
-import ReactPlayer from "react-player/youtube"
 import Row from "react-bootstrap/Row"
-import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
-import { Error } from "./Error"
-import Chat from "./components/Chat"
-import WebSocketProvider from "~Websocket"
+import ReactPlayer from "react-player/youtube"
+import { Link, useParams } from "react-router-dom"
 import { UserType } from "~/generated-types"
 import { Maybe } from "~/types"
+import WebSocketProvider from "~Websocket"
+
+import { Error } from "./Error"
+import Chat from "./components/Chat"
+import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 
 gql`
   query ServicePage($slug: String!) {
