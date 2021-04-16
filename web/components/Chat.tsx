@@ -416,9 +416,12 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   setFilterTag = (tag: string) => {
-    this.setState({
-      filterTag: tag,
-    })
+    this.setState(
+      {
+        filterTag: tag,
+      },
+      this.scrollToBottom
+    )
   }
 
   render() {
