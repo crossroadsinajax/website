@@ -2,7 +2,9 @@ import React, { useRef, useState } from "react"
 import styled from "styled-components"
 import moment from "moment"
 import Dropdown from "react-bootstrap/Dropdown"
+import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
+import Tab from "react-bootstrap/Tab"
 import Tooltip from "react-bootstrap/Tooltip"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 import { UserType } from "~/generated-types"
@@ -292,6 +294,15 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
   )
 }
 
+const _ChatMessageContainer = styled.div`
+  overflow-y: scroll;
+  word-break: break-word;
+  font-size: 14px;
+  padding: 0px;
+  margin-left: unset;
+  margin-right: unset;
+`
+
 type ChatProps = {
   ws: WebSocketProvider
   user: UserType
@@ -300,14 +311,15 @@ type ChatProps = {
 
 type ChatState = {
   messages: ChatMessage[]
-  message: string
+  filterTag: string
 }
 
 export default class Chat extends React.Component<ChatProps, ChatState> {
   state: ChatState = {
     messages: [],
-    message: "",
+    filterTag: "",
   }
+
   private chatEnd: HTMLDivElement | null
 
   constructor(props: ChatProps) {
@@ -403,36 +415,59 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
+  setFilterTag = (tag: string) => {
+    this.setState({
+      filterTag: tag,
+    })
+  }
+
   render() {
+    const { messages, filterTag } = this.state
+
+    let msgs
+    if (filterTag) {
+      console.log(filterTag)
+      msgs = messages.filter((msg) => msg.tags.includes(filterTag))
+    } else {
+      msgs = messages
+    }
+
     return (
-      <div className="d-flex flex-column flex-grow-1">
-        <div
-          className="row form-control flex-grow-1"
-          style={{
-            overflowY: "scroll",
-            wordBreak: "break-word",
-            fontSize: "14px",
-            padding: "0px",
-            marginLeft: "unset",
-            marginRight: "unset",
-          }}
-        >
-          {this.state.messages.map((msg) => (
-            <ChatMessageRC
-              user={this.props.user}
-              key={msg.id}
-              msg={msg}
-              onReact={this.onReact}
-              onDelete={this.onDeleteMessage}
-              onToggleTag={this.onToggleTag}
+      <div className="d-flex flex-column flex-grow-1 h-100">
+        <Tab.Container defaultActiveKey="chat">
+          <Nav variant="tabs">
+            <Nav.Item>
+              <Nav.Link eventKey="chat" onClick={() => this.setFilterTag("")}>
+                Chat
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="prayer"
+                onClick={() => this.setFilterTag("pr")}
+              >
+                Prayer
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+          <_ChatMessageContainer className="row form-control flex-grow-1">
+            {msgs.map((msg) => (
+              <ChatMessageRC
+                user={this.props.user}
+                key={msg.id}
+                msg={msg}
+                onReact={this.onReact}
+                onDelete={this.onDeleteMessage}
+                onToggleTag={this.onToggleTag}
+              />
+            ))}
+            <div
+              ref={(el) => {
+                this.chatEnd = el
+              }}
             />
-          ))}
-          <div
-            ref={(el) => {
-              this.chatEnd = el
-            }}
-          />
-        </div>
+          </_ChatMessageContainer>
+        </Tab.Container>
         <div
           className="row"
           style={{

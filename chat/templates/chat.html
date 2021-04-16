@@ -1,39 +1,4 @@
 <div id="chatapp" v-cloak class="d-flex flex-column h-100">
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" data-toggle="tab" href="#chat" role="tab" aria-selected="true" v-on:click="changeTab('chat')">Chat</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#pr" role="tab" aria-selected="false" v-on:click="changeTab('pr')">Prayer</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#q" role="tab" aria-selected="false" v-on:click="changeTab('q')">Q&A</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#viewers" role="tab" aria-selected="false" v-on:click="view='viewers'">Users ([[ numViewers ]])</a>
-    </li>
-  </ul>
-  <div id="chat-log-{{chat_id}}" class="row form-control flex-grow-1" style="overflow-y: scroll; word-break: break-word; font-size: 14px; padding: 0px;">
-    <template v-if="view==='viewers'">
-        <div v-if="view==='viewers'" v-for="user in users" style="font-size: 1rem; font-weight: bold;">
-            <span>[[ user.username ]] ([[ user.count ]])</span>
-        </div>
-    </template>
-    <chat-message
-        v-for="msg in displaymessages"
-        v-bind:emojis="['🙏', '🙌', '🤣', '👍']"
-        v-bind:id="msg.id"
-        v-bind:type="getType(msg)"
-        v-bind:author="msg.author"
-        v-bind:body="msg.body"
-        v-bind:date="msg.created_at"
-        v-bind:reacts="getReacts(msg)"
-        @react="react"
-        @toggle-tag="toggleTag"
-        @delete-message="deleteMsg"
-        @clear-messages="clearMsgs"
-    ></chat-message>
-  </div>
   <div class="row">
     {% if user.username != "guest" %}
     <button class="btn btn-info form-control" type="button" v-on:click="popupClick" v-bind:style="{
