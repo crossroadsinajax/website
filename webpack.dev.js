@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
   mode: "development",
-  entry: ["./web/index.tsx"],
+  entry: ["react-hot-loader/patch", "./web/index.tsx"], // react hot loader has to be loaded before react
   output: {
     path: path.join(__dirname, "dist"),
     filename: "app.js",

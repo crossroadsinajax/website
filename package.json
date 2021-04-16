@@ -46,6 +46,7 @@
     "@graphql-codegen/typescript": "1.21.0",
     "@graphql-codegen/typescript-operations": "1.17.14",
     "@graphql-codegen/typescript-react-apollo": "2.2.1",
+    "@trivago/prettier-plugin-sort-imports": "^2.0.2",
     "@types/node": "^14.0.14",
     "@typescript-eslint/eslint-plugin": "^4.3.0",
     "@typescript-eslint/parser": "^4.6.0",
@@ -63,7 +64,11 @@
   },
   "prettier": {
     "trailingComma": "es5",
-    "semi": false
+    "semi": false,
+    "importOrder": [
+      "^[./]"
+    ],
+    "importOrderSeparation": true
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
