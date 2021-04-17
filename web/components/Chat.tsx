@@ -1,5 +1,5 @@
 import moment from "moment"
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -15,9 +15,10 @@ const _ChatReactDiv = styled.div<{
   padding: 2px;
   display: inherit;
   margin-right: 2px;
-  border: ${({ filledIn }) =>
-    !filledIn ? "1px solid rgba(0,0,0,.125)" : "1px solid rgba(0, 0, 0, .3)"};
+  border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 6px;
+  background-color: ${({ filledIn }) => (filledIn ? "#007bff" : "")};
+  color: ${({ filledIn }) => (filledIn ? "white" : "")};
 `
 
 type ChatMessage = {
@@ -89,7 +90,6 @@ const datefmt = (created: number) => {
 
 // TODO: move to server side
 const colours = [
-  "#00ffff",
   "#000000",
   "#0000ff",
   "#a52a2a",
@@ -199,8 +199,13 @@ const _ChatMessageDateSpan = styled.span`
 `
 
 const _ChatMessageBody = styled.div`
-  font-size: 1rem;
+  font-size: 16px;
   margin-bottom: 3px;
+`
+
+const _ChatFooter = styled.footer`
+  font-size: 14px;
+  margin-bottom: 5px;
 `
 
 type ChatMessageProps = {
@@ -265,7 +270,7 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
         <_ChatMessageBody>
           <span>{msg.body}</span>
         </_ChatMessageBody>
-        <footer style={{ fontSize: "14px", marginBottom: "5px" }}>
+        <_ChatFooter>
           {msgReacts.map((react, i) => (
             <ChatReactSelector
               user={user}
@@ -275,7 +280,7 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
               onReact={onReact}
             />
           ))}
-        </footer>
+        </_ChatFooter>
       </_ChatMessageContent>
     </_ChatMessageCard>
   )
@@ -522,6 +527,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         />
       )
     } else if (tab == "viewers") {
+      component = null
     }
     return component
   }
