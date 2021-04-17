@@ -568,6 +568,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     // TODO: there is tab logic mixed in this component which is ok given that
     // it's a one-off use at the moment and the component isn't too complex.
     // It might be worth pulling this into a separate Tabs component in the future.
+    const numViewers = this.state.viewers.reduce(
+      (x: number, v: Viewer) => x + v.count,
+      0
+    )
     return (
       <div className="d-flex flex-column flex-grow-1 h-100">
         <Tab.Container defaultActiveKey="chat">
@@ -587,7 +591,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
                 eventKey="viewers"
                 onClick={() => this.setTab("viewers")}
               >
-                Viewers
+                Viewers ({numViewers})
               </Nav.Link>
             </Nav.Item>
           </Nav>

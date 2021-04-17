@@ -9,28 +9,6 @@ Vue.component('chat-message', {
             hover: false
         };
     },
-    computed: {
-        emojis: function () {
-            return this.$props.emojis.reverse();
-        },
-        backgroundColor: function () {
-            var type = this.$props.type;
-            if (type === 'chat') {
-                return '';
-            }
-            else if (type === 'q') {
-                return '#d2f8d2';
-            }
-            return '';
-        }
-    },
-    methods: {
-        hasReacted: function (emoji) {
-            var username = '{{ user.username }}';
-            var reacts = this.$props.reacts;
-            return emoji in reacts && reacts[emoji].reactors.includes(username);
-        },
-    },
     template: '#chat-message-template'
 });
 
@@ -54,11 +32,6 @@ var chatApp = new Vue({
         },
     },
     computed: {
-        numViewers: function () {
-            return this.users.reduce(function (acc, x) {
-                return acc + x.count;
-            }, 0);
-        },
         showNewPopup: function () {
             if (this.updateType !== 'chat.message') {
                 return this.prevShowNewPopup;
@@ -93,28 +66,5 @@ var chatApp = new Vue({
             log.scrollTop = log.scrollHeight;
         }
         this.updateType = "";
-    }
-});
-
-
-socket.register('chat', {
-    onmessage: function (event) {
-        chatApp.updateType = event.type;
-
-        if (event.type == 'chat.users_update') {
-            chatApp.users.splice(0, chatApp.users.length);
-            for (var i = 0; i < event.users.length; ++i) {
-                chatApp.users.push(event.users[i]);
-            }
-        }
-        else {
-            console.error('UNHANDLED MESSAGE TYPE ' + event.type);
-        }
-    },
-    onopen: function () {
-        socket.send(JSON.stringify({
-            type: 'chat.connect',
-            chat_id: chatId
-        }))
     }
 });
