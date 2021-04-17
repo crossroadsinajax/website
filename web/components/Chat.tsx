@@ -1,5 +1,5 @@
 import moment from "moment"
-import React, { useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -329,6 +329,47 @@ const _ChatMessageContainer = styled.div`
   margin-right: unset;
 `
 
+const ChatTab: React.FC<{
+  user: UserType
+  messages: ChatMessage[]
+  onDelete: (msg: ChatMessage) => void
+  onReact: (msg: ChatMessage, react: string) => void
+  onToggleTag: (msg: ChatMessage, tag: string) => void
+  filterTag: string
+  chatEndRef: (ref: HTMLDivElement | null) => void
+}> = ({
+  user,
+  messages,
+  onDelete,
+  onReact,
+  onToggleTag,
+  filterTag,
+  chatEndRef,
+}) => {
+  let msgs
+  if (filterTag) {
+    msgs = messages.filter((msg) => msg.tags.includes(filterTag))
+  } else {
+    msgs = messages
+  }
+
+  return (
+    <_ChatMessageContainer className="row form-control flex-grow-1">
+      {msgs.map((msg) => (
+        <MemodChatMessageRC
+          user={user}
+          key={msg.id}
+          msg={msg}
+          onReact={onReact}
+          onDelete={onDelete}
+          onToggleTag={onToggleTag}
+        />
+      ))}
+      <div ref={chatEndRef} />
+    </_ChatMessageContainer>
+  )
+}
+
 type ChatProps = {
   ws: WebSocketProvider
   user: UserType
@@ -337,13 +378,13 @@ type ChatProps = {
 
 type ChatState = {
   messages: ChatMessage[]
-  filterTag: string
+  tab: "chat" | "prayer" | "viewers"
 }
 
 export default class Chat extends React.Component<ChatProps, ChatState> {
   state: ChatState = {
     messages: [],
-    filterTag: "",
+    tab: "chat",
   }
 
   private chatEnd: HTMLDivElement | null
@@ -379,23 +420,29 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
 
   onMessage = (msg: WSMessage) => {
     if (msg.type == "chat.init") {
-      this.setState({
-        messages: msg.chat.messages,
-      })
-      this.scrollToBottom()
+      this.setState(
+        {
+          messages: msg.chat.messages,
+        },
+        this.scrollToBottom
+      )
     } else if (msg.type == "chat.message") {
-      this.setState({
-        messages: this.state.messages.concat(msg.msg),
-      })
-      this.scrollToBottom()
+      this.setState(
+        {
+          messages: this.state.messages.concat(msg.msg),
+        },
+        this.scrollToBottom
+      )
     } else if (msg.type == "chat.message_update") {
       const messages = this.state.messages.map((m) =>
         m.id === msg.msg.id ? msg.msg : m
       )
-      this.setState({
-        messages: messages,
-      })
-      this.scrollToBottom()
+      this.setState(
+        {
+          messages: messages,
+        },
+        this.scrollToBottom
+      )
     } else if (msg.type == "chat.message_delete") {
       const messages = this.state.messages.filter((m) => m.id != msg.msg_id)
       this.setState({
@@ -422,7 +469,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  onDeleteMessage = (msg: ChatMessage) => {
+  onDelete = (msg: ChatMessage) => {
     this.props.ws.send({
       type: "chat.message_delete",
       msg_id: msg.id,
@@ -437,61 +484,76 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  setFilterTag = (tag: string) => {
-    this.setState(
-      {
-        filterTag: tag,
-      },
-      this.scrollToBottom
-    )
+  setTab = (tab: "chat" | "prayer" | "viewers") => {
+    this.setState({
+      tab: tab,
+    })
+  }
+
+  getTab = () => {
+    const { tab } = this.state
+    let component = null
+    if (tab == "chat") {
+      component = (
+        <ChatTab
+          user={this.props.user}
+          messages={this.state.messages}
+          filterTag={""}
+          onDelete={this.onDelete}
+          onReact={this.onReact}
+          onToggleTag={this.onToggleTag}
+          chatEndRef={(ref) => {
+            this.chatEnd = ref
+          }}
+        />
+      )
+    } else if (tab == "prayer") {
+      component = (
+        <ChatTab
+          user={this.props.user}
+          messages={this.state.messages}
+          filterTag={"pr"}
+          onDelete={this.onDelete}
+          onReact={this.onReact}
+          onToggleTag={this.onToggleTag}
+          chatEndRef={(ref) => {
+            this.chatEnd = ref
+          }}
+        />
+      )
+    } else if (tab == "viewers") {
+    }
+    return component
   }
 
   render() {
-    const { messages, filterTag } = this.state
-
-    let msgs
-    if (filterTag) {
-      console.log(filterTag)
-      msgs = messages.filter((msg) => msg.tags.includes(filterTag))
-    } else {
-      msgs = messages
-    }
-
+    // TODO: there is tab logic mixed in this component which is ok given that
+    // it's a one-off use at the moment and the component isn't too complex.
+    // It might be worth pulling this into a separate Tabs component in the future.
     return (
       <div className="d-flex flex-column flex-grow-1 h-100">
         <Tab.Container defaultActiveKey="chat">
           <Nav variant="tabs">
             <Nav.Item>
-              <Nav.Link eventKey="chat" onClick={() => this.setFilterTag("")}>
+              <Nav.Link eventKey="chat" onClick={() => this.setTab("chat")}>
                 Chat
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link
-                eventKey="prayer"
-                onClick={() => this.setFilterTag("pr")}
-              >
+              <Nav.Link eventKey="prayer" onClick={() => this.setTab("prayer")}>
                 Prayer
               </Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="viewers"
+                onClick={() => this.setTab("viewers")}
+              >
+                Viewers
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
-          <_ChatMessageContainer className="row form-control flex-grow-1">
-            {msgs.map((msg) => (
-              <MemodChatMessageRC
-                user={this.props.user}
-                key={msg.id}
-                msg={msg}
-                onReact={this.onReact}
-                onDelete={this.onDeleteMessage}
-                onToggleTag={this.onToggleTag}
-              />
-            ))}
-            <div
-              ref={(el) => {
-                this.chatEnd = el
-              }}
-            />
-          </_ChatMessageContainer>
+          {this.getTab()}
         </Tab.Container>
         <div
           className="row"
