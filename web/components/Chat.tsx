@@ -305,9 +305,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
 
   return (
     <>
-      <input
+      <textarea
         className="form-control"
-        type="text"
+        rows={1}
         autoComplete="off"
         placeholder="type your message here"
         onChange={(e) => setInput(e.currentTarget.value)}
