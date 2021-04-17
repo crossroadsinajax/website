@@ -1,10 +1,12 @@
 import moment from "moment"
-import React, { useRef, useState } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
 import Tab from "react-bootstrap/Tab"
 import Tooltip from "react-bootstrap/Tooltip"
+import AutoSizer from "react-virtualized-auto-sizer"
+import { VariableSizeList as List } from "react-window"
 import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
@@ -295,7 +297,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
 }
 
 const _ChatMessageContainer = styled.div`
-  overflow-y: scroll;
   word-break: break-word;
   font-size: 14px;
   padding: 0px;
@@ -320,10 +321,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     filterTag: "",
   }
 
-  private chatEnd: HTMLDivElement | null
+  private listRef: React.RefObject<List> | null
 
   constructor(props: ChatProps) {
     super(props)
+    this.listRef = React.createRef()
   }
 
   componentDidMount() {
@@ -346,12 +348,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   scrollToBottom = () => {
-    // This scrolls the whole page
-    // this.chatEnd?.scrollIntoView({
-    //   behavior: "smooth",
-    // })
-    if (this.chatEnd && this.chatEnd.parentElement) {
-      this.chatEnd.parentElement.scrollTop = this.chatEnd.offsetTop
+    if (this.listRef && this.listRef.current) {
+      this.listRef.current.scrollToItem(this.state.messages.length - 1, "end")
     }
   }
 
@@ -427,12 +425,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   render() {
     const { messages, filterTag } = this.state
 
-    let msgs
+    let msgs = messages
     if (filterTag) {
       console.log(filterTag)
       msgs = messages.filter((msg) => msg.tags.includes(filterTag))
-    } else {
-      msgs = messages
     }
 
     return (
@@ -454,21 +450,30 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             </Nav.Item>
           </Nav>
           <_ChatMessageContainer className="row form-control flex-grow-1">
-            {msgs.map((msg) => (
-              <ChatMessageRC
-                user={this.props.user}
-                key={msg.id}
-                msg={msg}
-                onReact={this.onReact}
-                onDelete={this.onDeleteMessage}
-                onToggleTag={this.onToggleTag}
-              />
-            ))}
-            <div
-              ref={(el) => {
-                this.chatEnd = el
-              }}
-            />
+            <AutoSizer>
+              {({ height, width }) => (
+                <List
+                  ref={this.listRef}
+                  height={height}
+                  width={width}
+                  itemCount={msgs.length}
+                  itemSize={i => Object.keys(msgs[i].reacts).length > 0 ? 78.3167 : 54.4}
+                >
+                  {({ index, style }) => (
+                    <div style={style}>
+                      {useMemo(() => <ChatMessageRC
+                        user={this.props.user}
+                        key={msgs[index].id}
+                        msg={msgs[index]}
+                        onReact={this.onReact}
+                        onDelete={this.onDeleteMessage}
+                        onToggleTag={this.onToggleTag}
+                      />, [this.props.user, msgs[index]])}
+                    </div>
+                  )}
+                </List>
+              )}
+            </AutoSizer>
           </_ChatMessageContainer>
         </Tab.Container>
         <div
