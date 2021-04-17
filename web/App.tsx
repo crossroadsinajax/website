@@ -13,7 +13,6 @@ import { Maybe } from "~/types"
 
 import { AboutUs, Beliefs, Becoming, Contact } from "./About"
 import { Auth, Signup } from "./Auth"
-import { Error } from "./Error"
 import Giving from "./Giving"
 import Home from "./Home"
 import { Service, Services } from "./Service"
@@ -98,68 +97,61 @@ const Header: React.FC<HeaderProps> = (props) => {
 }
 
 const AppBase: React.FC<AppProps> = (props) => {
-  const { data, loading } = useUserQuery()
+  const { data } = useUserQuery()
 
-  if (loading) {
-    return <h1>loading</h1>
-  } else if (data) {
-    return (
-      <React.Fragment>
-        <Helmet>
-          <title>Crossroads Community Church</title>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta
-            name="description"
-            content="Welcome to Crossroads Community Church!"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-            integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
-            crossOrigin="anonymous"
-          />
-        </Helmet>
-        <Router>
-          <Header user={data.currentUser} />
-          <Switch>
-            <Route path="/gatherings">
-              <Services />
-            </Route>
-            <Route path="/gathering/:slug">
-              <Service user={data.currentUser} ws={props.ws} />
-            </Route>
-            <Route path="/give/">
-              <Giving />
-            </Route>
-            <Route path="/contact/">
-              <Contact />
-            </Route>
-            <Route path="/about/become-a-christian">
-              <Becoming />
-            </Route>
-            <Route path="/about/beliefs">
-              <Beliefs />
-            </Route>
-            <Route path="/about/">
-              <AboutUs />
-            </Route>
-            <Route path="/login">
-              <Auth />
-            </Route>
-            <Route path="/signup">
-              <Signup />
-            </Route>
-            <Route path="/">
-              <Home ws={props.ws} />
-            </Route>
-          </Switch>
-        </Router>
-      </React.Fragment>
-    )
-  } else {
-    return <Error />
+  let user = null
+  if (data) {
+    user = data.currentUser
   }
+
+  return (
+    <React.Fragment>
+      <Helmet>
+        <title>Crossroads Community Church</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="description"
+          content="Welcome to Crossroads Community Church!"
+        />
+      </Helmet>
+      <Router>
+        <Header user={user} />
+        <Switch>
+          <Route path="/gatherings">
+            <Services />
+          </Route>
+          <Route path="/gathering/:slug">
+            <Service user={user} ws={props.ws} />
+          </Route>
+          <Route path="/give/">
+            <Giving />
+          </Route>
+          <Route path="/contact/">
+            <Contact />
+          </Route>
+          <Route path="/about/become-a-christian">
+            <Becoming />
+          </Route>
+          <Route path="/about/beliefs">
+            <Beliefs />
+          </Route>
+          <Route path="/about/">
+            <AboutUs />
+          </Route>
+          <Route path="/login">
+            <Auth />
+          </Route>
+          <Route path="/signup">
+            <Signup />
+          </Route>
+          <Route path="/">
+            <Home ws={props.ws} />
+          </Route>
+        </Switch>
+      </Router>
+    </React.Fragment>
+  )
 }
 
 export const App = hot(AppBase)
