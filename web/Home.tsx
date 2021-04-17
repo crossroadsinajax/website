@@ -5,33 +5,57 @@ import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
 import Row from "react-bootstrap/Row"
+import Spinner from "react-bootstrap/Spinner"
 import { Link } from "react-router-dom"
 import { ParallaxProvider, ParallaxBanner } from "react-scroll-parallax"
 
 import WebSocketProvider from "./Websocket"
-import { useHomePageQuery } from "./generated-types"
+import { HomePageQuery, useHomePageQuery } from "./generated-types"
+import { Maybe } from "./types"
 
 gql`
   query HomePage {
     currentService {
-      title
       slug
+      title
     }
   }
 `
+
+const GatheringsFeature: React.FC<{
+  service: Maybe<HomePageQuery["currentService"]>
+}> = ({ service }) => {
+  let content
+  if (service) {
+    content = (
+      <>
+        <p className="lead">
+          Click below to view this week&apos;s service <b>{service.title}</b>:
+        </p>
+        <p>
+          <Link to={`gathering/${service.slug}`}>
+            <Button>View service &raquo;</Button>
+          </Link>
+        </p>
+      </>
+    )
+  } else {
+    content = <Spinner animation="border"></Spinner>
+  }
+  return (
+    <>
+      <h2>Gatherings</h2>
+      {content}
+    </>
+  )
+}
 
 type HomeProps = {
   ws: WebSocketProvider
 }
 
 const Home: React.FC<HomeProps> = () => {
-  const { data, loading } = useHomePageQuery()
-
-  if (loading || !data) {
-    return <h1>Loading...</h1>
-  }
-
-  const { currentService } = data
+  const { data } = useHomePageQuery()
 
   return (
     <Container fluid>
@@ -87,16 +111,7 @@ const Home: React.FC<HomeProps> = () => {
             </p>
           </Col>
           <Col lg="4">
-            <h2>Gatherings</h2>
-            <p className="lead">
-              Click below to view this week&apos;s service{" "}
-              <b>{currentService.title}</b>:
-            </p>
-            <p>
-              <Link to={`gathering/${currentService.slug}`}>
-                <Button>View service &raquo;</Button>
-              </Link>
-            </p>
+            <GatheringsFeature service={data?.currentService} />
           </Col>
         </Row>
         <Row>
