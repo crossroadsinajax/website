@@ -35,6 +35,11 @@ type ChatMessage = {
   tags: string[]
 }
 
+type Viewer = {
+  username: string
+  count: number
+}
+
 const ChatReactSelector: React.FC<{
   user: UserType
   react: string
@@ -375,6 +380,26 @@ const ChatTab: React.FC<{
   )
 }
 
+const _ViewersContainer = styled.div`
+  padding: 0px;
+  margin-left: unset;
+  margin-right: unset;
+`
+
+const ViewersTab: React.FC<{
+  viewers: Viewer[]
+}> = ({ viewers }) => {
+  return (
+    <_ViewersContainer className="row form-control flex-grow-1">
+      {viewers.map((v, i) => (
+        <div key={i}>
+          {v.username} {v.count > 1 && <span>({v.count})</span>}
+        </div>
+      ))}
+    </_ViewersContainer>
+  )
+}
+
 type ChatProps = {
   ws: WebSocketProvider
   user: UserType
@@ -383,12 +408,14 @@ type ChatProps = {
 
 type ChatState = {
   messages: ChatMessage[]
+  viewers: Viewer[]
   tab: "chat" | "prayer" | "viewers"
 }
 
 export default class Chat extends React.Component<ChatProps, ChatState> {
   state: ChatState = {
     messages: [],
+    viewers: [],
     tab: "chat",
   }
 
@@ -452,6 +479,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       const messages = this.state.messages.filter((m) => m.id != msg.msg_id)
       this.setState({
         messages: messages,
+      })
+    } else if (msg.type == "chat.users_update") {
+      const viewers = msg.users
+      this.setState({
+        viewers: viewers,
       })
     }
   }
@@ -527,7 +559,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         />
       )
     } else if (tab == "viewers") {
-      component = null
+      component = <ViewersTab viewers={this.state.viewers} />
     }
     return component
   }
