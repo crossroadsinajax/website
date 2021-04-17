@@ -1,5 +1,5 @@
 import moment from "moment"
-import React, { useRef, useState } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -176,12 +176,36 @@ const _ChatMessageEmojiSelector = styled.span`
   font-size: 1rem;
 `
 
+const _ChatMessageContent = styled.div`
+  padding: 0.15rem 1.5rem 0rem 0.25rem;
+`
+
+const _ChatMessageDateSpan = styled.span`
+  color: grey;
+  margin-left: 3px;
+`
+
+const _ChatMessageBody = styled.div`
+  font-size: 1rem;
+  margin-bottom: 3px;
+`
+
 type ChatMessageProps = {
   user: UserType
   msg: ChatMessage
   onReact: (msg: ChatMessage, react: string) => void
   onDelete: (msg: ChatMessage) => void
   onToggleTag: (msg: ChatMessage, tag: string) => void
+}
+
+const MemodChatMessageRC: React.FC<ChatMessageProps> = (
+  props: ChatMessageProps
+) => {
+  const mem = useMemo(() => <ChatMessageRC {...props} />, [
+    props.user,
+    props.msg,
+  ])
+  return mem
 }
 
 const ChatMessageRC: React.FC<ChatMessageProps> = ({
@@ -221,25 +245,13 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
         ))}
       </_ChatMessageTopRightControls>
 
-      <div
-        className="card-body"
-        style={{
-          padding: "0.15rem 1.5rem 0rem 0.25rem",
-        }}
-      >
+      <_ChatMessageContent className="card-body">
         <span style={{ color: authorColour(msg.author) }}>{msg.author}</span>
-        <span style={{ color: "grey", marginLeft: "3px" }}>
-          {datefmt(msg.created_at)}
-        </span>
+        <_ChatMessageDateSpan>{datefmt(msg.created_at)}</_ChatMessageDateSpan>
         <br />
-        <div
-          style={{
-            fontSize: "1rem",
-            marginBottom: "3px",
-          }}
-        >
+        <_ChatMessageBody>
           <span>{msg.body}</span>
-        </div>
+        </_ChatMessageBody>
         <footer style={{ fontSize: "14px", marginBottom: "5px" }}>
           {msgReacts.map((react, i) => (
             <ChatReactSelector
@@ -250,7 +262,7 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
             />
           ))}
         </footer>
-      </div>
+      </_ChatMessageContent>
     </_ChatMessageCard>
   )
 }
@@ -346,10 +358,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   scrollToBottom = () => {
-    // This scrolls the whole page
-    // this.chatEnd?.scrollIntoView({
-    //   behavior: "smooth",
-    // })
     if (this.chatEnd && this.chatEnd.parentElement) {
       this.chatEnd.parentElement.scrollTop = this.chatEnd.offsetTop
     }
@@ -455,7 +463,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           </Nav>
           <_ChatMessageContainer className="row form-control flex-grow-1">
             {msgs.map((msg) => (
-              <ChatMessageRC
+              <MemodChatMessageRC
                 user={this.props.user}
                 key={msg.id}
                 msg={msg}
