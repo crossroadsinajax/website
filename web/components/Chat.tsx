@@ -9,6 +9,17 @@ import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 
+const _ChatReactDiv = styled.div<{
+  filledIn: boolean
+}>`
+  padding: 2px;
+  display: inherit;
+  margin-right: 2px;
+  border: ${({ filledIn }) =>
+    !filledIn ? "1px solid rgba(0,0,0,.125)" : "1px solid rgba(0, 0, 0, .3)"};
+  border-radius: 6px;
+`
+
 type ChatMessage = {
   author: string
   body: string
@@ -24,10 +35,11 @@ type ChatMessage = {
 }
 
 const ChatReactSelector: React.FC<{
+  user: UserType
   react: string
   msg: ChatMessage
   onReact: (msg: ChatMessage, react: string) => void
-}> = ({ msg, react, onReact }) => {
+}> = ({ user, msg, react, onReact }) => {
   const [showReactors, setShowReactors] = useState(false)
   const target = useRef(null)
 
@@ -40,17 +52,18 @@ const ChatReactSelector: React.FC<{
         style={{ cursor: "pointer" }}
         onClick={() => onReact(msg, react)}
       >
-        <div
+        <_ChatReactDiv
           slot="reference"
-          style={{
-            display: "inherit",
-            border: "1px solid rgba(0,0,0,.125)",
-            borderRadius: "6px",
-          }}
+          filledIn={
+            react in msg.reacts &&
+            msg.reacts[react].reactors.includes(user.username)
+          }
         >
           <span className="ml-1">{react}</span>
-          <span className="mr-1">{msg.reacts[react].count}</span>
-        </div>
+          <span className="mr-1" style={{ marginLeft: "2px" }}>
+            {msg.reacts[react].count}
+          </span>
+        </_ChatReactDiv>
       </a>
       <Overlay target={target.current} show={showReactors} placement="right">
         {(props) => (
@@ -255,6 +268,7 @@ const ChatMessageRC: React.FC<ChatMessageProps> = ({
         <footer style={{ fontSize: "14px", marginBottom: "5px" }}>
           {msgReacts.map((react, i) => (
             <ChatReactSelector
+              user={user}
               key={react + i}
               msg={msg}
               react={react}
