@@ -298,6 +298,11 @@ type ChatInputProps = {
 const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
   const [input, setInput] = useState("")
 
+  const updateInput = (input: string) => {
+    input = input.trim()
+    setInput(input)
+  }
+
   const submit = (input: string) => {
     onSubmit(input)
     setInput("")
@@ -310,7 +315,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
         rows={1}
         autoComplete="off"
         placeholder="type your message here"
-        onChange={(e) => setInput(e.currentTarget.value)}
+        onChange={(e) => updateInput(e.currentTarget.value)}
         value={input}
         onKeyPress={(e) => {
           if (e.charCode == 13) {
