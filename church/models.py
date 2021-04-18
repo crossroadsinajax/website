@@ -338,7 +338,10 @@ class ServicePage(Page, ContentPageMixin):
     @property
     def bulletin_dict(self):
         # i dont like this
-        return self.bulletin._raw_data[0]
+        if len(self.bulletin._raw_data):
+            return self.bulletin._raw_data[0]
+        else:
+            return {}
 
     def get_context(self, request):
         context = super().get_context(request)
