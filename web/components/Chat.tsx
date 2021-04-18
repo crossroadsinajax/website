@@ -440,22 +440,28 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   componentDidMount() {
-    this.props.ws.registerOnOpen(this.onConnect)
-    this.props.ws.registerOnMessage(this.onMessage)
+    const { ws } = this.props
+    ws.registerOnOpen(this.onConnect)
+    ws.registerOnMessage(this.onMessage)
     console.debug("chat component mounted!")
   }
 
   onConnect = () => {
+    const { id, ws } = this.props
     console.debug("chat connected!")
-    this.props.ws.send({
+    ws.send({
       type: "chat.connect",
-      chat_id: this.props.id,
+      chat_id: id,
     })
   }
 
   componentWillUnmount() {
-    this.props.ws.deregisterOnOpen(this.onConnect)
-    this.props.ws.deregisterOnMessage(this.onMessage)
+    const { ws } = this.props
+    ws.deregisterOnOpen(this.onConnect)
+    ws.deregisterOnMessage(this.onMessage)
+    ws.send({
+      type: "chat.disconnect",
+    })
   }
 
   scrollToBottom = () => {

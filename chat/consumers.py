@@ -12,7 +12,6 @@ log = logging.getLogger(__name__)
 
 
 class ChatManager:
-    # TODO move this to SubConsumer
     # maintain real-time stats about a chatroom
 
     rooms = dict()

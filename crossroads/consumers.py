@@ -142,8 +142,8 @@ class Consumer(AsyncWebsocketConsumer):
         self._sub_consumers = dict(self._sub_consumers)
         super().__init__(*args, **kwargs)
 
-    def subcons(self, event):
-        # Returns the SubConsumer instance for an event
+    def _subcons(self, event):
+        # Returns the SubConsumer class for an event
         cls = registry.resolve(event)
 
         if not cls:
@@ -208,7 +208,7 @@ class Consumer(AsyncWebsocketConsumer):
                 user = await channels.auth.get_user(self.scope)
                 span.set_tag("user", user.username)
 
-                consumer = self.subcons(event)
+                consumer = self._subcons(event)
 
                 if not consumer:
                     log.error("No consumer found for event %r", text_data)
@@ -230,7 +230,7 @@ class Consumer(AsyncWebsocketConsumer):
             with tracer.start_span("ws.dispatch", child_of=ctx) as span:
                 span.set_tag(SPAN_MEASURED_KEY)
 
-                consumer = self.subcons(event)
+                consumer = self._subcons(event)
                 if not consumer:
                     span._ignore_exception(channels.exceptions.StopConsumer)
                     await super().dispatch(event)
