@@ -15,7 +15,7 @@ import { AboutUs, Beliefs, Becoming, Contact } from "./About"
 import { Auth, Signup } from "./Auth"
 import Giving from "./Giving"
 import Home from "./Home"
-import { Service, Services } from "./Service"
+import { ServicePage, Services } from "./Service"
 import WebSocketProvider from "./Websocket"
 import { useUserQuery } from "./generated-types"
 
@@ -98,11 +98,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
 const AppBase: React.FC<AppProps> = (props) => {
   const { data } = useUserQuery()
-
-  let user = null
-  if (data) {
-    user = data.currentUser
-  }
+  const user = data?.currentUser
 
   return (
     <React.Fragment>
@@ -122,7 +118,7 @@ const AppBase: React.FC<AppProps> = (props) => {
             <Services />
           </Route>
           <Route path="/gathering/:slug">
-            <Service user={user} ws={props.ws} />
+            <ServicePage user={user} ws={props.ws} />
           </Route>
           <Route path="/give/">
             <Giving />
