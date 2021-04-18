@@ -59,9 +59,9 @@ const VideoCol = styled(Col)`
 `
 
 const ChatCol = styled(Col)`
-  @media (max-width: 768px) {
-    padding-right: 5px !important;
-  }
+  padding-right: 5px !important;
+  padding-left: 5px;
+  min-height: 400px;
 `
 
 type ServiceProps = {
@@ -95,16 +95,10 @@ const Service: React.FC<ServiceProps> = (props) => {
                 url={page.streamLink}
                 playing={true}
                 controls={true}
-              ></ReactPlayer>
+              />
             </ResponsiveEmbed>
           </VideoCol>
-          <ChatCol
-            md={3}
-            style={{
-              paddingLeft: "5px",
-              minHeight: "400px",
-            }}
-          >
+          <ChatCol md={3}>
             {props.user && (
               <Chat user={props.user} id={page.pk} ws={props.ws} />
             )}
