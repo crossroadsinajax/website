@@ -560,9 +560,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   onChatScroll = () => {
     const chatEnd = this.chatEnd
     if (chatEnd?.parentElement) {
+      const parentEl = chatEnd.parentElement
       const diff =
-        chatEnd.parentElement.scrollHeight - chatEnd.parentElement.scrollTop
-      if (diff > 550) {
+        parentEl.scrollHeight - parentEl.clientHeight - parentEl.scrollTop
+      if (diff > 60) {
         this.setState({
           chatScrollPaused: true,
         })
