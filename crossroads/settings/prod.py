@@ -16,6 +16,9 @@ LOGGING = {
         },
     },
     "loggers": {
+        "chat": {"handlers": ["console"], "level": "WARN"},
+        "church": {"handlers": ["console"], "level": "WARN"},
+        "crossroads": {"handlers": ["console"], "level": "WARN"},
         "django": {
             "handlers": ["console"],
             "level": "WARN",
