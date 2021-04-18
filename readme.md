@@ -18,16 +18,15 @@ The app will run by default on port 8000. This can be configured in
 ## adding a frontend dependency
 
 ```bash
-docker-compose run web yarn add <dep>
-docker-compose up -d --build
+docker-compose exec web yarn add <dep>
 ```
 
 ## adding a backend dependency
 
 ```bash
-docker-compose run app pipenv install <dep><version>
+docker-compose exec app pip install <dep><version>
 # example
-# docker-compose run app pipenv install numpy~=1.20.0
+# docker-compose run app pip install numpy~=1.20.0
 
 docker-compose up -d --build
 ```
@@ -41,20 +40,31 @@ docker-compose exec app python manage.py graphql_schema
 docker-compose exec web yarn run gql
 ```
 
+## running migrations
+
+```bash
+# create migrations
+docker-compose exec app python manage.py makemigrations
+# apply migrations
+docker-compose exec app python manage.py migrate
+```
+
 ## useful commands
 
 ```bash
+# get a python django shell
+docker-compose exec app python manage.py shell_plus
 # format python code
-docker-compose run app riot run -s fmt
+docker-compose exec app riot run -s fmt
 # lint python code
-docker-compose run app riot run -s lint
+docker-compose exec app riot run -s lint
 # lint yaml
-docker-compose run app riot run -s yaml_lint
+docker-compose exec app riot run -s yaml_lint
 
 # format ts/js code
-docker-compose run web yarn fmt
+docker-compose exec web yarn fmt
 # lint ts/js code
-docker-compose run web yarn lint
+docker-compose exec web yarn lint
 
 # execute a shell in the server container
 docker-compose exec app fish

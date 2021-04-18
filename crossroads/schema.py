@@ -1,3 +1,5 @@
+from typing import Optional
+
 import graphene
 from graphene import relay
 from graphene_django.types import DjangoObjectType
@@ -7,6 +9,8 @@ from church import models
 
 
 class UserType(DjangoObjectType):
+    is_chatmod = graphene.Boolean(source="is_chatmod", required=True)
+
     class Meta:
         model = models.User
         fields = ["username", "first_name", "last_name"]
@@ -40,14 +44,16 @@ class ServicePageNode(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
+    current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
 
-    def resolve_current_user(self, info, **kwargs):
-        if info.context.user.is_authenticated:
-            return info.context.user
-        else:
-            return None
+    def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
+        user = info.context.user
+        return user if user.is_authenticated else None
+
+    def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
+        return models.ServicePage.current_service_page()
 
 
 schema = graphene.Schema(query=Query)

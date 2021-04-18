@@ -1,4 +1,7 @@
+from collections import defaultdict
 import logging
+from typing import List
+from typing import TypedDict
 
 from django.conf import settings
 from django.core import exceptions as exc
@@ -32,22 +35,18 @@ class ChatMessage(models.Model):
     body = models.CharField(max_length=2048)
     chat = models.ForeignKey("Chat", related_name="messages", on_delete=models.CASCADE)
 
-    @cached_property
-    def aggreacts(self):
-        # Aggregate common reacts into a dict(<emoji> = dict(count=<int>, reactors=[username]))
-        aggr = {}
+    class AggrReacts(TypedDict):
+        count: int
+        reactors: List[str]
 
+    @cached_property
+    def aggreacts(self) -> AggrReacts:
+        aggr = defaultdict(lambda: {"count": 0, "reactors": []})
         reacts = self.reacts.all()
 
         for react in reacts:
-            if react.type not in aggr:
-                aggr[react.type] = dict(
-                    count=0,
-                    reactors=[],
-                )
-            count = aggr[react.type]["count"]
-            aggr[react.type]["count"] = count + 1
-            aggr[react.type]["reactors"].append(react.user.display_name)
+            aggr[react.type]["count"] += 1
+            aggr[react.type]["reactors"].append(react.user.username)
 
         return aggr
 

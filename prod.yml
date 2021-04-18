@@ -59,6 +59,7 @@ services:
       service: datadog
     image: ghcr.io/crossroadsinajax/datadog-agent:${GIT_TAG}
     environment:
+      - DD_ENV=prod
       - DD_LOG_LEVEL=WARNING
       - DD_API_KEY_FILE=/run/secrets/datadog_api_key
     secrets:

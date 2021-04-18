@@ -1,4 +1,3 @@
-import "react-hot-loader" // Has to be imported before react + react-dom
 import {
   ApolloClient,
   ApolloProvider,
@@ -10,18 +9,18 @@ import { setContext } from "@apollo/client/link/context"
 import { onError } from "@apollo/client/link/error"
 import React from "react"
 import ReactDOM from "react-dom"
+import "react-hot-loader"
+
 import { App } from "./App"
 import WebsocketProvider from "./Websocket"
-
 import "./index.html"
-import { ThemeProvider, CssBaseline, createMuiTheme } from "@material-ui/core"
 
 declare global {
   /* eslint-disable no-unused-vars  */
   interface Window {
     CSRF_TOKEN: string
     SETTINGS: {
-      DEBUG: boolean
+      PROD: boolean
     }
   }
 }
@@ -54,21 +53,14 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const theme = createMuiTheme({
-  palette: {
-    type: "light",
-  },
-})
+const WS_PROTO = window.location.protocol == "https:" ? "wss" : "ws"
+const WS_URL = `${WS_PROTO}://${window.location.host}/ws/`
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline>
-        <WebsocketProvider url={"ws://localhost:8000/ws/"}>
-          {(props) => <App ws={props.ws} />}
-        </WebsocketProvider>
-      </CssBaseline>
-    </ThemeProvider>
+    <WebsocketProvider url={WS_URL}>
+      {(props) => <App ws={props.ws} />}
+    </WebsocketProvider>
   </ApolloProvider>,
   document.getElementById("react-app")
 )

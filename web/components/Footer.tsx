@@ -1,3 +1,4 @@
+/*
 import React from "react"
 import { Box, makeStyles, Typography } from "@material-ui/core"
 import { blueGrey } from "@material-ui/core/colors"
@@ -32,3 +33,4 @@ export const Footer: React.FC<FooterProps> = () => {
     </Box>
   )
 }
+*/
