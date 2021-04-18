@@ -25,6 +25,8 @@ LOGGING = {
         },
     },
     "loggers": {
+        "chat": {"handlers": ["console"], "level": "INFO"},
+        "church": {"handlers": ["console"], "level": "INFO"},
         "crossroads": {"handlers": ["console"], "level": "INFO"},
         "django": {
             "handlers": ["console"],
