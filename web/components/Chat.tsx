@@ -1,5 +1,6 @@
 import moment from "moment"
 import React, { useMemo, useRef, useState } from "react"
+import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -98,7 +99,6 @@ const colours = [
   "#000000",
   "#0000ff",
   "#a52a2a",
-  "#00ffff",
   "#00008b",
   "#008b8b",
   "#006400",
@@ -299,7 +299,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit }) => {
   const [input, setInput] = useState("")
 
   const updateInput = (input: string) => {
-    input = input.trim()
+    input = input.replace(/\n$/, "")
     setInput(input)
   }
 
@@ -352,6 +352,7 @@ const ChatTab: React.FC<{
   onToggleTag: (msg: ChatMessage, tag: string) => void
   filterTag: string
   chatEndRef: (ref: HTMLDivElement | null) => void
+  onScroll: () => void
 }> = ({
   user,
   messages,
@@ -360,6 +361,7 @@ const ChatTab: React.FC<{
   onToggleTag,
   filterTag,
   chatEndRef,
+  onScroll,
 }) => {
   let msgs
   if (filterTag) {
@@ -369,7 +371,10 @@ const ChatTab: React.FC<{
   }
 
   return (
-    <_ChatMessageContainer className="row form-control flex-grow-1">
+    <_ChatMessageContainer
+      className="row form-control flex-grow-1"
+      onScroll={onScroll}
+    >
       {msgs.map((msg) => (
         <MemodChatMessageRC
           user={user}
@@ -415,6 +420,8 @@ type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
   tab: "chat" | "prayer" | "viewers"
+  chatScrollPaused: boolean
+  numMissedMessages: number
 }
 
 export default class Chat extends React.Component<ChatProps, ChatState> {
@@ -422,6 +429,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     messages: [],
     viewers: [],
     tab: "chat",
+    chatScrollPaused: false,
+    numMissedMessages: 0,
   }
 
   private chatEnd: HTMLDivElement | null
@@ -450,8 +459,13 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   scrollToBottom = () => {
-    if (this.chatEnd && this.chatEnd.parentElement) {
+    const { chatScrollPaused } = this.state
+    if (!chatScrollPaused && this.chatEnd?.parentElement) {
       this.chatEnd.parentElement.scrollTop = this.chatEnd.offsetTop
+      this.setState({
+        chatScrollPaused: false,
+        numMissedMessages: 0,
+      })
     }
   }
 
@@ -464,11 +478,15 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         this.scrollToBottom
       )
     } else if (msg.type == "chat.message") {
+      const { chatScrollPaused, numMissedMessages } = this.state
       this.setState(
         {
           messages: this.state.messages.concat(msg.msg),
+          numMissedMessages: chatScrollPaused
+            ? numMissedMessages + 1
+            : numMissedMessages,
         },
-        this.scrollToBottom
+        chatScrollPaused ? () => {} : this.scrollToBottom
       )
     } else if (msg.type == "chat.message_update") {
       const messages = this.state.messages.map((m) =>
@@ -527,9 +545,34 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   setTab = (tab: "chat" | "prayer" | "viewers") => {
-    this.setState({
-      tab: tab,
-    })
+    let callback = () => {}
+    if (tab == "chat" || tab == "prayer") {
+      callback = this.scrollToBottom
+    }
+    this.setState(
+      {
+        tab: tab,
+      },
+      callback
+    )
+  }
+
+  onChatScroll = () => {
+    const chatEnd = this.chatEnd
+    if (chatEnd?.parentElement) {
+      const diff =
+        chatEnd.parentElement.scrollHeight - chatEnd.parentElement.scrollTop
+      if (diff > 550) {
+        this.setState({
+          chatScrollPaused: true,
+        })
+      } else if (this.state.chatScrollPaused) {
+        this.setState({
+          chatScrollPaused: false,
+          numMissedMessages: 0,
+        })
+      }
+    }
   }
 
   getTab = () => {
@@ -547,6 +590,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           chatEndRef={(ref) => {
             this.chatEnd = ref
           }}
+          onScroll={this.onChatScroll}
         />
       )
     } else if (tab == "prayer") {
@@ -561,6 +605,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           chatEndRef={(ref) => {
             this.chatEnd = ref
           }}
+          onScroll={() => {}}
         />
       )
     } else if (tab == "viewers") {
@@ -569,14 +614,21 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     return component
   }
 
+  onResumeScroll = () => {
+    this.setState(
+      {
+        chatScrollPaused: false,
+      },
+      this.scrollToBottom
+    )
+  }
+
   render() {
     // TODO: there is tab logic mixed in this component which is ok given that
     // it's a one-off use at the moment and the component isn't too complex.
     // It might be worth pulling this into a separate Tabs component in the future.
-    const numViewers = this.state.viewers.reduce(
-      (x: number, v: Viewer) => x + v.count,
-      0
-    )
+    const { chatScrollPaused, numMissedMessages, viewers } = this.state
+    const numViewers = viewers.reduce((x: number, v: Viewer) => x + v.count, 0)
     return (
       <div className="d-flex flex-column flex-grow-1 h-100">
         <Tab.Container defaultActiveKey="chat">
@@ -609,6 +661,22 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             marginRight: "unset",
           }}
         >
+          {chatScrollPaused && (
+            <Button
+              className="btn btn-primary form-control"
+              style={{ marginTop: -28, zIndex: 1000 }}
+              onClick={this.onResumeScroll}
+            >
+              ⏸️ chat is paused{" "}
+              {numMissedMessages > 0 && (
+                <span>
+                  {numMissedMessages} new message
+                  {numMissedMessages > 1 ? "s" : ""} below
+                </span>
+              )}
+              {" ⬇️ "}
+            </Button>
+          )}
           <ChatInput onSubmit={this.sendMsg} />
         </div>
       </div>
