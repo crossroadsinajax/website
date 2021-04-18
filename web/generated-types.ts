@@ -22,6 +22,13 @@ export type Scalars = {
    * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
    */
   Date: any
+  /**
+   * Allows use of a JSON String for input / output from the GraphQL schema.
+   *
+   * Use of this type is *not recommended* as you lose the benefits of having a defined, static
+   * schema (one of the key benefits of GraphQL).
+   */
+  JSONString: any
 }
 
 export type Query = {
@@ -68,6 +75,7 @@ export type ServicePageNode = Node & {
   description: Scalars["String"]
   streamLink: Scalars["String"]
   pk: Scalars["Int"]
+  bulletin: Scalars["JSONString"]
 }
 
 /** An object with an ID */
@@ -122,7 +130,7 @@ export type HomePageQueryVariables = Exact<{ [key: string]: never }>
 export type HomePageQuery = { __typename?: "Query" } & {
   currentService: { __typename?: "ServicePageNode" } & Pick<
     ServicePageNode,
-    "title" | "slug"
+    "slug" | "title"
   >
 }
 
@@ -224,8 +232,8 @@ export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>
 export const HomePageDocument = gql`
   query HomePage {
     currentService {
-      title
       slug
+      title
     }
   }
 `
