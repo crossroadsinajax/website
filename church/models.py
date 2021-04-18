@@ -333,6 +333,11 @@ class ServicePage(Page, ContentPageMixin):
             if doclink.include_in_email
         ]
 
+    @property
+    def bulletin_dict(self):
+        # i dont like this
+        return self.bulletin._raw_data[0]
+
     def get_context(self, request):
         context = super().get_context(request)
         context["self"] = self

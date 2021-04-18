@@ -37,8 +37,8 @@ class ServicePageNode(DjangoObjectType):
         filter_fields = ["id", "title", "slug"]
         interfaces = (relay.Node,)
 
-    def resolve_bulletin(self, info, **kwargs):
-        return { "test": "value" }
+    def resolve_bulletin(self, info, slug, **kwargs):
+        return models.ServicePage.objects.filter(slug=slug).bulletin_dict
 
 
 
