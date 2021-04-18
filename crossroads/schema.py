@@ -41,7 +41,6 @@ class ServicePageNode(DjangoObjectType):
         return models.ServicePage.objects.filter(slug=slug).bulletin_dict
 
 
-
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
     current_service = graphene.Field(ServicePageNode, required=True)
