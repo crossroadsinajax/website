@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row"
 import Spinner from "react-bootstrap/Spinner"
 import ReactPlayer from "react-player/youtube"
 import { Link, useParams } from "react-router-dom"
+import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import { Maybe } from "~/types"
 import WebSocketProvider from "~Websocket"
@@ -47,6 +48,22 @@ gql`
   }
 `
 
+const VideoCol = styled(Col)`
+  @media (max-width: 768px) {
+    padding-left: unset;
+  }
+  @media (min-width: 768px) {
+    padding-left: 5px;
+  }
+  padding-right: unset;
+`
+
+const ChatCol = styled(Col)`
+  @media (max-width: 768px) {
+    padding-right: 5px !important;
+  }
+`
+
 type ServiceProps = {
   ws: WebSocketProvider
   user: Maybe<UserType>
@@ -70,12 +87,7 @@ const Service: React.FC<ServiceProps> = (props) => {
     return (
       <Container fluid>
         <Row>
-          <Col
-            md={9}
-            style={{
-              paddingRight: "unset",
-            }}
-          >
+          <VideoCol md={9}>
             <ResponsiveEmbed aspectRatio="16by9">
               <ReactPlayer
                 width="100%"
@@ -85,8 +97,8 @@ const Service: React.FC<ServiceProps> = (props) => {
                 controls={true}
               ></ReactPlayer>
             </ResponsiveEmbed>
-          </Col>
-          <Col
+          </VideoCol>
+          <ChatCol
             md={3}
             style={{
               paddingLeft: "5px",
@@ -96,7 +108,7 @@ const Service: React.FC<ServiceProps> = (props) => {
             {props.user && (
               <Chat user={props.user} id={page.pk} ws={props.ws} />
             )}
-          </Col>
+          </ChatCol>
         </Row>
         <h2>{page.title}</h2>
         <p className="meta">{page.date}</p>
