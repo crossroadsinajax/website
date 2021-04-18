@@ -75,7 +75,7 @@ export type ServicePageNode = Node & {
   description: Scalars["String"]
   streamLink: Scalars["String"]
   pk: Scalars["Int"]
-  bulletin: Scalars["JSONString"]
+  bulletin?: Maybe<Scalars["JSONString"]>
 }
 
 /** An object with an ID */
