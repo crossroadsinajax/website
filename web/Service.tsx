@@ -8,9 +8,9 @@ import Spinner from "react-bootstrap/Spinner"
 import ReactPlayer from "react-player/youtube"
 import { Link, useParams } from "react-router-dom"
 import styled from "styled-components"
-import { UserType } from "~/generated-types"
+import { ServicePageNode, UserType } from "~/generated-types"
 import { Maybe } from "~/types"
-import WebSocketProvider from "~Websocket"
+import WebSocketProvider, { WSMessage } from "~Websocket"
 
 import { Error } from "./Error"
 import Chat from "./components/Chat"
@@ -21,6 +21,7 @@ gql`
     services(slug: $slug) {
       edges {
         node {
+          bulletin
           date
           id
           pk
@@ -64,26 +65,49 @@ const ChatCol = styled(Col)`
   min-height: 400px;
 `
 
-type ServiceProps = {
+interface ServiceProps {
   ws: WebSocketProvider
   user: Maybe<UserType>
+  page: ServicePageNode
+  refetch: () => void
 }
 
-const Service: React.FC<ServiceProps> = (props) => {
-  let { slug } = useParams()
-  const { data, loading } = useServicePageQuery({
-    variables: {
-      slug,
-    },
-  })
-
-  if (!window.SETTINGS.PROD) {
-    console.log(loading, data)
+class Service extends React.Component<ServiceProps, {}> {
+  constructor(props: ServiceProps) {
+    super(props)
   }
 
-  const page = data?.services?.edges?.[0]?.node
+  componentDidMount() {
+    const { ws } = this.props
+    ws.registerOnOpen(this.onConnect)
+    ws.registerOnMessage(this.onMessage)
+  }
 
-  if (data && page != null) {
+  componentWillUnmount() {
+    const { ws } = this.props
+    ws.deregisterOnOpen(this.onConnect)
+    ws.deregisterOnMessage(this.onMessage)
+    ws.send({
+      type: "service.disconnect",
+    })
+  }
+
+  onConnect = () => {
+    const { page, ws } = this.props
+    ws.send({
+      type: "service.connect",
+      id: page.pk,
+    })
+  }
+
+  onMessage = (msg: WSMessage) => {
+    if (msg.type == "service.update") {
+      this.props.refetch()
+    }
+  }
+
+  render() {
+    const { page, user, ws } = this.props
     return (
       <Container fluid>
         <Row>
@@ -99,9 +123,7 @@ const Service: React.FC<ServiceProps> = (props) => {
             </ResponsiveEmbed>
           </VideoCol>
           <ChatCol md={3}>
-            {props.user && (
-              <Chat user={props.user} id={page.pk} ws={props.ws} />
-            )}
+            {user && <Chat user={user} id={page.pk} ws={ws} />}
           </ChatCol>
         </Row>
         <h2>{page.title}</h2>
@@ -109,8 +131,37 @@ const Service: React.FC<ServiceProps> = (props) => {
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
       </Container>
     )
+  }
+}
+
+interface ServicePageProps {
+  user: Maybe<UserType>
+  ws: WebSocketProvider
+}
+
+const ServicePage: React.FC<ServicePageProps> = ({ user, ws }) => {
+  let { slug } = useParams()
+  const { data, loading, refetch } = useServicePageQuery({
+    variables: {
+      slug,
+    },
+  })
+
+  const page = data?.services?.edges?.[0]?.node
+
+  if (page) {
+    return (
+      <Service
+        user={user}
+        ws={ws}
+        page={page}
+        refetch={() => {
+          refetch()
+        }}
+      />
+    )
   } else if (loading) {
-    return null
+    return <Spinner animation="border"></Spinner>
   } else {
     return <Error />
   }
@@ -182,4 +233,4 @@ const Services: React.FC<ServicesProps> = () => {
     </Container>
   )
 }
-export { Service, Services }
+export { ServicePage, Services }

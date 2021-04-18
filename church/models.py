@@ -1,11 +1,13 @@
 import secrets
 
+from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from channels.layers import get_channel_layer
 from modelcluster.fields import ParentalKey
 from wagtail.core.models import Page, Orderable
 from wagtail.core import fields as wtfields, blocks
@@ -343,6 +345,17 @@ class ServicePage(Page, ContentPageMixin):
         context["self"] = self
         context["docs"] = self.documents.all()
         return context
+
+
+@receiver(models.signals.post_save, sender=ServicePage)
+def service_page_post_save(sender, instance, *args, **kwargs):
+    layer = get_channel_layer()
+    async_to_sync(layer.group_send)(
+        f"service.{instance.pk}",
+        {
+            "type": "service.update",
+        },
+    )
 
 
 class ServicePageDocumentLink(Orderable):
