@@ -1,5 +1,7 @@
+from typing import List
 from typing import Optional
 
+from django.urls import reverse
 import graphene
 from graphene import relay
 from graphene_django.types import DjangoObjectType
@@ -10,10 +12,14 @@ from church import models
 
 class UserType(DjangoObjectType):
     is_chatmod = graphene.Boolean(source="is_chatmod", required=True)
+    groups = graphene.List(graphene.String)
 
     class Meta:
         model = models.User
         fields = ["username", "first_name", "last_name"]
+
+    def resolve_groups(self, info, *args, **kwargs) -> List[str]:
+        return self.group_names
 
 
 class AuthMutation(graphene.Mutation):
@@ -30,6 +36,7 @@ class AuthMutation(graphene.Mutation):
 class ServicePageNode(DjangoObjectType):
     pk = graphene.Int(source="pk", required=True)
     bulletin = graphene.JSONString(required=False)
+    edit_url = graphene.String(required=False)
 
     class Meta:
         model = models.ServicePage
@@ -42,6 +49,15 @@ class ServicePageNode(DjangoObjectType):
         if user.is_authenticated:
             return self.bulletin_dict
         return None
+
+    def resolve_edit_url(self, info, *args, **kwargs) -> Optional[str]:
+        user = info.context.user
+        if user.is_authenticated and any(
+            g in user.group_names for g in {"Editors", "Moderators"}
+        ):
+            return reverse("wagtailadmin_pages:edit", args=[self.pk])
+        else:
+            return None
 
 
 class Query(graphene.ObjectType):

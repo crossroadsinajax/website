@@ -15,6 +15,7 @@ import WebSocketProvider, { WSMessage } from "~Websocket"
 import { Error } from "./Error"
 import Title from "./Title"
 import Chat from "./components/Chat"
+import { Userbar } from "./components/Wagtail"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 
 gql`
@@ -24,6 +25,7 @@ gql`
         node {
           bulletin
           date
+          editUrl
           id
           pk
           slug
@@ -111,6 +113,7 @@ class Service extends React.Component<ServiceProps, {}> {
     const { page, user, ws } = this.props
     return (
       <Container fluid>
+        {page.editUrl && <Userbar url={page.editUrl} />}
         <Row>
           <VideoCol md={9}>
             <ResponsiveEmbed aspectRatio="16by9">
@@ -201,7 +204,7 @@ const Services: React.FC<ServicesProps> = () => {
   }
 
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="Gatherings" />
       <h1>Sunday Gatherings</h1>
       <p>
@@ -226,14 +229,11 @@ const Services: React.FC<ServicesProps> = () => {
         <br />
         During COVID-19 we are meeting online only, through our website at 10:30
         a.m. EST on Sunday mornings, every Sunday morning! Please feel free to
-        join us using the links on the Service links page or contact &nbsp;
-        <a href="mailto:kyle@crossroadsajax.church">
-          kyle@crossroadsajax.church
-        </a>
-        &nbsp; for access! Our Ministry Centre is closed, but our ministry
-        continues. In partnership with Johanne’s House, Southside Foodbank, John
-        Howard Society, and other tremendous organizations, we seek to serve the
-        Ajax community uninterrupted.
+        join us as a guest or <Link to="/signup">sign up</Link>. Our Ministry
+        Centre is closed, but our ministry continues. In partnership with
+        Johanne’s House, Southside Foodbank, John Howard Society, and other
+        tremendous organizations, we seek to serve the Ajax community
+        uninterrupted.
       </p>
       {listing}
     </Container>

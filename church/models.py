@@ -1,4 +1,5 @@
 import secrets
+from typing import List
 
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AbstractUser
@@ -60,31 +61,31 @@ class User(AbstractUser):
         return display_name
 
     @cached_property
-    def group_names(self):
+    def group_names(self) -> List[str]:
         return [g.name for g in self.groups.all()]
 
     @cached_property
-    def is_chatmod(self):
+    def is_chatmod(self) -> bool:
         return self.is_superuser or "chatmod" in [g.name for g in self.groups.all()]
 
     @cached_property
-    def is_pastor(self):
+    def is_pastor(self) -> bool:
         return "pastor" in self.group_names
 
     @cached_property
-    def is_streamer(self):
+    def is_streamer(self) -> bool:
         return "streamer" in self.group_names
 
     @cached_property
-    def is_member(self):
+    def is_member(self) -> bool:
         return "member" in self.group_names
 
     @cached_property
-    def is_guest(self):
+    def is_guest(self) -> bool:
         return "guest" in self.group_names
 
     @cached_property
-    def is_mod(self):
+    def is_mod(self) -> bool:
         return "chat_mod" in self.group_names
 
     def get_next_service_link(self):

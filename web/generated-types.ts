@@ -61,6 +61,7 @@ export type UserType = {
   firstName: Scalars["String"]
   lastName: Scalars["String"]
   isChatmod: Scalars["Boolean"]
+  groups?: Maybe<Array<Maybe<Scalars["String"]>>>
 }
 
 export type ServicePageNode = Node & {
@@ -76,6 +77,7 @@ export type ServicePageNode = Node & {
   streamLink: Scalars["String"]
   pk: Scalars["Int"]
   bulletin?: Maybe<Scalars["JSONString"]>
+  editUrl?: Maybe<Scalars["String"]>
 }
 
 /** An object with an ID */
@@ -120,7 +122,7 @@ export type UserQuery = { __typename?: "Query" } & {
   currentUser?: Maybe<
     { __typename?: "UserType" } & Pick<
       UserType,
-      "username" | "firstName" | "lastName" | "isChatmod"
+      "username" | "firstName" | "lastName" | "isChatmod" | "groups"
     >
   >
 }
@@ -149,6 +151,7 @@ export type ServicePageQuery = { __typename?: "Query" } & {
                 ServicePageNode,
                 | "bulletin"
                 | "date"
+                | "editUrl"
                 | "id"
                 | "pk"
                 | "slug"
@@ -192,6 +195,7 @@ export const UserDocument = gql`
       firstName
       lastName
       isChatmod
+      groups
     }
   }
 `
@@ -288,6 +292,7 @@ export const ServicePageDocument = gql`
         node {
           bulletin
           date
+          editUrl
           id
           pk
           slug
