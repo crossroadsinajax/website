@@ -1,13 +1,16 @@
 import { gql } from "@apollo/client"
 import React from "react"
+import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav"
 import NavDropdown from "react-bootstrap/NavDropdown"
 import Navbar from "react-bootstrap/Navbar"
+import Row from "react-bootstrap/Row"
 import { Helmet } from "react-helmet"
 import { hot } from "react-hot-loader/root"
 import { Link } from "react-router-dom"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
+import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import { Maybe } from "~/types"
 
@@ -34,11 +37,9 @@ gql`
   }
 `
 
-type HeaderProps = {
+const Header: React.FC<{
   user: Maybe<UserType>
-}
-
-const Header: React.FC<HeaderProps> = (props) => {
+}> = (props) => {
   const { user } = props
   return (
     <Navbar expand="lg" bg="light" style={{ padding: "0rem 1rem" }}>
@@ -96,6 +97,51 @@ const Header: React.FC<HeaderProps> = (props) => {
   )
 }
 
+const _Footer = styled.footer`
+  ul {
+    list-style-type: none;
+  }
+`
+
+const Footer: React.FC<{}> = () => {
+  return (
+    <_Footer className="mt-5 pt-4 pb-3 bg-light">
+      <Container>
+        <Row>
+          <Col lg="5" xs="12">
+            <h2>Crossroads Community Church</h2>
+            <p>Learning to love God, each other and all people!</p>
+          </Col>
+          <Col lg="3" xs="12">
+            <h4>Links</h4>
+            <ul className="m-0 p-0">
+              <li>
+                - <Link to="/about">About us</Link>
+              </li>
+              <li>
+                - <Link to="/gatherings">Gatherings</Link>
+              </li>
+              <li>
+                - <Link to="/give">Giving</Link>
+              </li>
+            </ul>
+          </Col>
+          <Col lg="4" xs="12">
+            <h4>Location</h4>
+            <p>520 Westney Rd South | Ajax, Ontario | L1S6W6</p>
+            <p>
+              <a href="mailto:lynn@crossroadsajax.church">
+                lynn@crossroadsajax.church
+              </a>
+            </p>
+            <p>905-426-4962</p>
+          </Col>
+        </Row>
+      </Container>
+    </_Footer>
+  )
+}
+
 const AppBase: React.FC<AppProps> = (props) => {
   const { data } = useUserQuery()
   const user = data?.currentUser
@@ -145,6 +191,7 @@ const AppBase: React.FC<AppProps> = (props) => {
             <Home ws={props.ws} />
           </Route>
         </Switch>
+        <Footer />
       </Router>
     </React.Fragment>
   )
