@@ -1,11 +1,15 @@
 import React from "react"
+import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
+import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
+import Row from "react-bootstrap/Row"
+import { Link } from "react-router-dom"
 
 import Title from "./Title"
 
 const AboutUs: React.FC<{}> = () => {
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="About us" />
       <h1>About us</h1>
       <p>
@@ -57,7 +61,7 @@ const AboutUs: React.FC<{}> = () => {
 
 const Beliefs: React.FC<{}> = () => {
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="Our beliefs" />
       <h1>Our beliefs</h1>
       <p>
@@ -161,7 +165,7 @@ const Beliefs: React.FC<{}> = () => {
 
 const Becoming: React.FC<{}> = () => {
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="Becoming a Christian" />
       <h1>Becoming a Christian</h1>
       <p>
@@ -202,17 +206,13 @@ const Becoming: React.FC<{}> = () => {
 
 const Contact: React.FC<{}> = () => {
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="Contact us" />
       <h1>Contact us</h1>
       <p>
         <b>During COVID-19</b> we are meeting online only, through our website
         at 10:30 a.m. EST on Sunday mornings, every Sunday morning! Please feel
-        free to join us in the Service links page or contact{" "}
-        <a href="mailto:kyle@crossroadsajax.church">
-          kyle@crossroadsajax.church
-        </a>{" "}
-        for access to the interactive chat and prayer requests.
+        free to join us by <Link to="/signup">signing up</Link>.
       </p>
 
       <p>
@@ -222,17 +222,37 @@ const Contact: React.FC<{}> = () => {
         community uninterrupted.
       </p>
 
-      <p>
-        <b>Address</b>
-      </p>
-      <p>18-520 Westney Rd S</p>
-      <p>Ajax, ON L1S 6W6</p>
-      <p>Canada</p>
-
-      <p>
-        <b>Email</b>
-      </p>
-      <a href="mailto:lynn@crossroadsinajax.org">lynn@crossroadsinajax.org</a>
+      <Row>
+        <Col className="text-center mt-5">
+          <p>
+            <b>Email</b>
+            <br />
+            <a href="mailto:lynn@crossroadsinajax.org">
+              lynn@crossroadsinajax.org
+            </a>
+          </p>
+          <p>
+            <b>Phone</b>
+            <p>905-426-4962</p>
+          </p>
+          <p>
+            <b>Address</b>
+          </p>
+          <p>18-520 Westney Rd S</p>
+          <p>Ajax, ON L1S 6W6</p>
+          <p>Canada</p>
+        </Col>
+        <Col>
+          <ResponsiveEmbed>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2878.180621828271!2d-79.03499828878361!3d43.831352692580005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89d4de33aa400001%3A0x4e587971b11f0898!2s520%20Westney%20Rd%20S%20Unit%2018%2C%20Ajax%2C%20ON%20L1S%206W6!5e0!3m2!1sen!2sca!4v1618803109164!5m2!1sen!2sca"
+              width="600"
+              height="450"
+              loading="lazy"
+            ></iframe>
+          </ResponsiveEmbed>
+        </Col>
+      </Row>
     </Container>
   )
 }

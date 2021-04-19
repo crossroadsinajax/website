@@ -105,7 +105,7 @@ const _Footer = styled.footer`
 
 const Footer: React.FC<{}> = () => {
   return (
-    <_Footer className="mt-5 pt-4 pb-3 bg-light">
+    <_Footer className="mt-5 pt-4 pb-2 bg-light border-top">
       <Container>
         <Row>
           <Col lg="5" xs="12">

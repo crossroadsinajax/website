@@ -7,7 +7,7 @@ type GivingProps = {}
 
 const Giving: React.FC<GivingProps> = () => {
   return (
-    <Container>
+    <Container className="mt-4">
       <Title text="Giving" />
       <div className="text-center">
         <h1>Giving</h1>
@@ -16,9 +16,7 @@ const Giving: React.FC<GivingProps> = () => {
           ministries
         </p>
       </div>
-      <p></p>
-
-      <Container>
+      <Container className="mt-4">
         <div className="card-deck mb-3 text-center">
           <div className="card mb-4 shadow-sm">
             <div className="card-header">

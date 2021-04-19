@@ -18,8 +18,8 @@ const _ChatReactDiv = styled.div<{
   margin-right: 2px;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 6px;
-  background-color: ${({ filledIn }) => (filledIn ? "#007bff" : "")};
-  color: ${({ filledIn }) => (filledIn ? "white" : "")};
+  background-color: ${({ filledIn }) => (filledIn ? "#d5fadd" : "")};
+  color: ${({ filledIn }) => (filledIn ? "black" : "")};
 `
 
 type ChatMessage = {
