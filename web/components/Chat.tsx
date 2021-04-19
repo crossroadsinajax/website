@@ -465,7 +465,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   scrollToBottom = () => {
-    const { chatScrollPaused } = this.state
+    const { chatScrollPaused, tab } = this.state
+    if (tab != "chat") {
+      return
+    }
     if (!chatScrollPaused && this.chatEnd?.parentElement) {
       this.chatEnd.parentElement.scrollTop = this.chatEnd.offsetTop
       this.setState({
