@@ -13,6 +13,7 @@ import { Maybe } from "~/types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 
 import { Error } from "./Error"
+import Title from "./Title"
 import Chat from "./components/Chat"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 
@@ -152,14 +153,17 @@ const ServicePage: React.FC<ServicePageProps> = ({ user, ws }) => {
 
   if (page) {
     return (
-      <Service
-        user={user}
-        ws={ws}
-        page={page}
-        refetch={() => {
-          refetch()
-        }}
-      />
+      <>
+        <Title text={page.title} />
+        <Service
+          user={user}
+          ws={ws}
+          page={page}
+          refetch={() => {
+            refetch()
+          }}
+        />
+      </>
     )
   } else if (loading) {
     return <Spinner animation="border"></Spinner>
@@ -198,6 +202,7 @@ const Services: React.FC<ServicesProps> = () => {
 
   return (
     <Container>
+      <Title text="Gatherings" />
       <h1>Sunday Gatherings</h1>
       <p>
         We gather every Sunday as a community to be encouraged and reminded that

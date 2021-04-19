@@ -1,9 +1,12 @@
 import React from "react"
 import Container from "react-bootstrap/Container"
 
+import Title from "./Title"
+
 const AboutUs: React.FC<{}> = () => {
   return (
     <Container>
+      <Title text="About us" />
       <h1>About us</h1>
       <p>
         Crossroads Community Church has been in Ajax since 1995. Since 2009 we
@@ -55,6 +58,7 @@ const AboutUs: React.FC<{}> = () => {
 const Beliefs: React.FC<{}> = () => {
   return (
     <Container>
+      <Title text="Our beliefs" />
       <h1>Our beliefs</h1>
       <p>
         <b>We believe in God</b> — Do you believe that there is a God? We do!
@@ -158,6 +162,7 @@ const Beliefs: React.FC<{}> = () => {
 const Becoming: React.FC<{}> = () => {
   return (
     <Container>
+      <Title text="Becoming a Christian" />
       <h1>Becoming a Christian</h1>
       <p>
         God loves all people, but He is hurt and angry at the many ways we
@@ -198,6 +203,7 @@ const Becoming: React.FC<{}> = () => {
 const Contact: React.FC<{}> = () => {
   return (
     <Container>
+      <Title text="Contact us" />
       <h1>Contact us</h1>
       <p>
         <b>During COVID-19</b> we are meeting online only, through our website

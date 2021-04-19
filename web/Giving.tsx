@@ -1,11 +1,14 @@
 import React from "react"
 import Container from "react-bootstrap/Container"
 
+import Title from "./Title"
+
 type GivingProps = {}
 
 const Giving: React.FC<GivingProps> = () => {
   return (
     <Container>
+      <Title text="Giving" />
       <h1>Giving</h1>
       <p>
         There are multiple ways to donate to support Crossroads and its
