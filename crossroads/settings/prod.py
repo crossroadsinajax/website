@@ -24,6 +24,8 @@ LOGGING = {
             "level": "WARN",
         },
         "ddtrace": {"handlers": ["console"], "level": "WARN"},
+        "graphql": {"handlers": ["console"], "level": "WARN"},
+        "graphene": {"handlers": ["console"], "level": "WARN"},
     },
 }
 
