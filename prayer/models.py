@@ -1,6 +1,9 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.core import exceptions
 from django.conf import settings
 from django.db import models
+from django.dispatch import receiver
 
 
 class PrayerRequestReact(models.Model):
@@ -70,3 +73,14 @@ class PrayerRequest(models.Model):
         if pr.author != user:
             raise exceptions.PermissionDenied("")
         return pr
+
+
+@receiver(models.signals.post_save, sender=PrayerRequest)
+def service_page_post_save(sender, instance, *args, **kwargs):
+    layer = get_channel_layer()
+    async_to_sync(layer.group_send)(
+        "prayer",
+        {
+            "type": "prayer.update",
+        },
+    )

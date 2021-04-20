@@ -29,6 +29,12 @@ export type Scalars = {
    * schema (one of the key benefits of GraphQL).
    */
   JSONString: any
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: any
 }
 
 export type Query = {
@@ -38,6 +44,7 @@ export type Query = {
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
+  prayerRequests: PrayerRequestNodeConnection
 }
 
 export type QueryServiceArgs = {
@@ -52,6 +59,14 @@ export type QueryServicesArgs = {
   id?: Maybe<Scalars["ID"]>
   title?: Maybe<Scalars["String"]>
   slug?: Maybe<Scalars["String"]>
+}
+
+export type QueryPrayerRequestsArgs = {
+  before?: Maybe<Scalars["String"]>
+  after?: Maybe<Scalars["String"]>
+  first?: Maybe<Scalars["Int"]>
+  last?: Maybe<Scalars["Int"]>
+  id?: Maybe<Scalars["ID"]>
 }
 
 export type UserType = {
@@ -116,13 +131,61 @@ export type ServicePageNodeEdge = {
   cursor: Scalars["String"]
 }
 
+export type PrayerRequestNodeConnection = {
+  __typename?: "PrayerRequestNodeConnection"
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<PrayerRequestNodeEdge>>
+}
+
+/** A Relay edge containing a `PrayerRequestNode` and its cursor. */
+export type PrayerRequestNodeEdge = {
+  __typename?: "PrayerRequestNodeEdge"
+  /** The item at the end of the edge */
+  node?: Maybe<PrayerRequestNode>
+  /** A cursor for use in pagination */
+  cursor: Scalars["String"]
+}
+
+export type PrayerRequestNode = Node & {
+  __typename?: "PrayerRequestNode"
+  createdAt: Scalars["DateTime"]
+  bodyVisibility: PrayerRequestBodyVisibility
+  providedName: Scalars["String"]
+  body: Scalars["String"]
+  note: Scalars["String"]
+  state: PrayerRequestState
+  /** The ID of the object. */
+  id: Scalars["ID"]
+  pk: Scalars["Int"]
+}
+
+/** An enumeration. */
+export enum PrayerRequestBodyVisibility {
+  /** Only you */
+  A = "A_",
+  /** Only Crossroads members */
+  Member = "MEMBER",
+  /** Only Crossroads prayer team members */
+  PrayerTeam = "PRAYER_TEAM",
+}
+
+/** An enumeration. */
+export enum PrayerRequestState {
+  /** Active */
+  Act = "ACT",
+  /** Answered */
+  Ans = "ANS",
+}
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
   currentUser?: Maybe<
     { __typename?: "UserType" } & Pick<
       UserType,
-      "username" | "firstName" | "lastName" | "isChatmod" | "groups"
+      "username" | "firstName" | "lastName" | "isChatmod"
     >
   >
 }
@@ -134,6 +197,31 @@ export type HomePageQuery = { __typename?: "Query" } & {
     ServicePageNode,
     "slug" | "title"
   >
+}
+
+export type PrayerPageQueryVariables = Exact<{ [key: string]: never }>
+
+export type PrayerPageQuery = { __typename?: "Query" } & {
+  prayerRequests: { __typename?: "PrayerRequestNodeConnection" } & {
+    edges: Array<
+      Maybe<
+        { __typename?: "PrayerRequestNodeEdge" } & {
+          node?: Maybe<
+            { __typename?: "PrayerRequestNode" } & Pick<
+              PrayerRequestNode,
+              | "createdAt"
+              | "pk"
+              | "providedName"
+              | "body"
+              | "bodyVisibility"
+              | "note"
+              | "state"
+            >
+          >
+        }
+      >
+    >
+  }
 }
 
 export type ServicePageQueryVariables = Exact<{
@@ -195,7 +283,6 @@ export const UserDocument = gql`
       firstName
       lastName
       isChatmod
-      groups
     }
   }
 `
@@ -284,6 +371,69 @@ export type HomePageLazyQueryHookResult = ReturnType<
 export type HomePageQueryResult = Apollo.QueryResult<
   HomePageQuery,
   HomePageQueryVariables
+>
+export const PrayerPageDocument = gql`
+  query PrayerPage {
+    prayerRequests {
+      edges {
+        node {
+          createdAt
+          pk
+          providedName
+          body
+          bodyVisibility
+          note
+          state
+        }
+      }
+    }
+  }
+`
+
+/**
+ * __usePrayerPageQuery__
+ *
+ * To run a query within a React component, call `usePrayerPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePrayerPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePrayerPageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePrayerPageQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    PrayerPageQuery,
+    PrayerPageQueryVariables
+  >
+) {
+  return Apollo.useQuery<PrayerPageQuery, PrayerPageQueryVariables>(
+    PrayerPageDocument,
+    baseOptions
+  )
+}
+export function usePrayerPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PrayerPageQuery,
+    PrayerPageQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<PrayerPageQuery, PrayerPageQueryVariables>(
+    PrayerPageDocument,
+    baseOptions
+  )
+}
+export type PrayerPageQueryHookResult = ReturnType<typeof usePrayerPageQuery>
+export type PrayerPageLazyQueryHookResult = ReturnType<
+  typeof usePrayerPageLazyQuery
+>
+export type PrayerPageQueryResult = Apollo.QueryResult<
+  PrayerPageQuery,
+  PrayerPageQueryVariables
 >
 export const ServicePageDocument = gql`
   query ServicePage($slug: String!) {

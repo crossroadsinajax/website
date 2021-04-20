@@ -8,6 +8,7 @@ from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from church import models
+from prayer.models import PrayerRequest
 
 
 class UserType(DjangoObjectType):
@@ -60,11 +61,29 @@ class ServicePageNode(DjangoObjectType):
             return None
 
 
+class PrayerRequestNode(DjangoObjectType):
+    pk = graphene.Int(source="pk", required=True)
+
+    class Meta:
+        model = PrayerRequest
+        only_fields = [
+            "provided_name",
+            "note",
+            "state",
+            "body_visibility",
+            "body",
+            "created_at",
+        ]
+        filter_fields = ["id"]
+        interfaces = (relay.Node,)
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
     current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
+    prayer_requests = DjangoFilterConnectionField(PrayerRequestNode, required=True)
 
     def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
         user = info.context.user
