@@ -60,6 +60,9 @@ type PrayerRequests = PrayerPageQuery["prayerRequests"]
 type PrayerRequest = NonNullable<
   NonNullable<NonNullable<PrayerRequests["edges"]>[0]>["node"]
 >
+type PrayerRequestReact = NonNullable<
+  NonNullable<PrayerRequest["reacts"]["edges"]>[0]
+>["node"]
 
 const ADD_PRAYER_REQUEST = gql`
   mutation AddPrayerRequest(
@@ -197,7 +200,15 @@ const PrayerCard: React.FC<{
   onDelete: (id: number) => void
   onResolve: (id: number) => void
   onActivate: (id: number) => void
-}> = ({ prayerRequest, onDelete, onResolve, onActivate }) => {
+  onReact: (id: number, react: string) => void
+}> = ({ prayerRequest, onDelete, onResolve, onActivate, onReact }) => {
+  const { body, pk } = prayerRequest
+  let reacts: PrayerRequestReact[] = []
+  if (prayerRequest.reacts.edges) {
+    reacts = prayerRequest.reacts.edges.map((e) => e && e.node)
+  }
+  const prayReacts = reacts.filter((r) => r?.type === "🙏")
+  const praiseReacts = reacts.filter((r) => r?.type === "🙌")
   return (
     <Card>
       <div className="float-right">
@@ -207,28 +218,30 @@ const PrayerCard: React.FC<{
           title=""
         >
           {prayerRequest.state === PrayerRequestState.Act && (
-            <Dropdown.Item onClick={() => onResolve(prayerRequest.pk)}>
-              Resolve
-            </Dropdown.Item>
+            <Dropdown.Item onClick={() => onResolve(pk)}>Resolve</Dropdown.Item>
           )}
           {prayerRequest.state === PrayerRequestState.Res && (
-            <Dropdown.Item onClick={() => onActivate(prayerRequest.pk)}>
+            <Dropdown.Item onClick={() => onActivate(pk)}>
               Unresolve
             </Dropdown.Item>
           )}
           <Dropdown.Item>Edit</Dropdown.Item>
-          <DropdownItemWarning onClick={() => onDelete(prayerRequest.pk)}>
+          <DropdownItemWarning onClick={() => onDelete(pk)}>
             Delete
           </DropdownItemWarning>
         </_PrayerCardMenuButton>
       </div>
       <Card.Body>
-        <Card.Text>{prayerRequest.body}</Card.Text>
+        <Card.Text>{body}</Card.Text>
         <footer>
-          <span>🙏</span>
-          <span className="ml-1">0</span>
-          <span className="ml-2">🙌</span>
-          <span className="ml-1">0</span>
+          <a onClick={() => onReact(pk, "🙏")} style={{ cursor: "pointer" }}>
+            <span>🙏</span>
+            <span className="ml-1">{prayReacts.length}</span>
+          </a>
+          <a onClick={() => onReact(pk, "🙌")} style={{ cursor: "pointer" }}>
+            <span className="ml-2">🙌</span>
+            <span className="ml-1">{praiseReacts.length}</span>
+          </a>
           <small className="text-muted float-right">
             {prayerRequest.providedName && "--"} {prayerRequest.providedName}
           </small>
@@ -300,6 +313,15 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
     })
   }
 
+  onReact = (id: number, react: string) => {
+    const { ws } = this.props
+    ws.send({
+      type: "prayer.react",
+      id,
+      react,
+    })
+  }
+
   onResolve = (id: number) => {
     const { ws } = this.props
     ws.send({
@@ -343,6 +365,7 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
                     prayerRequest={e.node}
                     onActivate={this.onActivate}
                     onDelete={this.onDelete}
+                    onReact={this.onReact}
                     onResolve={this.onResolve}
                   />
                 )
@@ -365,6 +388,7 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
                   onActivate={this.onActivate}
                   prayerRequest={e.node}
                   onDelete={this.onDelete}
+                  onReact={this.onReact}
                   onResolve={this.onResolve}
                 />
               )
@@ -390,6 +414,7 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
                   prayerRequest={e.node}
                   onDelete={this.onDelete}
                   onResolve={this.onResolve}
+                  onReact={this.onReact}
                   onActivate={this.onActivate}
                 />
               )

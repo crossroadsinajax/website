@@ -100,12 +100,25 @@ class PrayerRequest(models.Model):
         else:
             raise PermissionError
 
+    def react(self, user: "User", react: str) -> None:
+        assert user.is_authenticated
+        existing_reacts = PrayerRequestReact.objects.filter(
+            item=self, type=react, user=user
+        )
+        if len(existing_reacts):
+            for r in existing_reacts:
+                r.delete()
+            return
+        PrayerRequestReact.objects.create(item=self, type=react, user=user)
+
     def react_count(self, emoji: str):
         return len(PrayerRequestReact.objects.filter(type=emoji, item=self))
 
 
 @receiver(models.signals.post_delete, sender=PrayerRequest)
 @receiver(models.signals.post_save, sender=PrayerRequest)
+@receiver(models.signals.post_save, sender=PrayerRequestReact)
+@receiver(models.signals.post_delete, sender=PrayerRequestReact)
 def prayer_update(sender, instance, *args, **kwargs):
     layer = get_channel_layer()
     async_to_sync(layer.group_send)(

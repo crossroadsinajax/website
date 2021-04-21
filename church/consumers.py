@@ -42,6 +42,15 @@ class PrayerConsumer(SubConsumer):
             self.group_name = "prayer"
             await self.group_join(self.group_name)
             log.info("%r joined prayer %r", user, self.group_name)
+        elif _type == "prayer.react":
+            if not user.is_authenticated:
+                log.warning("unauthenticated user attempted to react to prayer request")
+                return
+            pk = int(event["id"])
+            react = event["react"]
+            pr = await sync2async(PrayerRequest.objects.get)(pk=pk)
+            await sync2async(pr.react)(user, react)
+            log.info("user %r reacted %r to prayer request %r", user, react, pk)
         elif _type == "prayer.resolve":
             pk = int(event["id"])
             pr = await sync2async(PrayerRequest.objects.get)(pk=pk)
