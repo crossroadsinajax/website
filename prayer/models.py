@@ -1,9 +1,15 @@
+from typing import TYPE_CHECKING
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.core import exceptions
 from django.conf import settings
 from django.db import models
+from django.db.models import QuerySet
 from django.dispatch import receiver
+
+if TYPE_CHECKING:
+    from church.models import User
 
 
 class PrayerRequestReact(models.Model):
@@ -46,41 +52,61 @@ class PrayerRequest(models.Model):
     state = models.CharField(max_length=3, choices=STATE_CHOICES, default=STATE_ACTIVE)
 
     @classmethod
-    def for_user(cls, user):
+    def for_user(cls, user: "User") -> QuerySet:
         prayer_requests = cls.objects.filter(author=user)
         return prayer_requests
 
     @classmethod
-    def crossroads_requests_for_user(cls, user):
+    def crossroads_requests_for_user(cls, user: "User") -> QuerySet:
         groups = [g.name for g in user.groups.all()]
         prayer_requests = cls.objects.filter(
             models.Q(body_visibility__in=groups) | models.Q(author=user)
         )
         return prayer_requests
 
-    def react_count(self, emoji):
-        return len(PrayerRequestReact.objects.filter(type=emoji, item=self))
-
-    @property
-    def prayer_react_count(self):
-        return len(PrayerRequestReact.objects.filter(type="🙏", item=self))
-
-    @property
-    def praise_react_count(self):
-        return len(PrayerRequestReact.objects.filter(type="🙌", item=self))
-
     @classmethod
-    def get_for_user(cls, pr_id, user):
-        # Only returns the PR for pr_id if user owns it
-        # else raises permission denied
-        pr = cls.objects.get(pk=pr_id)
+    def get_for_user(cls, pk: int, user: "User") -> "PrayerRequest":
+        pr = cls.objects.get(pk=pk)
         if pr.author != user:
             raise exceptions.PermissionDenied("")
         return pr
 
+    @property
+    def prayer_react_count(self) -> int:
+        return len(PrayerRequestReact.objects.filter(type="🙏", item=self))
 
+    @property
+    def praise_react_count(self) -> int:
+        return len(PrayerRequestReact.objects.filter(type="🙌", item=self))
+
+    def safe_delete(self, user: "User") -> None:
+        # TODO: does allow other users (eg prayer team) to delete requests
+        if self.author is user or user.has_perm("prayer.delete_prayerrequest"):
+            self.delete()
+        else:
+            raise PermissionError
+
+    def safe_resolve(self, user: "User") -> None:
+        if self.author is user or user.has_perm("prayer.change_prayerrequest"):
+            self.state = self.STATE_RESOLVED
+            self.save()
+        else:
+            raise PermissionError
+
+    def safe_activate(self, user: "User") -> None:
+        if self.author is user or user.has_perm("prayer.change_prayerrequest"):
+            self.state = self.STATE_ACTIVE
+            self.save()
+        else:
+            raise PermissionError
+
+    def react_count(self, emoji: str):
+        return len(PrayerRequestReact.objects.filter(type=emoji, item=self))
+
+
+@receiver(models.signals.post_delete, sender=PrayerRequest)
 @receiver(models.signals.post_save, sender=PrayerRequest)
-def prayer_post_save(sender, instance, *args, **kwargs):
+def prayer_update(sender, instance, *args, **kwargs):
     layer = get_channel_layer()
     async_to_sync(layer.group_send)(
         "prayer.prayer",

@@ -10,6 +10,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 
 from church import models
 from prayer.models import PrayerRequest
+from prayer.models import PrayerRequestReact
 
 
 class UserType(DjangoObjectType):
@@ -62,8 +63,20 @@ class ServicePageNode(DjangoObjectType):
             return None
 
 
+class PrayerRequestReactNode(DjangoObjectType):
+    class Meta:
+        model = PrayerRequestReact
+        only_fields = [
+            "user",
+            "type",
+        ]
+        filter_fields = ["type"]
+        interfaces = (relay.Node,)
+
+
 class PrayerRequestNode(DjangoObjectType):
     pk = graphene.Int(source="pk", required=True)
+    reacts = DjangoFilterConnectionField(PrayerRequestReactNode, required=True)
 
     class Meta:
         model = PrayerRequest

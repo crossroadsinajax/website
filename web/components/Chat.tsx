@@ -10,6 +10,8 @@ import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 
+import { DropdownItemWarning } from "./"
+
 const _ChatReactDiv = styled.div<{
   filledIn: boolean
 }>`
@@ -134,10 +136,6 @@ const authorColour = (name: string) => {
   return colours[Math.abs(hashCode(name)) % (colours.length - 1)]
 }
 
-const _WarningDropdownMenuItem = styled(Dropdown.Item)`
-  color: red;
-`
-
 const ChatMessageModControls: React.FC<{
   msg: ChatMessage
   onDelete: (msg: ChatMessage) => void
@@ -156,12 +154,12 @@ const ChatMessageModControls: React.FC<{
           {msg.tags.includes("pr") ? "Untag" : "Tag"}
           {" as #pr"}
         </Dropdown.Item>
-        <_WarningDropdownMenuItem onClick={() => onDelete(msg)}>
+        <DropdownItemWarning onClick={() => onDelete(msg)}>
           Delete message
-        </_WarningDropdownMenuItem>
-        <_WarningDropdownMenuItem onClick={() => onDelete(msg)}>
+        </DropdownItemWarning>
+        <DropdownItemWarning onClick={() => onDelete(msg)}>
           Delete all messages from user
-        </_WarningDropdownMenuItem>
+        </DropdownItemWarning>
       </Dropdown.Menu>
     </Dropdown>
   )

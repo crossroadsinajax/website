@@ -66,7 +66,9 @@ export type QueryPrayerRequestsArgs = {
   after?: Maybe<Scalars["String"]>
   first?: Maybe<Scalars["Int"]>
   last?: Maybe<Scalars["Int"]>
-  id?: Maybe<Scalars["ID"]>
+  createdAt?: Maybe<Scalars["DateTime"]>
+  updatedAt?: Maybe<Scalars["DateTime"]>
+  state?: Maybe<Scalars["String"]>
 }
 
 export type UserType = {
@@ -152,6 +154,8 @@ export type PrayerRequestNode = Node & {
   __typename?: "PrayerRequestNode"
   createdAt: Scalars["DateTime"]
   bodyVisibility: PrayerRequestBodyVisibility
+  author: UserType
+  includeName: Scalars["Boolean"]
   providedName: Scalars["String"]
   body: Scalars["String"]
   note: Scalars["String"]
@@ -159,6 +163,15 @@ export type PrayerRequestNode = Node & {
   /** The ID of the object. */
   id: Scalars["ID"]
   pk: Scalars["Int"]
+  reacts: PrayerRequestReactNodeConnection
+}
+
+export type PrayerRequestNodeReactsArgs = {
+  before?: Maybe<Scalars["String"]>
+  after?: Maybe<Scalars["String"]>
+  first?: Maybe<Scalars["Int"]>
+  last?: Maybe<Scalars["Int"]>
+  type?: Maybe<Scalars["String"]>
 }
 
 /** An enumeration. */
@@ -175,8 +188,35 @@ export enum PrayerRequestBodyVisibility {
 export enum PrayerRequestState {
   /** Active */
   Act = "ACT",
-  /** Answered */
-  Ans = "ANS",
+  /** Inactive */
+  Ina = "INA",
+  /** Resolved */
+  Res = "RES",
+}
+
+export type PrayerRequestReactNodeConnection = {
+  __typename?: "PrayerRequestReactNodeConnection"
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<PrayerRequestReactNodeEdge>>
+}
+
+/** A Relay edge containing a `PrayerRequestReactNode` and its cursor. */
+export type PrayerRequestReactNodeEdge = {
+  __typename?: "PrayerRequestReactNodeEdge"
+  /** The item at the end of the edge */
+  node?: Maybe<PrayerRequestReactNode>
+  /** A cursor for use in pagination */
+  cursor: Scalars["String"]
+}
+
+export type PrayerRequestReactNode = Node & {
+  __typename?: "PrayerRequestReactNode"
+  user: UserType
+  type: Scalars["String"]
+  /** The ID of the object. */
+  id: Scalars["ID"]
 }
 
 export type Mutation = {
@@ -234,7 +274,28 @@ export type PrayerPageQuery = { __typename?: "Query" } & {
               | "bodyVisibility"
               | "note"
               | "state"
-            >
+            > & {
+                author: { __typename?: "UserType" } & Pick<UserType, "username">
+                reacts: { __typename?: "PrayerRequestReactNodeConnection" } & {
+                  edges: Array<
+                    Maybe<
+                      { __typename?: "PrayerRequestReactNodeEdge" } & {
+                        node?: Maybe<
+                          { __typename?: "PrayerRequestReactNode" } & Pick<
+                            PrayerRequestReactNode,
+                            "type"
+                          > & {
+                              user: { __typename?: "UserType" } & Pick<
+                                UserType,
+                                "username"
+                              >
+                            }
+                        >
+                      }
+                    >
+                  >
+                }
+              }
           >
         }
       >
@@ -408,6 +469,9 @@ export const PrayerPageDocument = gql`
     prayerRequests {
       edges {
         node {
+          author {
+            username
+          }
           createdAt
           pk
           providedName
@@ -415,6 +479,16 @@ export const PrayerPageDocument = gql`
           bodyVisibility
           note
           state
+          reacts {
+            edges {
+              node {
+                user {
+                  username
+                }
+                type
+              }
+            }
+          }
         }
       }
     }
