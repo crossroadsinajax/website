@@ -2,6 +2,7 @@ from typing import List
 from typing import Optional
 
 from django.urls import reverse
+import django_filters
 import graphene
 from graphene import relay
 from graphene_django.types import DjangoObjectType
@@ -67,15 +68,23 @@ class PrayerRequestNode(DjangoObjectType):
     class Meta:
         model = PrayerRequest
         only_fields = [
+            "author",
             "provided_name",
             "note",
             "state",
             "body_visibility",
             "body",
             "created_at",
+            "include_name",
         ]
-        filter_fields = ["id"]
+        filter_fields = ["id", "created_at", "updated_at", "state"]
         interfaces = (relay.Node,)
+
+
+class PrayerRequestFilter(django_filters.FilterSet):
+    class Meta:
+        model = PrayerRequest
+        fields = ["created_at", "updated_at", "state"]
 
 
 class AddPrayerRequest(graphene.Mutation):
@@ -88,11 +97,15 @@ class AddPrayerRequest(graphene.Mutation):
     ok = graphene.Boolean()
     prayer_request = graphene.Field(PrayerRequestNode)
 
-    def mutate(root, info, body, body_visibility, include_name):
+    def mutate(root, info, body, body_visibility, include_name, display_name):
         user = info.context.user
         if user.is_authenticated:
             prayer_request = PrayerRequest.objects.create(
-                author=user, body=body, body_visibility=body_visibility
+                author=user,
+                body=body,
+                body_visibility=body_visibility,
+                include_name=include_name,
+                provided_name=display_name,
             )
             ok = True
             return AddPrayerRequest(prayer_request=prayer_request, ok=ok)
@@ -109,7 +122,9 @@ class Query(graphene.ObjectType):
     current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
-    prayer_requests = DjangoFilterConnectionField(PrayerRequestNode, required=True)
+    prayer_requests = DjangoFilterConnectionField(
+        PrayerRequestNode, required=True, filterset_class=PrayerRequestFilter
+    )
 
     def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
         user = info.context.user
@@ -117,6 +132,13 @@ class Query(graphene.ObjectType):
 
     def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
         return models.ServicePage.current_service_page()
+
+    def resolve_prayer_requests(self, info, **kwargs):
+        user = info.context.user
+        if user.is_authenticated:
+            return PrayerRequest.for_user(user)
+        else:
+            return PrayerRequest.objects.none()
 
 
 schema = graphene.Schema(mutation=Mutation, query=Query)

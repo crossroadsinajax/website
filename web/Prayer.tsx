@@ -44,11 +44,13 @@ const ADD_PRAYER_REQUEST = gql`
     $body: String!
     $bodyVisibility: String!
     $includeName: Boolean!
+    $displayName: String!
   ) {
     addPrayerRequest(
       body: $body
       bodyVisibility: $bodyVisibility
       includeName: $includeName
+      displayName: $displayName
     ) {
       ok
     }
@@ -77,11 +79,13 @@ const PrayerForm: React.FC<{
   const [body, setBody] = useState("")
   const [visibility, setVisibility] = useState("All of Crossroads")
   const [includeName, setIncludeName] = useState(true)
+  const [displayName, setDisplayName] = useState("")
   const [addPrayerRequest, { loading }] = useMutation(ADD_PRAYER_REQUEST, {
     onCompleted: () => {
       setBody("")
       setVisibility("All of Crossroads")
       setIncludeName(true)
+      setDisplayName("")
     },
   })
 
@@ -102,6 +106,7 @@ const PrayerForm: React.FC<{
         body,
         bodyVisibility,
         includeName,
+        displayName,
       },
     })
   }
@@ -145,7 +150,12 @@ const PrayerForm: React.FC<{
             <Form.Label className="mt-2">Email</Form.Label>
             <Form.Control type="email" placeholder="Enter email" />
             <Form.Label>Name (optional)</Form.Label>
-            <Form.Control type="input" placeholder="Display name" />
+            <Form.Control
+              type="input"
+              placeholder="Display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
           </>
         )}
       </Form.Group>

@@ -23,10 +23,12 @@ class PrayerRequest(models.Model):
         ("prayer_team", "Only Crossroads prayer team members"),
     ]
     STATE_ACTIVE = "ACT"
-    STATE_ANSWERED = "ANS"
+    STATE_INACTIVE = "INA"
+    STATE_RESOLVED = "RES"
     STATE_CHOICES = [
         (STATE_ACTIVE, "Active"),
-        (STATE_ANSWERED, "Answered"),
+        (STATE_INACTIVE, "Inactive"),
+        (STATE_RESOLVED, "Resolved"),
     ]
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -34,6 +36,8 @@ class PrayerRequest(models.Model):
         max_length=32, choices=BODY_VISIBILITY_CHOICES, default=""
     )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
+    include_name = models.BooleanField(default=True)
+    email = models.EmailField(blank=True, max_length=254)
     provided_name = models.CharField(max_length=64, default="")
     body = models.CharField(max_length=16384)
     note = models.CharField(

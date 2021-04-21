@@ -246,6 +246,7 @@ export type AddPrayerRequestMutationVariables = Exact<{
   body: Scalars["String"]
   bodyVisibility: Scalars["String"]
   includeName: Scalars["Boolean"]
+  displayName: Scalars["String"]
 }>
 
 export type AddPrayerRequestMutation = { __typename?: "Mutation" } & {
@@ -470,11 +471,13 @@ export const AddPrayerRequestDocument = gql`
     $body: String!
     $bodyVisibility: String!
     $includeName: Boolean!
+    $displayName: String!
   ) {
     addPrayerRequest(
       body: $body
       bodyVisibility: $bodyVisibility
       includeName: $includeName
+      displayName: $displayName
     ) {
       ok
     }
@@ -501,6 +504,7 @@ export type AddPrayerRequestMutationFn = Apollo.MutationFunction<
  *      body: // value for 'body'
  *      bodyVisibility: // value for 'bodyVisibility'
  *      includeName: // value for 'includeName'
+ *      displayName: // value for 'displayName'
  *   },
  * });
  */
