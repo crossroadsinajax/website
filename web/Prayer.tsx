@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql, useMutation } from "@apollo/client"
 import React, { useState } from "react"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
@@ -39,6 +39,22 @@ gql`
   }
 `
 
+const ADD_PRAYER_REQUEST = gql`
+  mutation AddPrayerRequest(
+    $body: String!
+    $bodyVisibility: String!
+    $includeName: Boolean!
+  ) {
+    addPrayerRequest(
+      body: $body
+      bodyVisibility: $bodyVisibility
+      includeName: $includeName
+    ) {
+      ok
+    }
+  }
+`
+
 type PrayerRequest = Pick<
   PrayerRequestNode,
   | "createdAt"
@@ -61,23 +77,35 @@ const PrayerForm: React.FC<{
   const [body, setBody] = useState("")
   const [visibility, setVisibility] = useState("All of Crossroads")
   const [includeName, setIncludeName] = useState(true)
-  const [loading, setLoading] = useState(false)
+  const [addPrayerRequest, { loading }] = useMutation(ADD_PRAYER_REQUEST, {
+    onCompleted: () => {
+      setBody("")
+      setVisibility("All of Crossroads")
+      setIncludeName(true)
+    },
+  })
 
   const updateBody = (val: string) => {
     setBody(val)
   }
 
   const onSubmit = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setBody("")
-      setVisibility("All of Crossroads")
-      setIncludeName(true)
-    }, 1000)
+    let bodyVisibility = ""
+    if (visibility === "All of Crossroads") {
+      bodyVisibility = "member"
+    } else if (visibility === "Only the prayer team") {
+      bodyVisibility = "prayer_team"
+    }
+
+    addPrayerRequest({
+      variables: {
+        body,
+        bodyVisibility,
+        includeName,
+      },
+    })
   }
 
-  // TODO: need email and display name for non-member requests
   return (
     <_PrayerForm className="mt-3">
       <h4>Submit a prayer request or praise report</h4>
@@ -211,11 +239,13 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
     if (tab == "church") {
       component = (
         <>
+          <h2>This week</h2>
           <CardColumns className="mt-2">
             {this.props.requests.map((pr, i) => (
               <PrayerCard key={i} prayerRequest={pr} />
             ))}
           </CardColumns>
+          <hr />
         </>
       )
     } else if (tab == "mine") {

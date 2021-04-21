@@ -78,6 +78,32 @@ class PrayerRequestNode(DjangoObjectType):
         interfaces = (relay.Node,)
 
 
+class AddPrayerRequest(graphene.Mutation):
+    class Arguments:
+        body = graphene.String()
+        body_visibility = graphene.String()
+        include_name = graphene.Boolean()
+        display_name = graphene.String()
+
+    ok = graphene.Boolean()
+    prayer_request = graphene.Field(PrayerRequestNode)
+
+    def mutate(root, info, body, body_visibility, include_name):
+        user = info.context.user
+        if user.is_authenticated:
+            prayer_request = PrayerRequest.objects.create(
+                author=user, body=body, body_visibility=body_visibility
+            )
+            ok = True
+            return AddPrayerRequest(prayer_request=prayer_request, ok=ok)
+        else:
+            raise NotImplementedError
+
+
+class Mutation(graphene.ObjectType):
+    add_prayer_request = AddPrayerRequest.Field()
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
     current_service = graphene.Field(ServicePageNode, required=True)
@@ -93,4 +119,4 @@ class Query(graphene.ObjectType):
         return models.ServicePage.current_service_page()
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(mutation=Mutation, query=Query)

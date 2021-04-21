@@ -179,6 +179,24 @@ export enum PrayerRequestState {
   Ans = "ANS",
 }
 
+export type Mutation = {
+  __typename?: "Mutation"
+  addPrayerRequest?: Maybe<AddPrayerRequest>
+}
+
+export type MutationAddPrayerRequestArgs = {
+  body?: Maybe<Scalars["String"]>
+  bodyVisibility?: Maybe<Scalars["String"]>
+  displayName?: Maybe<Scalars["String"]>
+  includeName?: Maybe<Scalars["Boolean"]>
+}
+
+export type AddPrayerRequest = {
+  __typename?: "AddPrayerRequest"
+  ok?: Maybe<Scalars["Boolean"]>
+  prayerRequest?: Maybe<PrayerRequestNode>
+}
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
@@ -222,6 +240,18 @@ export type PrayerPageQuery = { __typename?: "Query" } & {
       >
     >
   }
+}
+
+export type AddPrayerRequestMutationVariables = Exact<{
+  body: Scalars["String"]
+  bodyVisibility: Scalars["String"]
+  includeName: Scalars["Boolean"]
+}>
+
+export type AddPrayerRequestMutation = { __typename?: "Mutation" } & {
+  addPrayerRequest?: Maybe<
+    { __typename?: "AddPrayerRequest" } & Pick<AddPrayerRequest, "ok">
+  >
 }
 
 export type ServicePageQueryVariables = Exact<{
@@ -434,6 +464,64 @@ export type PrayerPageLazyQueryHookResult = ReturnType<
 export type PrayerPageQueryResult = Apollo.QueryResult<
   PrayerPageQuery,
   PrayerPageQueryVariables
+>
+export const AddPrayerRequestDocument = gql`
+  mutation AddPrayerRequest(
+    $body: String!
+    $bodyVisibility: String!
+    $includeName: Boolean!
+  ) {
+    addPrayerRequest(
+      body: $body
+      bodyVisibility: $bodyVisibility
+      includeName: $includeName
+    ) {
+      ok
+    }
+  }
+`
+export type AddPrayerRequestMutationFn = Apollo.MutationFunction<
+  AddPrayerRequestMutation,
+  AddPrayerRequestMutationVariables
+>
+
+/**
+ * __useAddPrayerRequestMutation__
+ *
+ * To run a mutation, you first call `useAddPrayerRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddPrayerRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addPrayerRequestMutation, { data, loading, error }] = useAddPrayerRequestMutation({
+ *   variables: {
+ *      body: // value for 'body'
+ *      bodyVisibility: // value for 'bodyVisibility'
+ *      includeName: // value for 'includeName'
+ *   },
+ * });
+ */
+export function useAddPrayerRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddPrayerRequestMutation,
+    AddPrayerRequestMutationVariables
+  >
+) {
+  return Apollo.useMutation<
+    AddPrayerRequestMutation,
+    AddPrayerRequestMutationVariables
+  >(AddPrayerRequestDocument, baseOptions)
+}
+export type AddPrayerRequestMutationHookResult = ReturnType<
+  typeof useAddPrayerRequestMutation
+>
+export type AddPrayerRequestMutationResult = Apollo.MutationResult<AddPrayerRequestMutation>
+export type AddPrayerRequestMutationOptions = Apollo.BaseMutationOptions<
+  AddPrayerRequestMutation,
+  AddPrayerRequestMutationVariables
 >
 export const ServicePageDocument = gql`
   query ServicePage($slug: String!) {

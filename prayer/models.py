@@ -76,10 +76,10 @@ class PrayerRequest(models.Model):
 
 
 @receiver(models.signals.post_save, sender=PrayerRequest)
-def service_page_post_save(sender, instance, *args, **kwargs):
+def prayer_post_save(sender, instance, *args, **kwargs):
     layer = get_channel_layer()
     async_to_sync(layer.group_send)(
-        "prayer",
+        "prayer.prayer",
         {
             "type": "prayer.update",
         },
