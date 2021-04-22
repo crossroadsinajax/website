@@ -134,9 +134,7 @@ class Service extends React.Component<ServiceProps, {}> {
         <h2>{page.title}</h2>
         <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
-        {/* <div>{page.bulletin}</div> */}
-        {/* {user && <Bulletin bulletinStr={page.bulletin} />} */}
-        <Bulletin bulletinStr={page.bulletin} />
+        {user && <Bulletin bulletinStr={page.bulletin} />}
       </Container>
     )
   }

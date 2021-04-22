@@ -11,7 +11,6 @@ import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 
 const BulletinItem: React.FC<{bulletinItem: BulletinItemProp}> = ({bulletinItem}) => {
-    //  { &&  &&  && bulletinItem.contactPhone && " or " && bulletinItem.contactPhone } 
     let cardText: any[] = ["Contact ", bulletinItem.contactName]
     if (bulletinItem.contactEmail || bulletinItem.contactPhone) {
         cardText.push(" at ")
