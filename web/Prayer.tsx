@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client"
-import React, { useState } from "react"
+import moment from "moment"
+import React, { useState, useRef } from "react"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import CardColumns from "react-bootstrap/CardColumns"
@@ -8,8 +9,10 @@ import Dropdown from "react-bootstrap/Dropdown"
 import DropdownButton from "react-bootstrap/DropdownButton"
 import Form from "react-bootstrap/Form"
 import Nav from "react-bootstrap/Nav"
+import Overlay from "react-bootstrap/Overlay"
 import Spinner from "react-bootstrap/Spinner"
 import Tab from "react-bootstrap/Tab"
+import Tooltip from "react-bootstrap/Tooltip"
 import styled from "styled-components"
 import { Maybe } from "~/types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
@@ -24,6 +27,7 @@ import {
   PrayerRequestBodyVisibility,
   PrayerRequestState,
 } from "./generated-types"
+import { isDefined } from "./utils"
 
 gql`
   query PrayerPage {
@@ -32,6 +36,8 @@ gql`
         node {
           author {
             username
+            firstName
+            lastName
           }
           createdAt
           pk
@@ -195,6 +201,51 @@ const _PrayerCardMenuButton = styled(DropdownButton)`
   }
 `
 
+const _PrayerCardReactEmojiSpan = styled.span<{
+  active: boolean
+}>`
+  margin-left: 3px;
+  filter: ${({ active }) => (active ? "" : "grayscale(100%)")};
+`
+
+const PrayerCardReact: React.FC<{
+  reacts: PrayerRequestReact[]
+  emoji: string
+  onReact: () => void
+}> = ({ reacts, emoji, onReact }) => {
+  const target = useRef(null)
+  const [showReactors, setShowReactors] = useState(false)
+  return (
+    <>
+      <a
+        ref={target}
+        onClick={() => onReact()}
+        style={{ cursor: "pointer" }}
+        onMouseEnter={() => setShowReactors(reacts.length > 0)}
+        onMouseLeave={() => setShowReactors(false)}
+      >
+        <_PrayerCardReactEmojiSpan active={reacts.length > 0}>
+          {emoji}
+        </_PrayerCardReactEmojiSpan>
+        {reacts.length > 0 && <span className="ml-1">{reacts.length}</span>}
+      </a>
+      <Overlay target={target.current} show={showReactors} placement="right">
+        {(props) => (
+          <Tooltip id={"tooltip"} {...props}>
+            {reacts.map((r, i) => (
+              <div key={i}>{r?.user.username}</div>
+            ))}
+          </Tooltip>
+        )}
+      </Overlay>
+    </>
+  )
+}
+
+const _PrayerCardDateSpan = styled.span`
+  margin-left: 5px;
+`
+
 const PrayerCard: React.FC<{
   prayerRequest: PrayerRequest
   onDelete: (id: number) => void
@@ -209,6 +260,11 @@ const PrayerCard: React.FC<{
   }
   const prayReacts = reacts.filter((r) => r?.type === "🙏")
   const praiseReacts = reacts.filter((r) => r?.type === "🙌")
+  let author = null
+  if (prayerRequest.author) {
+    const { firstName, lastName } = prayerRequest.author
+    author = `${firstName} ${lastName}`
+  }
   return (
     <Card>
       <div className="float-right">
@@ -234,16 +290,21 @@ const PrayerCard: React.FC<{
       <Card.Body>
         <Card.Text>{body}</Card.Text>
         <footer>
-          <a onClick={() => onReact(pk, "🙏")} style={{ cursor: "pointer" }}>
-            <span>🙏</span>
-            <span className="ml-1">{prayReacts.length}</span>
-          </a>
-          <a onClick={() => onReact(pk, "🙌")} style={{ cursor: "pointer" }}>
-            <span className="ml-2">🙌</span>
-            <span className="ml-1">{praiseReacts.length}</span>
-          </a>
+          <PrayerCardReact
+            emoji="🙏"
+            reacts={prayReacts}
+            onReact={() => onReact(pk, "🙏")}
+          />
+          <PrayerCardReact
+            emoji="🙌"
+            reacts={praiseReacts}
+            onReact={() => onReact(pk, "🙌")}
+          />
           <small className="text-muted float-right">
-            {prayerRequest.providedName && "--"} {prayerRequest.providedName}
+            {author && "--"} {author}
+            <_PrayerCardDateSpan className="text-muted">
+              {moment(prayerRequest.createdAt).fromNow()}
+            </_PrayerCardDateSpan>
           </small>
         </footer>
       </Card.Body>
@@ -344,32 +405,31 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
     let component = null
     if (!requests.edges) return null
 
+    const reqs = requests.edges
+      .map((e) => e && e.node)
+      .filter(isDefined)
+      .sort((a, b) => a.createdAt - b.createdAt)
+
     if (tab == "church") {
-      const churchRequests = requests.edges.filter(
-        (e) =>
-          e &&
-          e.node &&
-          e.node.bodyVisibility === PrayerRequestBodyVisibility.Member &&
-          e.node.state === PrayerRequestState.Act
+      const churchRequests = reqs.filter(
+        (r) =>
+          r.bodyVisibility === PrayerRequestBodyVisibility.Member &&
+          r.state === PrayerRequestState.Act
       )
       component = (
         <>
           <h2>This week</h2>
           <CardColumns className="mt-2">
-            {churchRequests.map(
-              (e, i) =>
-                e &&
-                e.node && (
-                  <PrayerCard
-                    key={i}
-                    prayerRequest={e.node}
-                    onActivate={this.onActivate}
-                    onDelete={this.onDelete}
-                    onReact={this.onReact}
-                    onResolve={this.onResolve}
-                  />
-                )
-            )}
+            {churchRequests.map((r, i) => (
+              <PrayerCard
+                key={i}
+                prayerRequest={r}
+                onActivate={this.onActivate}
+                onDelete={this.onDelete}
+                onReact={this.onReact}
+                onResolve={this.onResolve}
+              />
+            ))}
           </CardColumns>
         </>
       )
@@ -491,7 +551,11 @@ const PrayerPage: React.FC<{
       </>
     )
   } else if (loading) {
-    return <Spinner animation="border"></Spinner>
+    return (
+      <Container className="d-flex justify-content-center">
+        <Spinner animation="border" />
+      </Container>
+    )
   } else {
     return <Error />
   }

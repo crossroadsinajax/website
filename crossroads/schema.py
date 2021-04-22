@@ -149,7 +149,7 @@ class Query(graphene.ObjectType):
     def resolve_prayer_requests(self, info, **kwargs):
         user = info.context.user
         if user.is_authenticated:
-            return PrayerRequest.for_user(user)
+            return PrayerRequest.crossroads_requests_for_user(user)
         else:
             return PrayerRequest.objects.none()
 

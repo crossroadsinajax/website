@@ -275,7 +275,10 @@ export type PrayerPageQuery = { __typename?: "Query" } & {
               | "note"
               | "state"
             > & {
-                author: { __typename?: "UserType" } & Pick<UserType, "username">
+                author: { __typename?: "UserType" } & Pick<
+                  UserType,
+                  "username" | "firstName" | "lastName"
+                >
                 reacts: { __typename?: "PrayerRequestReactNodeConnection" } & {
                   edges: Array<
                     Maybe<
@@ -471,6 +474,8 @@ export const PrayerPageDocument = gql`
         node {
           author {
             username
+            firstName
+            lastName
           }
           createdAt
           pk
