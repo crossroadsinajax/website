@@ -10,35 +10,35 @@ import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
 
-const BulletinItem: React.FC<{bulletinItem: String}> = ({bulletinItem}) => {
+const BulletinItem: React.FC<{bulletinItem: BulletinItemProp}> = ({bulletinItem}) => {
+    //  { &&  &&  && bulletinItem.contactPhone && " or " && bulletinItem.contactPhone } 
+    let cardText: any[] = ["Contact ", bulletinItem.contactName]
+    if (bulletinItem.contactEmail || bulletinItem.contactPhone) {
+        cardText.push(" at ")
+        cardText.push(<a href={`mailto:${bulletinItem.contactEmail}`}> { bulletinItem.contactEmail } </a>)
+        if (bulletinItem.contactPhone) {
+            cardText.push(" or ")
+            cardText.push(bulletinItem.contactPhone)
+        }
+        cardText.push(" for more detail.")
+    }
     return (
-        // <div class="card" style="">
-        // <div class="card-body">
-        //     <h5 class="card-title">{{ value.title }}</h5>
-        //     {% if value.date %}
-        //     <h6 class="card-subtitle">{{ value.date }}</h6>
-        //     {% endif %}
-        //     <p class="card-text">
-        //     {{ value.body }}
-        //     </p>
-        // </div>
-        // {% if value.contact_name %}
-        // <div class="card-footer">
-        //     <p class="card-text">
-        //     Contact {{ value.contact_name }}
-        //     {% if value.contact_email or value.contact_phone %}
-        //         at <a href="mailto:{{ value.contact_email }}"> {{ value.contact_email }} </a>
-        //         {% if value.contact_email and value.contact_phone %}
-        //         or
-        //         {% endif %}
-        //         {{ value.contact_phone }}
-        //     {% endif %}
-        //         for more detail.
-        //     </p>
-        // </div>
-        // {% endif %}
-        // </div>
-        <div>bulletinItem</div>
+        <div className="card">
+        <div className="card-body">
+            <h5 className="card-title">{ bulletinItem.title }</h5>
+            {bulletinItem.date && bulletinItem.date !== "" && <h6 className="card-subtitle">{ bulletinItem.date }</h6>}
+            <p className="card-text" dangerouslySetInnerHTML={{ __html: bulletinItem.body }}>
+            </p>
+        </div>
+        {
+            bulletinItem.contactName &&
+            <div className="card-footer">
+            <p className="card-text">
+            {cardText}
+            </p>
+            </div>
+        }
+        </div>
     )
 }
 
@@ -46,20 +46,22 @@ const BulletinItem: React.FC<{bulletinItem: String}> = ({bulletinItem}) => {
 const BulletinSection: React.FC<{
     section: BulletinSectionProp
   }> = ({ section }) => {
+    let items = section.bulletins
+    let itemsTpl = []
+    for (let i = 0; i < items.length; i++) {
+        itemsTpl.push(<BulletinItem bulletinItem={items[i]} />);
+    }
     return (
-        // <div class="">
-        // <a href="#collapseBulletin" data-toggle="collapse" role="button" aria-controls="collapseBulletin" class="" style="color: black;">
-        //     <h2>Bulletin <span class="float-right">{% octicon "chevron-down" width=25 height=25 %}</span></h2>
-        // </a>
-        // <div id="collapseBulletin" class="panel-collapse">
-        //     <div class="card-columns">
-        //     {% for item in value.items %}
-        //         {% include_block item %}
-        //     {% endfor %}
-        //     </div>
-        // </div>
-        // </div>
-        <div>{section.title}</div>
+        <div>
+        <a href="#collapseBulletin" data-toggle="collapse" role="button" aria-controls="collapseBulletin" style={{ color: "black" }}>
+            <h2>{section.title}</h2>
+        </a>
+        <div id="collapseBulletin" className="panel-collapse">
+            <div className="card-columns">
+            {itemsTpl}
+            </div>
+        </div>
+        </div>
     )
   }
 
@@ -73,7 +75,6 @@ type BulletinItemProp = {
 }
 
 type BulletinSectionProp = {
-    id: string,
     title: string,
     bulletins: BulletinItemProp[],
 }
@@ -91,27 +92,34 @@ export const Bulletin: React.FC<{
             <div></div>
         )
     }
-    
-    let bulletinItems: BulletinItemProp[] = []
-    bulletin['value']['items'].forEach((e: { [x: string]: any }) => {
-        let bti: BulletinItemProp = {
-            body: e['body'],
-            contactEmail: e['contact_email'],
-            contactName: e['contact_name'],
-            contactPhone: e['contact_phone'],
-            date: e['date'],
-            title: e['title'],
-        }
-        bulletinItems.push(bti)
-    });
 
-    
-    let bulletinSection: BulletinSectionProp = {
-        id: bulletin['id'],
-        bulletins: bulletinItems,
-        title: bulletin['title'],
+    var bulletinSection: BulletinSectionProp 
+    try {
+        let bulletinItems: BulletinItemProp[] = []
+        bulletin['value']['items'].forEach((e: { [x: string]: any }) => {
+            let bti: BulletinItemProp = {
+                body: e['body'],
+                contactEmail: e['contact_email'],
+                contactName: e['contact_name'],
+                contactPhone: e['contact_phone'],
+                date: e['date'],
+                title: e['title'],
+            }
+            bulletinItems.push(bti)
+        });
+
+        bulletinSection = {
+            bulletins: bulletinItems,
+            title: bulletin['value']['title'],
+        }
+    } catch (e) {
+        console.error("error parsing bulletin obj: " + bulletinStr)
+        console.error(e)
+        return (
+            <div></div>
+        )
     }
-    console.log(bulletin)
+
     return (
       <BulletinSection section={bulletinSection} />
     )
