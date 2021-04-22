@@ -14,6 +14,7 @@ import WebSocketProvider, { WSMessage } from "~Websocket"
 
 import { Error } from "./Error"
 import Title from "./Title"
+import { Bulletin } from "./components/Bulletin"
 import Chat from "./components/Chat"
 import { Userbar } from "./components/Wagtail"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
@@ -133,7 +134,7 @@ class Service extends React.Component<ServiceProps, {}> {
         <h2>{page.title}</h2>
         <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
-        <div>{page.bulletin}</div>
+        {user && <Bulletin bulletinStr={page.bulletin} />}
       </Container>
     )
   }
