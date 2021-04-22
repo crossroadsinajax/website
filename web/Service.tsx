@@ -14,8 +14,8 @@ import WebSocketProvider, { WSMessage } from "~Websocket"
 
 import { Error } from "./Error"
 import Title from "./Title"
-import Chat from "./components/Chat"
 import { Bulletin } from "./components/Bulletin"
+import Chat from "./components/Chat"
 import { Userbar } from "./components/Wagtail"
 import { useServicePageQuery, useServicePagesQuery } from "./generated-types"
 
