@@ -4,12 +4,15 @@ import React, { useState, useRef } from "react"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import CardColumns from "react-bootstrap/CardColumns"
+import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import Dropdown from "react-bootstrap/Dropdown"
 import DropdownButton from "react-bootstrap/DropdownButton"
 import Form from "react-bootstrap/Form"
+import Modal from "react-bootstrap/Modal"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
+import Row from "react-bootstrap/Row"
 import Spinner from "react-bootstrap/Spinner"
 import Tab from "react-bootstrap/Tab"
 import Tooltip from "react-bootstrap/Tooltip"
@@ -89,13 +92,13 @@ const ADD_PRAYER_REQUEST = gql`
 `
 
 const _PrayerForm = styled(Form)`
-  border: 0.2rem solid #ececec;
   padding: 1rem;
 `
 
 const PrayerForm: React.FC<{
   includeContact: boolean
-}> = ({ includeContact }) => {
+  onSubmit: () => void
+}> = ({ includeContact, onSubmit }) => {
   const [body, setBody] = useState("")
   const [visibility, setVisibility] = useState("All of Crossroads")
   const [includeName, setIncludeName] = useState(true)
@@ -106,6 +109,7 @@ const PrayerForm: React.FC<{
       setVisibility("All of Crossroads")
       setIncludeName(true)
       setDisplayName("")
+      onSubmit()
     },
   })
 
@@ -113,7 +117,7 @@ const PrayerForm: React.FC<{
     setBody(val)
   }
 
-  const onSubmit = () => {
+  const myOnSubmit = () => {
     let bodyVisibility = ""
     if (visibility === "All of Crossroads") {
       bodyVisibility = "member"
@@ -132,8 +136,7 @@ const PrayerForm: React.FC<{
   }
 
   return (
-    <_PrayerForm className="mt-3">
-      <h4>Submit a prayer request or praise report</h4>
+    <_PrayerForm>
       <Form.Group>
         <Form.Label>Prayer request/praise report</Form.Label>
         <Form.Control
@@ -184,11 +187,37 @@ const PrayerForm: React.FC<{
       <Button
         disabled={loading}
         variant="primary"
-        onClick={loading ? undefined : onSubmit}
+        onClick={loading ? undefined : myOnSubmit}
       >
         {loading ? "Loading..." : "Submit"}
       </Button>
     </_PrayerForm>
+  )
+}
+
+const PrayerCreateFormModal: React.FC<{
+  includeContact: boolean
+}> = ({ includeContact }) => {
+  const [show, setShow] = useState(false)
+  return (
+    <>
+      <Button variant="primary" onClick={() => setShow(true)}>
+        Create prayer request
+      </Button>
+      <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create prayer request</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <PrayerForm
+              includeContact={includeContact}
+              onSubmit={() => setShow(false)}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   )
 }
 
@@ -281,7 +310,7 @@ const PrayerCard: React.FC<{
               Unresolve
             </Dropdown.Item>
           )}
-          <Dropdown.Item>Edit</Dropdown.Item>
+          <Dropdown.Item>Update</Dropdown.Item>
           <DropdownItemWarning onClick={() => onDelete(pk)}>
             Delete
           </DropdownItemWarning>
@@ -434,25 +463,21 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
         </>
       )
     } else if (tab == "mine") {
-      const myRequests = requests.edges.filter(
-        (e) => e && e.node && e.node.author?.username === user.username
+      const myRequests = reqs.filter(
+        (r) => r.author?.username === user.username
       )
       component = (
         <CardColumns className="mt-2">
-          {myRequests.map(
-            (e, i) =>
-              e &&
-              e.node && (
-                <PrayerCard
-                  key={i}
-                  onActivate={this.onActivate}
-                  prayerRequest={e.node}
-                  onDelete={this.onDelete}
-                  onReact={this.onReact}
-                  onResolve={this.onResolve}
-                />
-              )
-          )}
+          {myRequests.map((r, i) => (
+            <PrayerCard
+              key={i}
+              onActivate={this.onActivate}
+              prayerRequest={r}
+              onDelete={this.onDelete}
+              onReact={this.onReact}
+              onResolve={this.onResolve}
+            />
+          ))}
         </CardColumns>
       )
     } else if (tab == "jar") {
@@ -493,7 +518,14 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
   render() {
     return (
       <Container>
-        <h1 className="mt-3">Prayer</h1>
+        <Row>
+          <Col lg="10">
+            <h1 className="mt-3">Prayer</h1>
+          </Col>
+          <Col className="mt-3" lg="2">
+            <PrayerCreateFormModal includeContact={false} />
+          </Col>
+        </Row>
         <Tab.Container defaultActiveKey="chat">
           <Nav variant="tabs">
             <Nav.Item>
@@ -514,7 +546,6 @@ class Prayer extends React.Component<PrayerProps, PrayerState> {
           </Nav>
           <div className="mt-2">{this.getTab()}</div>
         </Tab.Container>
-        <PrayerForm includeContact={false} />
       </Container>
     )
   }
@@ -545,7 +576,7 @@ const PrayerPage: React.FC<{
         {!user && (
           <Container>
             <h2>Prayer</h2>
-            <PrayerForm includeContact={true} />
+            <PrayerForm includeContact={true} onSubmit={() => {}} />
           </Container>
         )}
       </>
