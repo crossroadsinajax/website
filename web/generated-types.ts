@@ -122,7 +122,7 @@ export type UserQuery = { __typename?: "Query" } & {
   currentUser?: Maybe<
     { __typename?: "UserType" } & Pick<
       UserType,
-      "username" | "firstName" | "lastName" | "isChatmod" | "groups"
+      "username" | "firstName" | "lastName" | "isChatmod"
     >
   >
 }
@@ -195,7 +195,6 @@ export const UserDocument = gql`
       firstName
       lastName
       isChatmod
-      groups
     }
   }
 `

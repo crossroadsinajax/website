@@ -44,11 +44,11 @@ class ServicePageNode(DjangoObjectType):
         filter_fields = ["id", "title", "slug"]
         interfaces = (relay.Node,)
 
-    def resolve_bulletin(self, info, *args, **kwargs) -> Optional[dict]:
-        user = info.context.user
-        if user.is_authenticated:
-            return self.bulletin_dict
-        return None
+    def resolve_bulletin(self, info, *args, **kwargs) -> dict:
+        # user = info.context.user
+        # if user.is_authenticated:
+        return self.bulletin_dict
+        # return None
 
     def resolve_edit_url(self, info, *args, **kwargs) -> Optional[str]:
         user = info.context.user
