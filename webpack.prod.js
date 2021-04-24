@@ -1,5 +1,3 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin")
-
 module.exports = {
   mode: "production",
   entry: ["./web/index.tsx"],
@@ -17,8 +15,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.html$/i,
-        loader: ["html-loader"],
+        test: /\.html/,
+        type: "asset/resource",
       },
       {
         test: /\.(j|t)s(x)?$/,
@@ -31,7 +29,7 @@ module.exports = {
             presets: [
               [
                 "@babel/preset-env",
-                { targets: { browsers: "last 2 versions" } }, // or whatever your project requires
+                { targets: { browsers: "last 2 versions" } },
               ],
               "@babel/preset-typescript",
               "@babel/preset-react",
@@ -44,9 +42,8 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./web/index.html",
-    }),
-  ],
+  optimization: {
+    usedExports: true,
+  },
+  plugins: [],
 }
