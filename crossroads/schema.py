@@ -2,12 +2,15 @@ from typing import List
 from typing import Optional
 
 from django.urls import reverse
+import django_filters
 import graphene
 from graphene import relay
 from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from church import models
+from prayer.models import PrayerRequest
+from prayer.models import PrayerRequestReact
 
 
 class UserType(DjangoObjectType):
@@ -66,11 +69,81 @@ class ServicePageNode(DjangoObjectType):
         return None
 
 
+class PrayerRequestReactNode(DjangoObjectType):
+    class Meta:
+        model = PrayerRequestReact
+        only_fields = [
+            "user",
+            "type",
+        ]
+        filter_fields = ["type"]
+        interfaces = (relay.Node,)
+
+
+class PrayerRequestNode(DjangoObjectType):
+    pk = graphene.Int(source="pk", required=True)
+    reacts = DjangoFilterConnectionField(PrayerRequestReactNode, required=True)
+
+    class Meta:
+        model = PrayerRequest
+        only_fields = [
+            "author",
+            "provided_name",
+            "note",
+            "state",
+            "body_visibility",
+            "body",
+            "created_at",
+            "include_name",
+        ]
+        filter_fields = ["id", "created_at", "updated_at", "state"]
+        interfaces = (relay.Node,)
+
+
+class PrayerRequestFilter(django_filters.FilterSet):
+    class Meta:
+        model = PrayerRequest
+        fields = ["created_at", "updated_at", "state"]
+
+
+class AddPrayerRequest(graphene.Mutation):
+    class Arguments:
+        body = graphene.String()
+        body_visibility = graphene.String()
+        include_name = graphene.Boolean()
+        display_name = graphene.String()
+
+    ok = graphene.Boolean()
+    prayer_request = graphene.Field(PrayerRequestNode)
+
+    def mutate(root, info, body, body_visibility, include_name, display_name):
+        user = info.context.user
+        if user.is_authenticated:
+            prayer_request = PrayerRequest.objects.create(
+                author=user,
+                body=body,
+                body_visibility=body_visibility,
+                include_name=include_name,
+                provided_name=display_name,
+            )
+            ok = True
+            return AddPrayerRequest(prayer_request=prayer_request, ok=ok)
+        else:
+            raise NotImplementedError
+
+
+class Mutation(graphene.ObjectType):
+    add_prayer_request = AddPrayerRequest.Field()
+
+
 class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
     current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
+    prayer_requests = DjangoFilterConnectionField(
+        PrayerRequestNode, required=True, filterset_class=PrayerRequestFilter
+    )
 
     def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
         user = info.context.user
@@ -79,5 +152,12 @@ class Query(graphene.ObjectType):
     def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
         return models.ServicePage.current_service_page()
 
+    def resolve_prayer_requests(self, info, **kwargs):
+        user = info.context.user
+        if user.is_authenticated:
+            return PrayerRequest.crossroads_requests_for_user(user)
+        else:
+            return PrayerRequest.objects.none()
 
-schema = graphene.Schema(query=Query)
+
+schema = graphene.Schema(mutation=Mutation, query=Query)

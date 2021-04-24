@@ -29,6 +29,12 @@ export type Scalars = {
    * schema (one of the key benefits of GraphQL).
    */
   JSONString: any
+  /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: any
 }
 
 export type Query = {
@@ -38,6 +44,7 @@ export type Query = {
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
+  prayerRequests: PrayerRequestNodeConnection
 }
 
 export type QueryServiceArgs = {
@@ -52,6 +59,16 @@ export type QueryServicesArgs = {
   id?: Maybe<Scalars["ID"]>
   title?: Maybe<Scalars["String"]>
   slug?: Maybe<Scalars["String"]>
+}
+
+export type QueryPrayerRequestsArgs = {
+  before?: Maybe<Scalars["String"]>
+  after?: Maybe<Scalars["String"]>
+  first?: Maybe<Scalars["Int"]>
+  last?: Maybe<Scalars["Int"]>
+  createdAt?: Maybe<Scalars["DateTime"]>
+  updatedAt?: Maybe<Scalars["DateTime"]>
+  state?: Maybe<Scalars["String"]>
 }
 
 export type UserType = {
@@ -116,6 +133,110 @@ export type ServicePageNodeEdge = {
   cursor: Scalars["String"]
 }
 
+export type PrayerRequestNodeConnection = {
+  __typename?: "PrayerRequestNodeConnection"
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<PrayerRequestNodeEdge>>
+}
+
+/** A Relay edge containing a `PrayerRequestNode` and its cursor. */
+export type PrayerRequestNodeEdge = {
+  __typename?: "PrayerRequestNodeEdge"
+  /** The item at the end of the edge */
+  node?: Maybe<PrayerRequestNode>
+  /** A cursor for use in pagination */
+  cursor: Scalars["String"]
+}
+
+export type PrayerRequestNode = Node & {
+  __typename?: "PrayerRequestNode"
+  createdAt: Scalars["DateTime"]
+  bodyVisibility: PrayerRequestBodyVisibility
+  author: UserType
+  includeName: Scalars["Boolean"]
+  providedName: Scalars["String"]
+  body: Scalars["String"]
+  note: Scalars["String"]
+  state: PrayerRequestState
+  /** The ID of the object. */
+  id: Scalars["ID"]
+  pk: Scalars["Int"]
+  reacts: PrayerRequestReactNodeConnection
+}
+
+export type PrayerRequestNodeReactsArgs = {
+  before?: Maybe<Scalars["String"]>
+  after?: Maybe<Scalars["String"]>
+  first?: Maybe<Scalars["Int"]>
+  last?: Maybe<Scalars["Int"]>
+  type?: Maybe<Scalars["String"]>
+}
+
+/** An enumeration. */
+export enum PrayerRequestBodyVisibility {
+  /** Only you */
+  A = "A_",
+  /** Only Crossroads members */
+  Member = "MEMBER",
+  /** Only Crossroads prayer team members */
+  PrayerTeam = "PRAYER_TEAM",
+}
+
+/** An enumeration. */
+export enum PrayerRequestState {
+  /** Active */
+  Act = "ACT",
+  /** Inactive */
+  Ina = "INA",
+  /** Resolved */
+  Res = "RES",
+}
+
+export type PrayerRequestReactNodeConnection = {
+  __typename?: "PrayerRequestReactNodeConnection"
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<PrayerRequestReactNodeEdge>>
+}
+
+/** A Relay edge containing a `PrayerRequestReactNode` and its cursor. */
+export type PrayerRequestReactNodeEdge = {
+  __typename?: "PrayerRequestReactNodeEdge"
+  /** The item at the end of the edge */
+  node?: Maybe<PrayerRequestReactNode>
+  /** A cursor for use in pagination */
+  cursor: Scalars["String"]
+}
+
+export type PrayerRequestReactNode = Node & {
+  __typename?: "PrayerRequestReactNode"
+  user: UserType
+  type: Scalars["String"]
+  /** The ID of the object. */
+  id: Scalars["ID"]
+}
+
+export type Mutation = {
+  __typename?: "Mutation"
+  addPrayerRequest?: Maybe<AddPrayerRequest>
+}
+
+export type MutationAddPrayerRequestArgs = {
+  body?: Maybe<Scalars["String"]>
+  bodyVisibility?: Maybe<Scalars["String"]>
+  displayName?: Maybe<Scalars["String"]>
+  includeName?: Maybe<Scalars["Boolean"]>
+}
+
+export type AddPrayerRequest = {
+  __typename?: "AddPrayerRequest"
+  ok?: Maybe<Scalars["Boolean"]>
+  prayerRequest?: Maybe<PrayerRequestNode>
+}
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
@@ -133,6 +254,68 @@ export type HomePageQuery = { __typename?: "Query" } & {
   currentService: { __typename?: "ServicePageNode" } & Pick<
     ServicePageNode,
     "slug" | "title"
+  >
+}
+
+export type PrayerPageQueryVariables = Exact<{ [key: string]: never }>
+
+export type PrayerPageQuery = { __typename?: "Query" } & {
+  prayerRequests: { __typename?: "PrayerRequestNodeConnection" } & {
+    edges: Array<
+      Maybe<
+        { __typename?: "PrayerRequestNodeEdge" } & {
+          node?: Maybe<
+            { __typename?: "PrayerRequestNode" } & Pick<
+              PrayerRequestNode,
+              | "createdAt"
+              | "pk"
+              | "providedName"
+              | "body"
+              | "bodyVisibility"
+              | "note"
+              | "state"
+            > & {
+                author: { __typename?: "UserType" } & Pick<
+                  UserType,
+                  "username" | "firstName" | "lastName"
+                >
+                reacts: { __typename?: "PrayerRequestReactNodeConnection" } & {
+                  edges: Array<
+                    Maybe<
+                      { __typename?: "PrayerRequestReactNodeEdge" } & {
+                        node?: Maybe<
+                          { __typename?: "PrayerRequestReactNode" } & Pick<
+                            PrayerRequestReactNode,
+                            "type"
+                          > & {
+                              user: { __typename?: "UserType" } & Pick<
+                                UserType,
+                                "username"
+                              >
+                            }
+                        >
+                      }
+                    >
+                  >
+                }
+              }
+          >
+        }
+      >
+    >
+  }
+}
+
+export type AddPrayerRequestMutationVariables = Exact<{
+  body: Scalars["String"]
+  bodyVisibility: Scalars["String"]
+  includeName: Scalars["Boolean"]
+  displayName: Scalars["String"]
+}>
+
+export type AddPrayerRequestMutation = { __typename?: "Mutation" } & {
+  addPrayerRequest?: Maybe<
+    { __typename?: "AddPrayerRequest" } & Pick<AddPrayerRequest, "ok">
   >
 }
 
@@ -283,6 +466,145 @@ export type HomePageLazyQueryHookResult = ReturnType<
 export type HomePageQueryResult = Apollo.QueryResult<
   HomePageQuery,
   HomePageQueryVariables
+>
+export const PrayerPageDocument = gql`
+  query PrayerPage {
+    prayerRequests {
+      edges {
+        node {
+          author {
+            username
+            firstName
+            lastName
+          }
+          createdAt
+          pk
+          providedName
+          body
+          bodyVisibility
+          note
+          state
+          reacts {
+            edges {
+              node {
+                user {
+                  username
+                }
+                type
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+/**
+ * __usePrayerPageQuery__
+ *
+ * To run a query within a React component, call `usePrayerPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePrayerPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePrayerPageQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePrayerPageQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    PrayerPageQuery,
+    PrayerPageQueryVariables
+  >
+) {
+  return Apollo.useQuery<PrayerPageQuery, PrayerPageQueryVariables>(
+    PrayerPageDocument,
+    baseOptions
+  )
+}
+export function usePrayerPageLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PrayerPageQuery,
+    PrayerPageQueryVariables
+  >
+) {
+  return Apollo.useLazyQuery<PrayerPageQuery, PrayerPageQueryVariables>(
+    PrayerPageDocument,
+    baseOptions
+  )
+}
+export type PrayerPageQueryHookResult = ReturnType<typeof usePrayerPageQuery>
+export type PrayerPageLazyQueryHookResult = ReturnType<
+  typeof usePrayerPageLazyQuery
+>
+export type PrayerPageQueryResult = Apollo.QueryResult<
+  PrayerPageQuery,
+  PrayerPageQueryVariables
+>
+export const AddPrayerRequestDocument = gql`
+  mutation AddPrayerRequest(
+    $body: String!
+    $bodyVisibility: String!
+    $includeName: Boolean!
+    $displayName: String!
+  ) {
+    addPrayerRequest(
+      body: $body
+      bodyVisibility: $bodyVisibility
+      includeName: $includeName
+      displayName: $displayName
+    ) {
+      ok
+    }
+  }
+`
+export type AddPrayerRequestMutationFn = Apollo.MutationFunction<
+  AddPrayerRequestMutation,
+  AddPrayerRequestMutationVariables
+>
+
+/**
+ * __useAddPrayerRequestMutation__
+ *
+ * To run a mutation, you first call `useAddPrayerRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddPrayerRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addPrayerRequestMutation, { data, loading, error }] = useAddPrayerRequestMutation({
+ *   variables: {
+ *      body: // value for 'body'
+ *      bodyVisibility: // value for 'bodyVisibility'
+ *      includeName: // value for 'includeName'
+ *      displayName: // value for 'displayName'
+ *   },
+ * });
+ */
+export function useAddPrayerRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddPrayerRequestMutation,
+    AddPrayerRequestMutationVariables
+  >
+) {
+  return Apollo.useMutation<
+    AddPrayerRequestMutation,
+    AddPrayerRequestMutationVariables
+  >(AddPrayerRequestDocument, baseOptions)
+}
+export type AddPrayerRequestMutationHookResult = ReturnType<
+  typeof useAddPrayerRequestMutation
+>
+export type AddPrayerRequestMutationResult = Apollo.MutationResult<AddPrayerRequestMutation>
+export type AddPrayerRequestMutationOptions = Apollo.BaseMutationOptions<
+  AddPrayerRequestMutation,
+  AddPrayerRequestMutationVariables
 >
 export const ServicePageDocument = gql`
   query ServicePage($slug: String!) {

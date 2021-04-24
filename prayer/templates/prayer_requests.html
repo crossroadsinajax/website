@@ -1,14 +1,3 @@
-<style>
-.emoji-btn {
-  padding: 0px !important;
-}
-.active-emoji {
-}
-.inactive-emoji {
-  filter: grayscale(100%);
-}
-</style>
-
 <div id="prayer-requests" class="card-columns">
 {% for pr in prayer_requests %}
   <div class="card">
@@ -37,24 +26,6 @@
     <div class="card-body">
       <p class="card-text">{{ pr.body }}</p>
       <footer class="">
-        <a class="btn emoji-btn" role="button" href="{% url 'prayer-request-react' pr_id=pr.pk emoji='🙏' %}">
-        {% if pr.prayer_react_count %}
-          <span class="">🙏 &nbsp;{{ pr.prayer_react_count }}</span>
-        {% else %}
-          <span class="inactive-emoji">🙏</span>
-        {% endif %}
-        </a>
-        <a class="btn emoji-btn" role="button" href="{% url 'prayer-request-react' pr_id=pr.pk emoji='🙌' %}">
-        {% if pr.praise_react_count %}
-        <span class="ml-2">🙌 &nbsp;{{ pr.praise_react_count }}</span>
-        {% else %}
-        <span class="ml-2 inactive-emoji">🙌</span>
-        {% endif %}
-        </a>
-      {% if pr.provided_name %}
-        <small class="text-muted float-right">-- {{ pr.provided_name }}</small>
-      {% endif %}
-      </footer>
       {% if pr.note and pr.state == pr.STATE_ANSWERED %}
         <hr/>
         <p>{{pr.note}}</p>

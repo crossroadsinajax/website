@@ -18,6 +18,7 @@ import { AboutUs, Beliefs, Becoming, Contact } from "./About"
 import { Auth, Signup } from "./Auth"
 import Giving from "./Giving"
 import Home from "./Home"
+import PrayerPage from "./Prayer"
 import { ServicePage, Services } from "./Service"
 import WebSocketProvider from "./Websocket"
 import { useUserQuery } from "./generated-types"
@@ -57,6 +58,9 @@ const Header: React.FC<{
           <Nav className="ml-auto">
             <Nav.Link as={Link} to="/gatherings">
               Gatherings
+            </Nav.Link>
+            <Nav.Link as={Link} to="/prayer">
+              Prayer
             </Nav.Link>
             <NavDropdown title="About us" id="about-nav-dropdown">
               <NavDropdown.Item as={Link} to="/about/">
@@ -142,7 +146,7 @@ const Footer: React.FC<{}> = () => {
   )
 }
 
-const AppBase: React.FC<AppProps> = (props) => {
+const AppBase: React.FC<AppProps> = ({ ws }) => {
   const { data } = useUserQuery()
   const user = data?.currentUser
 
@@ -164,7 +168,7 @@ const AppBase: React.FC<AppProps> = (props) => {
             <Services />
           </Route>
           <Route path="/gathering/:slug">
-            <ServicePage user={user} ws={props.ws} />
+            <ServicePage user={user} ws={ws} />
           </Route>
           <Route path="/give/">
             <Giving />
@@ -178,6 +182,9 @@ const AppBase: React.FC<AppProps> = (props) => {
           <Route path="/about/beliefs">
             <Beliefs />
           </Route>
+          <Route path="/prayer">
+            <PrayerPage ws={ws} user={user} />
+          </Route>
           <Route path="/about/">
             <AboutUs />
           </Route>
@@ -188,7 +195,7 @@ const AppBase: React.FC<AppProps> = (props) => {
             <Signup />
           </Route>
           <Route path="/">
-            <Home ws={props.ws} />
+            <Home ws={ws} />
           </Route>
         </Switch>
         <Footer />

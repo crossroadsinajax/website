@@ -25,8 +25,6 @@ LOGGING = {
         },
     },
     "loggers": {
-        "graphql": {"handlers": ["console"], "level": "INFO"},
-        "graphene": {"handlers": ["console"], "level": "INFO"},
         "chat": {"handlers": ["console"], "level": "INFO"},
         "church": {"handlers": ["console"], "level": "INFO"},
         "crossroads": {"handlers": ["console"], "level": "INFO"},
@@ -35,10 +33,8 @@ LOGGING = {
             "level": "INFO",
         },
         "ddtrace": {"handlers": ["console"], "level": "INFO"},
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
+        "graphql": {"handlers": ["console"], "level": "INFO"},
+        "graphene": {"handlers": ["console"], "level": "INFO"},
     },
 }
 
@@ -66,6 +62,7 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
     "django_extensions",
+    "django_filters",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
