@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client"
-import React from "react"
+import React, { useLayoutEffect } from "react"
 import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav"
@@ -8,7 +8,7 @@ import Navbar from "react-bootstrap/Navbar"
 import Row from "react-bootstrap/Row"
 import { Helmet } from "react-helmet"
 import { hot } from "react-hot-loader/root"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import styled from "styled-components"
 import { UserType } from "~/generated-types"
@@ -144,6 +144,10 @@ const Footer: React.FC<{}> = () => {
 
 const AppBase: React.FC<AppProps> = (props) => {
   const { data } = useUserQuery()
+  const { pathname } = useLocation()
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
   const user = data?.currentUser
 
   return (
@@ -157,44 +161,52 @@ const AppBase: React.FC<AppProps> = (props) => {
           content="Welcome to Crossroads Community Church!"
         />
       </Helmet>
-      <Router>
-        <Header user={user} />
-        <Switch>
-          <Route path="/gatherings">
-            <Services />
-          </Route>
-          <Route path="/gathering/:slug">
-            <ServicePage user={user} ws={props.ws} />
-          </Route>
-          <Route path="/give/">
-            <Giving />
-          </Route>
-          <Route path="/contact/">
-            <Contact />
-          </Route>
-          <Route path="/about/become-a-christian">
-            <Becoming />
-          </Route>
-          <Route path="/about/beliefs">
-            <Beliefs />
-          </Route>
-          <Route path="/about/">
-            <AboutUs />
-          </Route>
-          <Route path="/login">
-            <Auth />
-          </Route>
-          <Route path="/signup">
-            <Signup />
-          </Route>
-          <Route path="/">
-            <Home ws={props.ws} />
-          </Route>
-        </Switch>
-        <Footer />
-      </Router>
+      <Header user={user} />
+      <Switch>
+        <Route path="/gatherings">
+          <Services />
+        </Route>
+        <Route path="/gathering/:slug">
+          <ServicePage user={user} ws={props.ws} />
+        </Route>
+        <Route path="/give/">
+          <Giving />
+        </Route>
+        <Route path="/contact/">
+          <Contact />
+        </Route>
+        <Route path="/about/become-a-christian">
+          <Becoming />
+        </Route>
+        <Route path="/about/beliefs">
+          <Beliefs />
+        </Route>
+        <Route path="/about/">
+          <AboutUs />
+        </Route>
+        <Route path="/login">
+          <Auth />
+        </Route>
+        <Route path="/signup">
+          <Signup />
+        </Route>
+        <Route path="/">
+          <Home ws={props.ws} />
+        </Route>
+      </Switch>
+      <Footer />
     </React.Fragment>
   )
 }
 
-export const App = hot(AppBase)
+const RouterApp: React.FC<{
+  ws: WebSocketProvider
+}> = ({ ws }) => {
+  return (
+    <Router>
+      <AppBase ws={ws} />
+    </Router>
+  )
+}
+
+export const App = hot(RouterApp)
