@@ -26,7 +26,7 @@ module.exports = {
     rules: [
       {
         test: /\.html$/i,
-        loader: ["html-loader"],
+        loader: "html-loader",
       },
       {
         test: /\.(j|t)s(x)?$/,
@@ -54,9 +54,11 @@ module.exports = {
     ],
   },
   devtool: "eval-source-map",
+  optimization: {
+    moduleIds: "named",
+  },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
-    new webpack.NamedModulesPlugin(),
     new HtmlWebpackPlugin({
       template: "./web/index.html",
     }),
