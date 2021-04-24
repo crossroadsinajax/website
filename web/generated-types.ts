@@ -74,7 +74,7 @@ export type ServicePageNode = Node & {
   slug: Scalars["String"]
   date: Scalars["Date"]
   description: Scalars["String"]
-  streamLink: Scalars["String"]
+  streamLink?: Maybe<Scalars["String"]>
   pk: Scalars["Int"]
   bulletin?: Maybe<Scalars["JSONString"]>
   editUrl?: Maybe<Scalars["String"]>

@@ -29,7 +29,6 @@ class AuthMutation(graphene.Mutation):
         token = graphene.String()
 
     def mutate(self, info, username, password, token):
-        print(username, password, token)
         return AuthMutation()
 
 
@@ -37,6 +36,7 @@ class ServicePageNode(DjangoObjectType):
     pk = graphene.Int(source="pk", required=True)
     bulletin = graphene.JSONString(required=False)
     edit_url = graphene.String(required=False)
+    stream_link = graphene.String(required=False)
 
     class Meta:
         model = models.ServicePage
@@ -58,6 +58,12 @@ class ServicePageNode(DjangoObjectType):
             return reverse("wagtailadmin_pages:edit", args=[self.pk])
         else:
             return None
+
+    def resolve_stream_link(self, info, *args, **kwargs) -> Optional[str]:
+        user = info.context.user
+        if user.is_authenticated:
+            return self.stream_link
+        return None
 
 
 class Query(graphene.ObjectType):

@@ -54,6 +54,8 @@ gql`
 `
 
 const VideoCol = styled(Col)`
+  display: flex;
+  justify-content: center;
   @media (max-width: 768px) {
     padding-left: unset;
   }
@@ -112,20 +114,37 @@ class Service extends React.Component<ServiceProps, {}> {
 
   render() {
     const { page, user, ws } = this.props
+
+    if (!user) {
+      return (
+        <Container>
+          <h1>
+            Please <Link to="/signup">sign up</Link> to see our services
+          </h1>
+        </Container>
+      )
+    }
     return (
       <Container fluid>
         {page.editUrl && <Userbar url={page.editUrl} />}
         <Row>
-          <VideoCol md={9}>
-            <ResponsiveEmbed aspectRatio="16by9">
-              <ReactPlayer
-                width="100%"
-                height="100%"
-                url={page.streamLink}
-                playing={true}
-                controls={true}
-              />
-            </ResponsiveEmbed>
+          <VideoCol className="f-center" md={9}>
+            {page.streamLink && (
+              <ResponsiveEmbed aspectRatio="16by9">
+                <ReactPlayer
+                  width="100%"
+                  height="100%"
+                  url={page.streamLink}
+                  playing={true}
+                  controls={true}
+                />
+              </ResponsiveEmbed>
+            )}
+            {!page.streamLink && (
+              <h2 style={{ alignSelf: "center" }}>
+                The stream will load automatically
+              </h2>
+            )}
           </VideoCol>
           <ChatCol md={3}>
             {user && <Chat user={user} id={page.pk} ws={ws} />}
