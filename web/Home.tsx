@@ -87,7 +87,7 @@ const Home: React.FC<HomeProps> = () => {
           }}
         >
           <Col lg="4">
-            <h2>Our Calling</h2>
+            <h2>Our calling</h2>
             <p className="lead">
               Our calling is to help you and your loved ones Connect with Christ
               in Community, Live like Jesus, and Feel His Love.
