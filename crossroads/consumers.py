@@ -4,9 +4,10 @@ import logging
 
 import channels
 from channels.generic.websocket import AsyncWebsocketConsumer
+import ddtrace
 from ddtrace import tracer
-from ddtrace.context import Context
 from ddtrace.constants import SPAN_MEASURED_KEY
+from ddtrace.context import Context
 
 
 log = logging.getLogger(__name__)
@@ -107,15 +108,22 @@ class SubConsumer:
         return f"{self.app_name}.{name}"
 
     async def send_json(self, data: dict):
-        await self.send(text_data=json.dumps(data))
+        with tracer.trace("send_json"):
+            await self.send(text_data=json.dumps(data))
 
     async def group_join(self, group: str):
-        await self.channel_layer.group_add(self._group_name(group), self.channel_name)
+        with tracer.trace("group.join") as span:
+            span.set_tag("group", group)
+            await self.channel_layer.group_add(
+                self._group_name(group), self.channel_name
+            )
 
     async def group_leave(self, group: str):
-        await self.channel_layer.group_discard(
-            self._group_name(group), self.channel_name
-        )
+        with tracer.trace("group.leave") as span:
+            span.set_tag("group", group)
+            await self.channel_layer.group_discard(
+                self._group_name(group), self.channel_name
+            )
 
     async def group_send(self, group: str, data: dict):
         with tracer.trace("group_send") as span:
@@ -159,12 +167,10 @@ class Consumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         # Occurs when a user connects to the websocket
-
         self.group_name = "global"
         self.path = self.scope["path"]
 
         with tracer.trace("ws.connect") as span:
-
             user = await channels.auth.get_user(self.scope)
             span.set_tag("user", user.username)
 
@@ -174,7 +180,7 @@ class Consumer(AsyncWebsocketConsumer):
             await self.accept()
 
     async def disconnect(self, close_code):
-        with tracer.trace("ws.disconnect") as span:
+        with tracer.trace("websocket.disconnect") as span:
             user = await channels.auth.get_user(self.scope)
             span.set_tag("user", user.username)
 

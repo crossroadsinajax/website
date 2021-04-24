@@ -55,6 +55,7 @@ class ChatConsumer(SubConsumer):
 
     app_name = "chat"
 
+    @tracer.wrap()
     async def receive(self, user, event):
         if not user.is_authenticated:
             return
@@ -195,4 +196,7 @@ class ChatConsumer(SubConsumer):
             )
 
     async def handle(self, user, event):
+        span = tracer.current_span()
+        span.set_tag("user", user)
+        span.set_tag("type", event.get("type", None))
         await self.send_json(event)

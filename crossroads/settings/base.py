@@ -207,6 +207,7 @@ LOGOUT_REDIRECT_URL = "/"
 ASGI_APPLICATION = "crossroads.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
+
 EMAIL_BACKEND = "postmark.django_backend.EmailBackend"
 
 
