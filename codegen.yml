@@ -1,0 +1,10 @@
+---
+overwrite: true
+schema: "web/schema.json"
+documents: "**/*.tsx"
+generates:
+  web/generated-types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"

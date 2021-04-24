@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load chat_tags prayer_tags %}
+{% load prayer_tags %}
 {% load wagtailcore_tags %}
 
 {% block content %}
@@ -27,85 +27,6 @@
 <div class="container-xl">
 <h2>{{ page.title }}</h2>
 <p class="meta">{{ page.date }}</p>
-
-{% if request.user.is_pastor %}
-<div id="pastorcontrols">
-  <button type="button" class="btn btn-lg" v-bind:class="{
-    'btn-secondary': requested,
-    'btn-primary': !requested
-  }" v-on:click="advance">Next Slide</button>
-</div>
-<script>
-var slidesApp = new Vue({
-  el: '#pastorcontrols',
-  delimiters: ['[[', ']]'],
-  data: {
-    requested: false
-  },
-  methods: {
-    advance: function () {
-      window.socket.send(JSON.stringify({
-        type: 'slides.advance'
-      }));
-    }
-  }
-});
-
-window.socket.register('slides', {
-  onmessage: function (event) {
-    if (event.type === 'slides.update') {
-      slidesApp.requested = event.requested;
-    }
-  },
-  onopen: function () {
-    window.socket.send(JSON.stringify({
-      type: 'slides.connect'
-    }));
-  }
-});
-</script>
-{% elif request.user.is_streamer %}
-<div id="streamercontrols">
-  <button type="button" class="btn btn-lg" v-bind:class="{
-    'disabled': !requested,
-    'btn-secondary': requested,
-    'btn-success': requested
-  }" v-on:click="reset">Reset</button>
-  <button type="button" class="btn btn-lg" v-bind:class="{
-    'disabled': !requested,
-    'btn-secondary': !requested,
-    'btn-danger': requested
-  }">Next Slide Requested</button>
-</div>
-<script>
-var slidesApp = new Vue({
-  el: '#streamercontrols',
-  delimiters: ['[[', ']]'],
-  data: {
-    requested: false
-  },
-  methods: {
-    reset: function () {
-      socket.send(JSON.stringify({
-        type: 'slides.reset'
-      }));
-    }
-  }
-});
-
-socket.register('slides', {
-  onmessage: function (event) {
-    if (event.type === 'slides.update') {
-      slidesApp.requested = event.requested;
-    }
-  },
-  onopen: function () {
-    socket.send(JSON.stringify({
-      type: 'slides.connect'
-    }));
-  }
-});
-</script>
 {% endif %}
 
 

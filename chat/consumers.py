@@ -12,7 +12,6 @@ log = logging.getLogger(__name__)
 
 
 class ChatManager:
-    # TODO move this to SubConsumer
     # maintain real-time stats about a chatroom
 
     rooms = dict()
@@ -64,6 +63,7 @@ class ChatConsumer(SubConsumer):
         span = tracer.current_span()
 
         _type = event["type"]
+        span.resource = _type
 
         if _type == "chat.connect":
             self.chat_id = event["chat_id"]
@@ -97,7 +97,6 @@ class ChatConsumer(SubConsumer):
                     "users": ChatManager.user_list(self.chat_id),
                 },
             )
-            await self.log("user_connect", user=user)
 
         # New chat message
         elif _type == "chat.message":
@@ -112,7 +111,7 @@ class ChatConsumer(SubConsumer):
                 # Send message to room group
                 msg_json = await dbstoa(msg.__json__)()
                 await self.group_send(
-                    self.group_name, {"type": "chat.message", **msg_json}
+                    self.group_name, {"type": "chat.message", "msg": msg_json}
                 )
 
         # Delete chat message
@@ -122,7 +121,9 @@ class ChatConsumer(SubConsumer):
             try:
                 await dbstoa(self.chat.delete_message)(user=user, msg_id=msg_id)
             except exc.PermissionDenied:
-                log.warning("", exc_info=True)
+                log.warning(
+                    "user %r tried to delete message %r", user, msg_id, exc_info=True
+                )
             else:
                 await self.group_send(
                     self.group_name, {"type": "chat.message_delete", "msg_id": msg_id}
@@ -159,41 +160,30 @@ class ChatConsumer(SubConsumer):
                 self.group_name,
                 dict(
                     type="chat.message_update",
-                    msg_id=msg_id,
-                    **msg_json,
+                    msg=msg_json,
                 ),
             )
 
-        # Toggle a prayer request
-        elif _type == "chat.toggle_pr":
+        elif _type == "chat.toggle_tag":
             if not await dbstoa(user.has_perm)("chat.change_chatmessage"):
-                log.info("user %r tried to toggle pr without permissions", user)
+                log.warning("user %r tried to toggle pr without permissions", user)
                 return
 
             msg_id = event["msg_id"]
-            tag = event["tag"]
-            if tag == "pr":
-                msg = await dbstoa(models.ChatMessage.toggle_tag)("#pr", msg_id)
-            elif tag == "q":
-                msg = await dbstoa(models.ChatMessage.toggle_tag)("#q", msg_id)
-            else:
-                log.error("user %r tried to toggle pr without permissions", user)
-                return
-
+            tag = f"#{event['tag']}"
+            msg = await dbstoa(models.ChatMessage.toggle_tag)(tag, msg_id)
             msg_json = await dbstoa(msg.__json__)()
             await self.group_send(
                 self.group_name,
                 dict(
                     type="chat.message_update",
-                    msg_id=msg_id,
-                    **msg_json,
+                    msg=msg_json,
                 ),
             )
 
         # User disconnect
         elif _type == "chat.disconnect":
             ChatManager.deregister(self.chat_id, user)
-            await self.log("user_disconnect", user=user)
             await self.group_leave(self.group_name)
 
             # Update room with user count
@@ -205,20 +195,6 @@ class ChatConsumer(SubConsumer):
                 },
             )
 
-    async def log(self, type, user=None, body=""):
-        log = await dbstoa(self.chat.add_log)(
-            type=type,
-            body=body,
-            user=user,
-        )
-
-        # Send log to room group
-        # log_json = await database_sync_to_async(log.__json__)()
-        # await self.channel_layer.group_send(
-        #     self.chat_group_name, {"type": "log", **log_json}
-        # )
-
-    @tracer.wrap()
     async def handle(self, user, event):
         span = tracer.current_span()
         span.set_tag("user", user)

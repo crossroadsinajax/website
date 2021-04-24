@@ -1,11 +1,12 @@
+from collections import defaultdict
 import logging
+from typing import List
+from typing import TypedDict
 
 from django.conf import settings
 from django.core import exceptions as exc
 from django.db import models
 from django.utils.functional import cached_property
-
-from church.models import User
 
 
 log = logging.getLogger(__name__)
@@ -34,22 +35,18 @@ class ChatMessage(models.Model):
     body = models.CharField(max_length=2048)
     chat = models.ForeignKey("Chat", related_name="messages", on_delete=models.CASCADE)
 
-    @cached_property
-    def aggreacts(self):
-        # Aggregate common reacts into a dict(<emoji> = dict(count=<int>, reactors=[username]))
-        aggr = {}
+    class AggrReacts(TypedDict):
+        count: int
+        reactors: List[str]
 
+    @cached_property
+    def aggreacts(self) -> AggrReacts:
+        aggr = defaultdict(lambda: {"count": 0, "reactors": []})
         reacts = self.reacts.all()
 
         for react in reacts:
-            if react.type not in aggr:
-                aggr[react.type] = dict(
-                    count=0,
-                    reactors=[],
-                )
-            count = aggr[react.type]["count"]
-            aggr[react.type]["count"] = count + 1
-            aggr[react.type]["reactors"].append(react.user.display_name)
+            aggr[react.type]["count"] += 1
+            aggr[react.type]["reactors"].append(react.user.username)
 
         return aggr
 
@@ -142,25 +139,6 @@ class ChatMessage(models.Model):
         )
 
 
-class ChatLog(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
-    chat = models.ForeignKey("Chat", related_name="logs", on_delete=models.CASCADE)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True
-    )
-    type = models.CharField(max_length=16)
-    body = models.CharField(max_length=4096)
-
-    def __json__(self):
-        return dict(
-            id=self.pk,
-            type=self.type,
-            user_id=self.user.pk,
-            body=self.body,
-            created_at=self.created_at.strftime("%s"),
-        )
-
-
 class Chat(models.Model):
     chat_id = models.CharField(max_length=1024)
 
@@ -188,33 +166,16 @@ class Chat(models.Model):
         msg.delete()
         return msg
 
-    def add_log(self, type, user, body):
-        log = ChatLog.objects.create(chat=self, user=user, body=body)
-        try:
-            del self.logs_json
-        except AttributeError:
-            pass
-        return log
-
     @cached_property
     def messages_json(self):
-        # TODO: migrate chatbot messages into logs
-        chatbot = User.objects.get(username="chatbot")
         return [
             msg.__json__()
             for msg in self.messages.select_related("author")
             .prefetch_related("tags")
             .prefetch_related("reacts__user")
-            .exclude(author=chatbot)
         ]
-
-    @cached_property
-    def logs_json(self):
-        # return [log.__json__() for log in self.logs.all()]
-        return []
 
     def __json__(self):
         return dict(
             messages=self.messages_json,
-            log=self.logs_json,
         )

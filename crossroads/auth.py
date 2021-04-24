@@ -1,6 +1,5 @@
 import logging
 
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login
 from django.core.cache import cache
 from django.http import HttpResponseRedirect

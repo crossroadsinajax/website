@@ -1,4 +1,5 @@
-version: '3.7'
+---
+version: "3.7"
 
 # Unfortunately we can't extend prod.yml as the volumes
 # will be combined rather than overridden.
@@ -9,9 +10,11 @@ services:
     extends:
       file: common.yml
       service: app
-    image: ghcr.io/crossroadsinajax/app:latest
+    image: ghcr.io/crossroadsinajax/app:staging
     environment:
       - DD_ENV=staging
+      - DJANGO_SETTINGS_MODULE=crossroads.settings.staging
+    # TODO: uvicorn gives "Unsupported upgrade request."
     command: >
       sh -c "python manage.py migrate &&
              python manage.py loaddata groups &&
@@ -24,11 +27,28 @@ services:
       - /home/kyle/staging/db.sqlite3:/app/db.sqlite3
       - /home/kyle/staging/media:/app/media
 
+  web:
+    extends:
+      file: common.yml
+      service: web
+    image: ghcr.io/crossroadsinajax/web:staging
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile.prod
+    # Outputs app.js to /static/
+    # Defined in webpack.prod.js.
+    command: yarn run build
+    volumes:
+      - staticfiles:/static
+    deploy:
+      restart_policy:
+        condition: none
+
   nginx:
     extends:
       file: common.yml
       service: nginx
-    image: ghcr.io/crossroadsinajax/nginx:latest
+    image: ghcr.io/crossroadsinajax/nginx:staging
     build:
       context: ./docker/nginx_prod
       dockerfile: ./Dockerfile
@@ -41,10 +61,11 @@ services:
     extends:
       file: common.yml
       service: datadog
-    image: ghcr.io/crossroadsinajax/datadog-agent:latest
+    image: ghcr.io/crossroadsinajax/datadog-agent:staging
     environment:
-      - DD_LOG_LEVEL=WARNING
       - DD_API_KEY_FILE=/run/secrets/datadog_api_key
+      - DD_ENV=staging
+      - DD_LOG_LEVEL=WARNING
     secrets:
       - datadog_api_key
 

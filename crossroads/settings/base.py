@@ -8,12 +8,28 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 LOGGING = {
     "version": 1,
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} {levelname} [{name}:{lineno}] {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
+        "graphql": {"handlers": ["console"], "level": "INFO"},
+        "graphene": {"handlers": ["console"], "level": "INFO"},
+        "chat": {"handlers": ["console"], "level": "INFO"},
+        "church": {"handlers": ["console"], "level": "INFO"},
+        "crossroads": {"handlers": ["console"], "level": "INFO"},
         "django": {
             "handlers": ["console"],
             "level": "INFO",
@@ -35,7 +51,6 @@ INSTALLED_APPS = [
     "prayer",
     "polls",
     "channels",
-    "octicons",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -57,6 +72,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -68,7 +84,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "wagtail.core.middleware.SiteMiddleware",
+    "wagtail.contrib.legacy.sitemiddleware.SiteMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
@@ -92,9 +108,6 @@ TEMPLATES = [
         },
     },
 ]
-
-
-WSGI_APPLICATION = "crossroads.wsgi.application"
 
 
 # Database
@@ -203,6 +216,8 @@ class EMAIL_TEMPLATE:
     SERVICE = "d-93ce2ee9a14b4ed7aa2248bb33a3767f"
 
 
+GRAPHENE = dict(SCHEMA="crossroads.schema.schema", SCHEMA_OUTPUT="web/schema.json")
+
 POSTMARK_API_KEY = os.getenv("POSTMARK_API_KEY")
 POSTMARK_SENDER = "lynn@crossroadsajax.church"
 POSTMARK_TEST_MODE = False
@@ -211,3 +226,7 @@ POSTMARK_TRACK_OPENS = False
 repo = git.Repo(search_parent_directories=True)
 VERSION = repo.head.object.hexsha[0:6]
 ddtrace.config.version = VERSION
+
+RUM_SERVICE = ddtrace.config.service
+RUM_ENV = ddtrace.config.env
+RUM_VERSION = ddtrace.config.version

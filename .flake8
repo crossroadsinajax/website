@@ -1,0 +1,14 @@
+[flake8]
+ignore =
+  # allow module-level imports not at the top of the file
+  E402,
+  # line length conflicts with black
+  E501,
+  # binary operator whitespace conflicts with black
+  W503,
+exclude =
+  .git,
+  __pycache__,
+  migrations,
+  .venv,
+  .riot,

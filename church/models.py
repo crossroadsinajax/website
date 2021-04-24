@@ -1,12 +1,14 @@
 import secrets
+from typing import List
 
-from django import forms
+from asgiref.sync import async_to_sync
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django.utils.functional import cached_property
+from channels.layers import get_channel_layer
 from modelcluster.fields import ParentalKey
 from wagtail.core.models import Page, Orderable
 from wagtail.core import fields as wtfields, blocks
@@ -14,7 +16,6 @@ from wagtail.documents.models import Document
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
 from wagtailmedia.blocks import AbstractMediaChooserBlock
-from wagtailmedia.edit_handlers import MediaChooserPanel
 import yarl
 
 from prayer import models as pr_models
@@ -60,31 +61,31 @@ class User(AbstractUser):
         return display_name
 
     @cached_property
-    def group_names(self):
+    def group_names(self) -> List[str]:
         return [g.name for g in self.groups.all()]
 
     @cached_property
-    def is_chatmod(self):
+    def is_chatmod(self) -> bool:
         return self.is_superuser or "chatmod" in [g.name for g in self.groups.all()]
 
     @cached_property
-    def is_pastor(self):
+    def is_pastor(self) -> bool:
         return "pastor" in self.group_names
 
     @cached_property
-    def is_streamer(self):
+    def is_streamer(self) -> bool:
         return "streamer" in self.group_names
 
     @cached_property
-    def is_member(self):
+    def is_member(self) -> bool:
         return "member" in self.group_names
 
     @cached_property
-    def is_guest(self):
+    def is_guest(self) -> bool:
         return "guest" in self.group_names
 
     @cached_property
-    def is_mod(self):
+    def is_mod(self) -> bool:
         return "chat_mod" in self.group_names
 
     def get_next_service_link(self):
@@ -102,7 +103,7 @@ class User(AbstractUser):
         return guest.get_next_service_link()
 
     def get_services_link(self):
-        link = yarl.URL(f"https://crossroadsajax.church/services").with_query(
+        link = yarl.URL("https://crossroadsajax.church/services").with_query(
             dict(mem=self.token)
         )
         return str(link)
@@ -335,11 +336,30 @@ class ServicePage(Page, ContentPageMixin):
             if doclink.include_in_email
         ]
 
+    @property
+    def bulletin_dict(self):
+        # i dont like this
+        if len(self.bulletin._raw_data):
+            return self.bulletin._raw_data[0]
+        else:
+            return {}
+
     def get_context(self, request):
         context = super().get_context(request)
         context["self"] = self
         context["docs"] = self.documents.all()
         return context
+
+
+@receiver(models.signals.post_save, sender=ServicePage)
+def service_page_post_save(sender, instance, *args, **kwargs):
+    layer = get_channel_layer()
+    async_to_sync(layer.group_send)(
+        f"service.{instance.pk}",
+        {
+            "type": "service.update",
+        },
+    )
 
 
 class ServicePageDocumentLink(Orderable):

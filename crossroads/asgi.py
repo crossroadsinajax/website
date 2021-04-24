@@ -4,7 +4,6 @@ from ddtrace.contrib.asgi import TraceMiddleware
 import django
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
-from django.urls import re_path
 
 # Fetch Django ASGI application early to ensure AppRegistry is populated
 # before importing consumers and AuthMiddlewareStack that may import ORM

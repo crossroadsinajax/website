@@ -1,8 +1,6 @@
 import base64
-import mimetypes
 import os
 
-from django.conf import settings
 from django.contrib.staticfiles import finders
 from postmark.core import PMMail
 import yarl
@@ -65,18 +63,18 @@ def send_service(users):
 def send_daily_reading(users):
     page = DailyReadingPage.objects.live().order_by("-date").first()
     guest = User.objects.get(username="guest")
-    guest_link = yarl.URL(
-        f"https://crossroadsajax.church{page.url}"
-    ).with_query(dict(mem=guest.token))
+    guest_link = yarl.URL(f"https://crossroadsajax.church{page.url}").with_query(
+        dict(mem=guest.token)
+    )
 
     for user in users:
         # Skip sending to users without emails
         if not user.email:
             continue
 
-        link = yarl.URL(
-            f"https://crossroadsajax.church{page.url}"
-        ).with_query(dict(mem=user.token))
+        link = yarl.URL(f"https://crossroadsajax.church{page.url}").with_query(
+            dict(mem=user.token)
+        )
 
         m = PMMail(
             to=f"{user.first_name} {user.last_name} <{user.email}>",

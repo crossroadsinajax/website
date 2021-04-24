@@ -1,13 +1,5 @@
-#crossroads-logo {
-  width: 100px;
-}
-
 .dropdown-item:not(:first-child) {
   margin-top: 10px;
-}
-
-h1, h2, h3, h4 {
-  font-family: 'IBM Plex Sans';
 }
 
 body {
@@ -24,19 +16,7 @@ body {
   margin: 3rem 0;
 }
 
-@media (min-width: 1200px) {
-  .container-xl {
-      max-width: 1800px !important;
-      padding-left: 15px;
-      padding-right: 15px;
-  }
-}
-
 .row {
   margin-right: unset !important;
   margin-left: unset !important;
-}
-
-.navbar {
-  padding: 0rem 1rem !important;
 }

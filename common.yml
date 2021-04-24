@@ -1,4 +1,5 @@
-version: '3.7'
+---
+version: "3.7"
 
 services:
   app:
@@ -6,7 +7,7 @@ services:
       context: ./
       dockerfile: ./docker/server/Dockerfile
     environment:
-      - DATADOG_TRACE_AGENT_HOSTNAME=datadog
+      - DD_TRACE_AGENT_URL=http://datadog:8126
       - DD_ENV=dev
       - DD_SERVICE=crossroads-web
       - DD_LOGS_INJECTION=true
@@ -17,6 +18,11 @@ services:
       - DD_DJANGO_USE_HANDLER_RESOURCE_FORMAT=true
       - DD_SQLITE_SERVICE=crossroads-db
       - DD_PROFILING_ENABLED=true
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
 
   nginx:
     restart: always

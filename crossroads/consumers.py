@@ -1,12 +1,12 @@
-from typing import Dict, Union, Set, Type
+from typing import Dict, Union, Type
 import json
 import logging
 
 import channels
 from channels.generic.websocket import AsyncWebsocketConsumer
-import ddtrace
 from ddtrace import tracer
 from ddtrace.constants import SPAN_MEASURED_KEY
+from ddtrace.context import Context
 
 
 log = logging.getLogger(__name__)
@@ -125,9 +125,12 @@ class SubConsumer:
             )
 
     async def group_send(self, group: str, data: dict):
-        with tracer.trace("group.send") as span:
-            span.set_tag("group", group)
-            await self.channel_layer.group_send(self._group_name(group), data)
+        with tracer.trace("group_send") as span:
+            group_name = self._group_name(group)
+            span.set_tag("group", group_name)
+            data["span_id"] = span.span_id
+            data["trace_id"] = span.trace_id
+            await self.channel_layer.group_send(group_name, data)
 
     async def receive(self, data):
         # Called when data received from websocket
@@ -139,12 +142,6 @@ class SubConsumer:
 
 
 class Consumer(AsyncWebsocketConsumer):
-    """
-    Events:
-        init
-        user_connect
-        user_disconnect
-    """
 
     _sub_consumers: Dict[Type[SubConsumer], SubConsumer] = {}
 
@@ -152,8 +149,8 @@ class Consumer(AsyncWebsocketConsumer):
         self._sub_consumers = dict(self._sub_consumers)
         super().__init__(*args, **kwargs)
 
-    def subcons(self, event):
-        # Returns the SubConsumer instance for an event
+    def _subcons(self, event):
+        # Returns the SubConsumer class for an event
         cls = registry.resolve(event)
 
         if not cls:
@@ -193,44 +190,65 @@ class Consumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data: str):
-        span = tracer.current_span()
         try:
-            event = json.loads(text_data)
+            with tracer.trace("ws.receive") as span:
+                try:
+                    event = json.loads(text_data)
+                except Exception:
+                    span.error = 1
+                    log.error(
+                        "json decode failed for event %r", text_data, exc_info=True
+                    )
+                    return
+
+                _type = event.get("type")
+                if not _type:
+                    span.error = 1
+                    log.error("No type provided for event %r", text_data)
+                    return
+
+                root = tracer.active_root_span()
+                root.resource = _type
+
+                user = await channels.auth.get_user(self.scope)
+                span.set_tag("user", user.username)
+
+                consumer = self._subcons(event)
+
+                if not consumer:
+                    log.error("No consumer found for event %r", text_data)
+                    return
+
+                await consumer.receive(user, event)
         except Exception:
-            log.error("json decode failed for event %r", text_data, exc_info=True)
-            return
-
-        _type = event.get("type", None)
-        if not _type:
-            log.error("No type provided for event %r", text_data)
-            return
-        span.resource = _type
-        span.set_tag("type", _type)
-
-        user = await channels.auth.get_user(self.scope)
-        span.set_tag("user", user.username)
-
-        # TODO: Custom consumer middleware?
-        consumer = self.subcons(event)
-
-        if not consumer:
-            log.error("No consumer found for event %r", text_data)
-            return
-
-        await consumer.receive(user, event)
+            log.error("failed to receive data", exc_info=True)
 
     async def dispatch(self, event):
-        with tracer.trace("websocket.dispatch", service="crossroads-ws") as span:
-            span.set_tag(SPAN_MEASURED_KEY)
-            span.set_tag("version", ddtrace.config.version)
-            consumer = self.subcons(event)
-            if not consumer:
-                span._ignore_exception(channels.exceptions.StopConsumer)
-                return await super().dispatch(event)
+        try:
+            span_id = event.pop("span_id", None)
+            trace_id = event.pop("trace_id", None)
+            if span_id and trace_id:
+                ctx = Context(span_id=span_id, trace_id=trace_id)
+            else:
+                ctx = tracer.active()
 
-            span.set_tag("consumer.app_name", consumer.app_name)
-            span.set_tag("consumer.channel_name", consumer.channel_name)
-            span.resource = event.get("type", "")
-            with tracer.trace("get_user"):
-                user = await channels.auth.get_user(self.scope)
-            await consumer.handle(user, event)
+            with tracer.start_span("ws.dispatch", child_of=ctx) as span:
+                span.set_tag(SPAN_MEASURED_KEY)
+
+                consumer = self._subcons(event)
+                if not consumer:
+                    span._ignore_exception(channels.exceptions.StopConsumer)
+                    await super().dispatch(event)
+                    return
+
+                span.set_tag("consumer.app_name", consumer.app_name)
+                span.set_tag("consumer.channel_name", consumer.channel_name)
+
+                with tracer.trace("get_user"):
+                    user = await channels.auth.get_user(self.scope)
+                span.set_tag("user", str(user))
+
+                with tracer.trace("ws.handle"):
+                    await consumer.handle(user, event)
+        except Exception:
+            log.exception("failed to dispatch", exc_info=True)

@@ -2,7 +2,6 @@ from django import template
 from django.core import exceptions
 
 from prayer import forms, models
-from utils import views as viewtils
 
 
 register = template.Library()

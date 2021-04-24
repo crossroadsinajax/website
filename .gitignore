@@ -12,3 +12,7 @@ __pycache__/
 docker-compose.override.yml
 crossroads/settings/local.py
 db.sqlite3
+
+
+node_modules/
+dist/

@@ -1,17 +1,15 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -y git libjpeg-turbo-progs zlib1g-dev gcc fish
-RUN pip install poetry==1.1.4
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-# Copy poetry files so builds will be cached if the files are unchanged.
-COPY poetry.lock pyproject.toml /app/
+# Copy requirements file so builds will be cached if the file is unchanged.
+COPY requirements.txt /app/
 
-# Install packages globally
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev
+# Install packages
+RUN pip install -r requirements.txt
 
 # Can be overridden by a volume mount.
 COPY . /app

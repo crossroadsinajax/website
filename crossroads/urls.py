@@ -1,15 +1,23 @@
+from graphene_django.views import GraphQLView
+from django import shortcuts
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from church import views
 from search import views as search_views
+
+from .schema import schema
+
+
+def spa_view(request):
+    return shortcuts.render(request, "index.html", {})
 
 
 urlpatterns = [
@@ -29,6 +37,7 @@ urlpatterns = [
         name="login",
     ),
     url(r"^logout/$", auth_views.LogoutView.as_view(), name="logout"),
+    path("gql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]
 
 
@@ -42,8 +51,5 @@ if settings.DEBUG:
 
 
 urlpatterns = urlpatterns + [
-    # For anything not caught by a more specific rule above, hand over to
-    # Wagtail's page serving mechanism. This should be the last pattern in
-    # the list:
-    url(r"", include(wagtail_urls)),
+    url(r"", spa_view, name="spa_view"),
 ]

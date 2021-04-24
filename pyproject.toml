@@ -1,18 +1,18 @@
 [tool.black]
-line-length = 88
-target-version = ['py38']
-include = '\.pyi?$'
 exclude = '''
-  (
-    /(
+
+(
+  /(
       \.eggs
     | \.git
-    | \.riot
     | \.mypy_cache
+    | \.riot
     | \.venv
-    )/
-  )
+  )/
+  | migrations
+)
 '''
+
 [tool.poetry]
 name = "crossroads"
 version = "0.1.0"
@@ -21,23 +21,24 @@ authors = ["kyle-verhoog <kyle@verhoog.ca>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Django = "3"
-ddtrace = {git = "https://github.com/crossroadsinajax/dd-trace-py", rev = "1261b2c9afba8ac2a3c9ad11908e1718fe421d7a"}
-wagtail = "2.10"
+Django = "^3.1"
+ddtrace = {git = "https://github.com/crossroadsinajax/dd-trace-py", rev = "crossroads"}
+wagtail = "^2.12.0"
 wagtailmedia = "0.5"
 yarl = "1.4"
+daphne = "^3.0"
 GitPython = "3.1"
 django-extensions = "2.2.9"
 channels = {git = "https://github.com/django/channels.git", rev = "main"}
-django-octicons = "^1.0.2"
-arrow = "0.17.0"
-python-postmark = {git = "https://github.com/crossroadsinajax/python-postmark.git", rev = "91b53f36f737dea7e4290dec1fc9f94f40a32321"}
-uvicorn = "0.13.3"
-daphne = "3.0.1"
+arrow = "^0.17.0"
+python-postmark = {git = "https://github.com/crossroadsinajax/python-postmark.git", rev = "0.5.3"}
+graphene = "^2.1.8"
+graphene-django = "^2.13.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
-riot = "0.4.0"
+riot = "^0.2.0"
+flake8 = "^3.8.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

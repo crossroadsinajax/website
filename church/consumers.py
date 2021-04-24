@@ -1,9 +1,5 @@
 import logging
 
-from channels.db import database_sync_to_async as dbstoa
-from ddtrace import tracer
-
-from chat import models
 from crossroads.consumers import SubConsumer, registry
 
 
@@ -11,35 +7,19 @@ log = logging.getLogger(__name__)
 
 
 @registry.register
-class SlidesConsumer(SubConsumer):
+class ServiceConsumer(SubConsumer):
 
-    app_name = "slides"
-
-    advance_requested = False
+    app_name = "service"
 
     async def receive(self, user, event):
         _type = event["type"]
 
-        if _type == "slides.connect":
-            await self.group_join("slides")
-            await self.group_send(
-                "slides", {"type": "slides.update", "requested": self.advance_requested}
-            )
-        elif _type == "slides.advance":
-            self.advance_requested = True
-            await self.group_send(
-                "slides", {"type": "slides.update", "requested": self.advance_requested}
-            )
-        elif _type == "slides.reset":
-            self.advance_requested = False
-            await self.group_send(
-                "slides", {"type": "slides.update", "requested": self.advance_requested}
-            )
-        elif _type == "slides.disconnect":
-            await self.group_leave("slides")
-            await self.group_send(
-                "slides", {"type": "slides.update", "requested": self.advance_requested}
-            )
+        if _type == "service.connect":
+            self.group_name = str(event["id"])
+            await self.group_join(self.group_name)
+            log.info("%r joined service %r", user, self.group_name)
+        elif _type == "service.disconnect":
+            await self.group_leave(self.group_name)
         else:
             log.error("")
 

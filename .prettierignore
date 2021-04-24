@@ -1,0 +1,13 @@
+*.py
+*.min.css
+*.min.js
+
+dist/
+
+# remove these once SPA is merged
+comments/
+prayer/
+chat/
+church/
+crossroads/
+search/

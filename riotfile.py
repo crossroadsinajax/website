@@ -1,7 +1,7 @@
-from riot import latest, Venv
+from riot import Venv
 
 venv = Venv(
-    pys="3.8",
+    pys=["3.9"],
     venvs=[
         Venv(
             pkgs={
@@ -9,30 +9,48 @@ venv = Venv(
             },
             venvs=[
                 Venv(
-                    name="black",
-                    command="black {cmdargs}",
+                    name="check_fmt",
+                    command="black --check .",
                 ),
                 Venv(
                     name="fmt",
-                    command="black --exclude migrations .",
+                    command="black .",
+                ),
+                Venv(
+                    name="black",
+                    command="black {cmdargs}",
                 ),
             ],
         ),
         Venv(
-            name="flake8",
-            command="flake8 {cmdargs}",
             pkgs={
-                "flake8": latest,
-                "flake8-builtins": latest,
-                "flake8-logging-format": latest,
+                "flake8": "==3.8.*",
             },
+            venvs=[
+                Venv(
+                    name="flake8",
+                    command="flake8 {cmdargs}",
+                ),
+                Venv(
+                    name="lint",
+                    command="flake8 .",
+                ),
+            ],
         ),
         Venv(
-            name="mypy",
-            command="mypy {cmdargs}",
             pkgs={
-                "mypy": latest,
+                "yamllint": "==1.26.*",
             },
+            venvs=[
+                Venv(
+                    name="yamllint",
+                    command="yamllint {cmdargs}",
+                ),
+                Venv(
+                    name="yaml_lint",
+                    command='yamllint `find . -type f -name "*.yml"`',
+                ),
+            ],
         ),
     ],
 )

@@ -1,4 +1,5 @@
-version: '3.7'
+---
+version: "3.7"
 
 services:
   app:
@@ -11,6 +12,15 @@ services:
     volumes:
       - .:/app
 
+  web:
+    extends:
+      file: common.yml
+      service: web
+    command: yarn run dev --host 0.0.0.0 --port 8000
+    volumes:
+      - .:/app
+      - /app/node_modules
+
   nginx:
     extends:
       file: common.yml
@@ -19,6 +29,8 @@ services:
       context: ./docker/nginx_dev
       dockerfile: ./Dockerfile
     restart: always
+    ports:
+      - 8000:80
 
   datadog:
     extends:
