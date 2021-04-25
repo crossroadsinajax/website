@@ -5,6 +5,17 @@ venv = Venv(
     venvs=[
         Venv(
             pkgs={
+                "bandit": ["==1.7.*"],
+            },
+            venvs=[
+                Venv(
+                    name="bandit",
+                    command="bandit -c .bandit.yml -r church/ crossroads/ prayer/ chat/",
+                ),
+            ],
+        ),
+        Venv(
+            pkgs={
                 "black": ["==20.8b1"],
                 "isort": [latest],
             },
