@@ -2,3 +2,6 @@
 static/
 **/node_modules
 node_modules/
+.riot/
+__pycache__
+.mypy_cache/

@@ -152,7 +152,9 @@ interface ServicePageProps {
 }
 
 const ServicePage: React.FC<ServicePageProps> = ({ user, ws }) => {
-  let { slug } = useParams()
+  let { slug } = useParams<{
+    slug: string
+  }>()
   const { data, loading, refetch } = useServicePageQuery({
     variables: {
       slug,

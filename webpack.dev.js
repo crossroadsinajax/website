@@ -60,6 +60,7 @@ module.exports = {
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
     new HtmlWebpackPlugin({
+      inject: true,
       template: "./web/index.html",
     }),
   ],

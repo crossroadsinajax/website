@@ -2,6 +2,10 @@
 *.min.css
 *.min.js
 
+.mypy_cache/
+.riot/
+.venv/
+
 dist/
 
 # remove these once SPA is merged
