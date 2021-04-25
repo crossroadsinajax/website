@@ -33,16 +33,16 @@ class TokenBackend:
 class AuthenticationMiddleware:
     """Authenticate a user via a token provided in the URL."""
 
-    TOKEN = "mem"  # Query param to use to authenticate with
+    PARAM = "mem"  # Query param to use to authenticate with
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.method != "GET" or self.TOKEN not in request.GET:
+        if request.method != "GET" or self.PARAM not in request.GET:
             return self.get_response(request)
 
-        token = request.GET[self.TOKEN]
+        token = request.GET[self.PARAM]
 
         user = authenticate(request, token=token)
         if user:
