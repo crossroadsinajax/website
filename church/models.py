@@ -93,7 +93,7 @@ class User(AbstractUser):
 
         # TODO: get the hostname dynamically
         stream_link = yarl.URL(
-            f"https://crossroadsajax.church/gathering/{service_page.title}"
+            f"https://crossroadsajax.church/gathering/{service_page.slug}"
         ).with_query(dict(mem=self.token))
         return str(stream_link)
 
@@ -103,7 +103,7 @@ class User(AbstractUser):
         return guest.get_next_service_link()
 
     def get_services_link(self):
-        link = yarl.URL("https://crossroadsajax.church/services").with_query(
+        link = yarl.URL("https://crossroadsajax.church/gatherings").with_query(
             dict(mem=self.token)
         )
         return str(link)

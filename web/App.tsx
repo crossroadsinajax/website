@@ -170,6 +170,12 @@ const AppBase: React.FC<AppProps> = (props) => {
         <Route path="/gathering/:slug">
           <ServicePage user={user} ws={props.ws} />
         </Route>
+        <Route path="/services/:slug">
+          <ServicePage user={user} ws={props.ws} />
+        </Route>
+        <Route path="/services">
+          <ServicesPage />
+        </Route>
         <Route path="/give/">
           <Giving />
         </Route>
