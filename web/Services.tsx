@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client"
-import moment from "moment"
+import { parse, format } from "date-fns"
 import React from "react"
 import Container from "react-bootstrap/Container"
 import Spinner from "react-bootstrap/Spinner"
@@ -48,7 +48,7 @@ const ServicesPage: React.FC<ServicesProps> = () => {
                   </Link>
                 </h5>
                 <div className="card-subtitle">
-                  <p>{moment(page.node.date).format("MMM. D, YYYY")}</p>
+                  <p>{format(parse(page.node.date, "yyyy-MM-dd", new Date()), "MMM. d, yyyy")}</p>
                 </div>
                 <p
                   className="card-text"
