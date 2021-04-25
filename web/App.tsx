@@ -7,7 +7,6 @@ import NavDropdown from "react-bootstrap/NavDropdown"
 import Navbar from "react-bootstrap/Navbar"
 import Row from "react-bootstrap/Row"
 import { Helmet } from "react-helmet"
-import { hot } from "react-hot-loader/root"
 import { Link, useLocation } from "react-router-dom"
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
 import styled from "styled-components"
@@ -216,4 +215,4 @@ const RouterApp: React.FC<{
   )
 }
 
-export const App = hot(RouterApp)
+export const App = RouterApp

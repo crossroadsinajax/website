@@ -9,7 +9,6 @@ import { setContext } from "@apollo/client/link/context"
 import { onError } from "@apollo/client/link/error"
 import React from "react"
 import ReactDOM from "react-dom"
-import "react-hot-loader"
 
 import { App } from "./App"
 import WebsocketProvider from "./Websocket"

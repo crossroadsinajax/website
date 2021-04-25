@@ -2,25 +2,23 @@ const path = require("path")
 const webpack = require("webpack")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const ReactRefreshTypeScript = require('react-refresh-typescript');
+
+const distPath = path.resolve(__dirname, "dist")
 
 module.exports = {
+  context: __dirname,
   mode: "development",
-  entry: ["react-hot-loader/patch", "./web/index.tsx"], // react hot loader has to be loaded before react
-  output: {
-    path: path.join(__dirname, "dist"),
-    filename: "app.js",
-    publicPath: "/",
-  },
+  entry: [path.join(path.resolve(__dirname, "web"), "index.tsx")],
   resolve: {
     modules: ["node_modules"],
-    alias: {
-      "react-dom": "@hot-loader/react-dom",
-    },
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
   devServer: {
     historyApiFallback: true,
-    contentBase: "./dist",
+    contentBase: distPath,
+    hot: true,
   },
   module: {
     rules: [
@@ -28,39 +26,39 @@ module.exports = {
         test: /\.html$/i,
         loader: "html-loader",
       },
+      // {
+      //   test: /\.html/,
+      //   type: "asset/resource",
+      // },
       {
-        test: /\.(j|t)s(x)?$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: require.resolve("ts-loader"),
           options: {
-            cacheDirectory: true,
-            babelrc: false,
-            presets: [
-              [
-                "@babel/preset-env",
-                { targets: { browsers: "last 2 versions" } }, // or whatever your project requires
-              ],
-              "@babel/preset-typescript",
-              "@babel/preset-react",
-            ],
-            plugins: [
-              ["@babel/plugin-proposal-class-properties", { loose: true }],
-              "react-hot-loader/babel",
-            ],
+            context: __dirname,
+            transpileOnly: true,
+            getCustomTransformers: () => ({
+              before: [ReactRefreshTypeScript()],
+            }),
           },
         },
       },
     ],
   },
-  devtool: "eval-source-map",
-  optimization: {
-    moduleIds: "named",
-  },
+  devtool: "inline-source-map",
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new ReactRefreshWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: "./web/index.html",
+      inject: true,
+      template: "web/index.html",
     }),
   ],
+  output: {
+    path: distPath,
+    filename: "app.js",
+    publicPath: "/",
+  },
 }
