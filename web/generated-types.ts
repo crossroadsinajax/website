@@ -178,7 +178,7 @@ export type ServicePagesQuery = { __typename?: "Query" } & {
             node?: Maybe<
               { __typename?: "ServicePageNode" } & Pick<
                 ServicePageNode,
-                "slug" | "title" | "description"
+                "date" | "description" | "slug" | "title"
               >
             >
           }
@@ -355,9 +355,10 @@ export const ServicePagesDocument = gql`
     services {
       edges {
         node {
+          date
+          description
           slug
           title
-          description
         }
       }
     }
