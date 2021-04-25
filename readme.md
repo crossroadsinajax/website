@@ -60,6 +60,8 @@ docker-compose exec app riot run -s fmt
 docker-compose exec app riot run -s lint
 # lint yaml
 docker-compose exec app riot run -s yaml_lint
+# type check
+docker-compose exec app mypy .
 
 # format ts/js code
 docker-compose exec web yarn fmt

@@ -53,7 +53,7 @@ class User(AbstractUser):
         return ""
 
     @cached_property
-    def display_name(self):
+    def display_name(self) -> str:
         if self.last_name:
             display_name = f"{self.first_name} {self.last_name[0]}"
         else:
@@ -89,7 +89,7 @@ class User(AbstractUser):
     def is_mod(self) -> bool:
         return "chat_mod" in self.group_names
 
-    def get_next_service_link(self):
+    def get_next_service_link(self) -> str:
         service_page = ServicePage.current_service_page()
 
         # TODO: get the hostname dynamically
@@ -99,11 +99,11 @@ class User(AbstractUser):
         return str(stream_link)
 
     @classmethod
-    def get_guest_next_service_link(cls):
+    def get_guest_next_service_link(cls) -> str:
         guest = cls.objects.get(username="guest")
         return guest.get_next_service_link()
 
-    def get_services_link(self):
+    def get_services_link(self) -> str:
         link = yarl.URL("https://crossroadsajax.church/gatherings").with_query(
             dict(mem=self.token)
         )

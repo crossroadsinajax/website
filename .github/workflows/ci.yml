@@ -11,14 +11,20 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: install deps
-        run: pip install -r requirements.txt
+      - name: install riot
+        run: pip install riot==0.5
 
       - name: check formatting
         run: riot run -s check_fmt
 
       - name: linting
         run: riot run -s lint
+
+      - name: install deps
+        run: pip install -r requirements.txt
+
+      - name: type check
+        run: mypy .
 
       - name: yaml linting
         run: riot run -s yaml_lint

@@ -4,6 +4,7 @@ from typing import Dict, Type, Union
 
 import channels
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.layers import BaseChannelLayer
 from ddtrace import tracer
 from ddtrace.constants import SPAN_MEASURED_KEY
 from ddtrace.context import Context
@@ -53,7 +54,7 @@ class ChannelManager:
 
 class ConsumerRegistry:
 
-    _registry = dict()
+    _registry: Dict[str, Type["SubConsumer"]] = dict()
 
     def __contains__(self, app: Union[str, "SubConsumer"]):
         if isinstance(app, str):
@@ -63,11 +64,9 @@ class ConsumerRegistry:
 
         raise NotImplementedError
 
-    def register(self, cls):
+    def register(self, cls: Type["SubConsumer"]) -> Type["SubConsumer"]:
         assert cls.app_name is not None, "app name must be defined"
         assert cls.app_name not in registry, "app names must be unique"
-        assert cls.channel_layer is None, "This is to be set by Consumer"
-        assert cls.channel_name is None, "This is to be set by Consumer"
         self._registry[cls.app_name] = cls
         return cls
 
@@ -91,13 +90,9 @@ registry = ConsumerRegistry()
 
 class SubConsumer:
     # TODO: user metrics
-    app_name = None
-    channel_layer = None
-    channel_name = None
+    app_name: str
 
-    def __init__(self, channel_layer, channel_name, send):
-        assert self.channel_layer is None, "This is to be set by Consumer"
-        assert self.channel_name is None, "This is to be set by Consumer"
+    def __init__(self, channel_layer: BaseChannelLayer, channel_name: str, send):
         self.channel_layer = channel_layer
         self.channel_name = channel_name
         self.send = send

@@ -46,7 +46,7 @@ class UserCreateForm(UserCreationForm):
 
 class UserAdmin(DjangoUserAdmin):
     add_form = UserCreateForm
-    fieldsets = DjangoUserAdmin.fieldsets + (
+    fieldsets = DjangoUserAdmin.fieldsets + (  # type: ignore
         (
             "Authentication",
             dict(
