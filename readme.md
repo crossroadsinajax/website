@@ -1,6 +1,6 @@
 # crossroads website
 
-> we'll CROSS that bridge when we get der
+> we'll cross that bridge when we get der
 
 # dev
 
@@ -72,6 +72,12 @@ docker-compose exec app fish
 # get the logs from the app
 docker-compose logs -f app web
 ```
+
+## authenticating
+
+- `docker-compose exec app python manage.py shell_plus`
+- `User.objects.get(username="<user>").token`
+- go to `http://localhost:8000/gql/?mem=<token printed above>`
 
 ## useful links
 
