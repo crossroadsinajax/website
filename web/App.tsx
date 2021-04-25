@@ -18,7 +18,8 @@ import { AboutUs, Beliefs, Becoming, Contact } from "./About"
 import { Auth, Signup } from "./Auth"
 import Giving from "./Giving"
 import Home from "./Home"
-import { ServicePage, Services } from "./Service"
+import { ServicePage } from "./Service"
+import { ServicesPage } from "./Services"
 import WebSocketProvider from "./Websocket"
 import { useUserQuery } from "./generated-types"
 
@@ -164,7 +165,7 @@ const AppBase: React.FC<AppProps> = (props) => {
       <Header user={user} />
       <Switch>
         <Route path="/gatherings">
-          <Services />
+          <ServicesPage />
         </Route>
         <Route path="/gathering/:slug">
           <ServicePage user={user} ws={props.ws} />

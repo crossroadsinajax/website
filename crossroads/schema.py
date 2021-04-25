@@ -41,7 +41,7 @@ class ServicePageNode(DjangoObjectType):
     class Meta:
         model = models.ServicePage
         only_fields = ["id", "title", "slug", "description", "date", "stream_link"]
-        filter_fields = ["id", "title", "slug"]
+        filter_fields = ["id", "title", "slug", "date"]
         interfaces = (relay.Node,)
 
     def resolve_bulletin(self, info, *args, **kwargs) -> Optional[dict]:
@@ -78,6 +78,9 @@ class Query(graphene.ObjectType):
 
     def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
         return models.ServicePage.current_service_page()
+
+    def resolve_services(self, info, **kwargs):
+        return models.ServicePage.objects.in_menu().order_by("-date")
 
 
 schema = graphene.Schema(query=Query)
