@@ -3,7 +3,8 @@ import functools
 from django import http, shortcuts
 from django.core import exceptions as ex
 
-from comments import models as mods, forms
+from comments import forms
+from comments import models as mods
 
 
 def authenticated(f):

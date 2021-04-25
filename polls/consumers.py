@@ -5,7 +5,6 @@ from channels.db import database_sync_to_async as dbstoa
 from crossroads.consumers import SubConsumer, registry
 from polls import models
 
-
 log = logging.getLogger(__name__)
 
 

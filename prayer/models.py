@@ -1,5 +1,5 @@
-from django.core import exceptions
 from django.conf import settings
+from django.core import exceptions
 from django.db import models
 
 

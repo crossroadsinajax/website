@@ -1,11 +1,10 @@
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
-from django.urls import reverse
 import graphene
+from django.urls import reverse
 from graphene import relay
-from graphene_django.types import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphene_django.types import DjangoObjectType
 
 from church import models
 

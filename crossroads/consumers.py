@@ -1,13 +1,12 @@
-from typing import Dict, Union, Type
 import json
 import logging
+from typing import Dict, Type, Union
 
 import channels
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ddtrace import tracer
 from ddtrace.constants import SPAN_MEASURED_KEY
 from ddtrace.context import Context
-
 
 log = logging.getLogger(__name__)
 

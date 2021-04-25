@@ -4,7 +4,6 @@ from django import template
 
 from church import models
 
-
 register = template.Library()
 
 

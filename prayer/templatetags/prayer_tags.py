@@ -3,7 +3,6 @@ from django.core import exceptions
 
 from prayer import forms, models
 
-
 register = template.Library()
 
 

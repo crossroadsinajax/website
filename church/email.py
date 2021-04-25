@@ -1,9 +1,9 @@
 import base64
 import os
 
+import yarl
 from django.contrib.staticfiles import finders
 from postmark.core import PMMail
-import yarl
 
 from church.models import DailyReadingPage, ServicePage, User
 

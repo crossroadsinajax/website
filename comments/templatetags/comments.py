@@ -1,5 +1,7 @@
 from django import template
-from comments import models as mods, forms
+
+from comments import forms
+from comments import models as mods
 
 register = template.Library()
 
