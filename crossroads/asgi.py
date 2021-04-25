@@ -1,7 +1,7 @@
 import os
 
-from ddtrace.contrib.asgi import TraceMiddleware
 import django
+from ddtrace.contrib.asgi import TraceMiddleware
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
@@ -16,6 +16,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 import chat.consumers  # noqa this import is required to register the chat consumer
 import church.consumers  # noqa this import is required to register the chat consumer
 import polls.consumers  # noqa this import is required to register the poll consumer
+
 from . import consumers
 
 django.setup()

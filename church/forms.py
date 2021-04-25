@@ -1,5 +1,4 @@
 from django import forms
-
 from wagtail.users import forms as wtforms
 
 from . import models

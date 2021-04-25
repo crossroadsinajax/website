@@ -1,13 +1,11 @@
-from collections import defaultdict
 import logging
-from typing import List
-from typing import TypedDict
+from collections import defaultdict
+from typing import List, TypedDict
 
 from django.conf import settings
 from django.core import exceptions as exc
 from django.db import models
 from django.utils.functional import cached_property
-
 
 log = logging.getLogger(__name__)
 

@@ -1,9 +1,9 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
 
 from . import email
+from .models import User
 
 
 def daily_reading_email(modeladmin, request, queryset):

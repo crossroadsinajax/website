@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect
 
 from church.models import User
 
-
 log = logging.getLogger(__name__)
 
 

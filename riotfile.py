@@ -1,11 +1,12 @@
-from riot import Venv
+from riot import Venv, latest
 
 venv = Venv(
     pys=["3.9"],
     venvs=[
         Venv(
             pkgs={
-                "black": "==20.8b1",
+                "black": ["==20.8b1"],
+                "isort": [latest],
             },
             venvs=[
                 Venv(
@@ -14,7 +15,7 @@ venv = Venv(
                 ),
                 Venv(
                     name="fmt",
-                    command="black .",
+                    command="isort . && black .",
                 ),
                 Venv(
                     name="black",
@@ -24,7 +25,8 @@ venv = Venv(
         ),
         Venv(
             pkgs={
-                "flake8": "==3.8.*",
+                "flake8": ["==3.8.*"],
+                "flake8-isort": [latest],
             },
             venvs=[
                 Venv(

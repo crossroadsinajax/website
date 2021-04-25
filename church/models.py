@@ -1,25 +1,26 @@
 import secrets
 from typing import List
 
+import yarl
 from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django.utils.functional import cached_property
-from channels.layers import get_channel_layer
 from modelcluster.fields import ParentalKey
-from wagtail.core.models import Page, Orderable
-from wagtail.core import fields as wtfields, blocks
-from wagtail.documents.models import Document
-from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.core import blocks
+from wagtail.core import fields as wtfields
+from wagtail.core.models import Orderable, Page
+from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.documents.models import Document
 from wagtailmedia.blocks import AbstractMediaChooserBlock
-import yarl
 
-from prayer import models as pr_models
 from comments import models as com_models
+from prayer import models as pr_models
 
 
 class User(AbstractUser):

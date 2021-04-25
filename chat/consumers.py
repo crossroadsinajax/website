@@ -7,7 +7,6 @@ from django.core import exceptions as exc
 from chat import models
 from crossroads.consumers import SubConsumer, registry
 
-
 log = logging.getLogger(__name__)
 
 

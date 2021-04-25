@@ -1,12 +1,11 @@
-from graphene_django.views import GraphQLView
 from django import shortcuts
 from django.conf import settings
 from django.conf.urls import include, url
-from django.contrib.auth import views as auth_views
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-
+from graphene_django.views import GraphQLView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 

@@ -2,7 +2,6 @@ import logging
 
 from crossroads.consumers import SubConsumer, registry
 
-
 log = logging.getLogger(__name__)
 
 
