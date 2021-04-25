@@ -1,5 +1,6 @@
 import logging
-from typing import Dict, TypedDict
+from collections import defaultdict
+from typing import DefaultDict, TypedDict
 
 from channels.db import database_sync_to_async as dbstoa
 from ddtrace import tracer
@@ -18,37 +19,27 @@ class ChatManager:
         count: int
 
     class Room(TypedDict):
-        users: "ChatManager.UserStats"
+        users: DefaultDict[str, "ChatManager.UserStats"]
 
-    rooms: Dict[str, Room] = dict()
-
-    @classmethod
-    def get_or_create_room(cls, room):
-        if room not in cls.rooms:
-            cls.rooms[room] = dict(
-                users=dict(),
-            )
-        return cls.rooms[room]
+    rooms: DefaultDict[str, Room] = defaultdict(
+        lambda: {"users": defaultdict(lambda: {"count": 0})}
+    )
 
     @classmethod
     def register(cls, room, user):
-        room = cls.get_or_create_room(room)
-        user_meta = room["users"].get(user.username, dict(count=0))
-        user_meta["count"] = user_meta["count"] + 1
-        room["users"][user.username] = user_meta
+        room = cls.rooms[room]
+        room["users"][user.username]["count"] += 1
 
     @classmethod
     def deregister(cls, room, user):
-        room = cls.get_or_create_room(room)
-        user_meta = room["users"].get(user.username)
-        if not user_meta:
-            return
-        user_meta["count"] = user_meta["count"] - 1
+        room = cls.rooms[room]
+        count = room["users"][user.username]["count"]
+        if count > 0:
+            room["users"][user.username]["count"] = count - 1
 
     @classmethod
     def user_list(cls, room):
-        room = cls.get_or_create_room(room)
-        users = room["users"]
+        users = cls.rooms[room]["users"]
         return [
             dict(username=username, count=meta["count"])
             for username, meta in users.items()
