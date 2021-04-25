@@ -17,7 +17,7 @@ cryptography==3.4.6
 daphne==3.0.1
 ddtrace @ git+https://github.com/crossroadsinajax/dd-trace-py@1261b2c9afba8ac2a3c9ad11908e1718fe421d7a
 distlib==0.3.1
-Django==3.1.7
+Django==3.1.*
 django-extensions==2.2.9
 django-filter==2.4.0
 django-modelcluster==5.1
@@ -68,9 +68,8 @@ Twisted==21.2.0
 txaio==21.2.1
 Unidecode==1.2.0
 urllib3==1.26.4
-uvicorn==0.13.4
 virtualenv==20.4.3
-wagtail==2.12.3
+wagtail==2.12.*
 wagtailmedia==0.5.0
 webencodings==0.5.1
 Willow==1.4
