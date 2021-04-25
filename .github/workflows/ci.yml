@@ -24,7 +24,7 @@ jobs:
         run: riot run -s yaml_lint
 
       - name: bandit
-        run: riot run -s yaml_lint
+        run: riot run -s bandit
 
       - name: install deps
         run: pip install -r requirements.txt
