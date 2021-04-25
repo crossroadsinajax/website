@@ -13,6 +13,9 @@ def _find_attachments(date: str):
     # They should be placed in the directory static/attachments/<YYYY><MM><DD>
     path = finders.find(f"attachments/{date}")
 
+    if isinstance(path, list):
+        raise NotImplementedError
+
     if not path:
         return []
 

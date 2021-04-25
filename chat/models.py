@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from typing import List, TypedDict
+from typing import DefaultDict, Dict, List, TypedDict
 
 from django.conf import settings
 from django.core import exceptions as exc
@@ -38,8 +38,11 @@ class ChatMessage(models.Model):
         reactors: List[str]
 
     @cached_property
-    def aggreacts(self) -> AggrReacts:
-        aggr = defaultdict(lambda: {"count": 0, "reactors": []})
+    def aggreacts(self) -> Dict[str, AggrReacts]:
+        """Aggregates the reacts by emoji type."""
+        aggr: DefaultDict[str, "ChatMessage.AggrReacts"] = defaultdict(
+            lambda: {"count": 0, "reactors": []}
+        )
         reacts = self.reacts.all()
 
         for react in reacts:

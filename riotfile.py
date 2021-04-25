@@ -41,7 +41,7 @@ venv = Venv(
         ),
         Venv(
             pkgs={
-                "yamllint": "==1.26.*",
+                "yamllint": ["==1.26.*"],
             },
             venvs=[
                 Venv(

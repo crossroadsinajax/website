@@ -1,4 +1,5 @@
 import logging
+from typing import Dict, TypedDict
 
 from channels.db import database_sync_to_async as dbstoa
 from ddtrace import tracer
@@ -13,7 +14,13 @@ log = logging.getLogger(__name__)
 class ChatManager:
     # maintain real-time stats about a chatroom
 
-    rooms = dict()
+    class UserStats(TypedDict):
+        count: int
+
+    class Room(TypedDict):
+        users: "ChatManager.UserStats"
+
+    rooms: Dict[str, Room] = dict()
 
     @classmethod
     def get_or_create_room(cls, room):
