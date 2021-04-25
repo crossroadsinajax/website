@@ -105,7 +105,8 @@ class Service extends React.Component<ServiceProps, {}> {
       return (
         <Container>
           <h1>
-            Please <Link to="/signup">sign up</Link> to see our services
+            Please <Link to="/signup">sign up</Link> to see our services or
+            check your email for access.
           </h1>
         </Container>
       )
