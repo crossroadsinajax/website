@@ -394,6 +394,7 @@ const _ViewersContainer = styled.div`
   padding: 0px;
   margin-left: unset;
   margin-right: unset;
+  overflow-y: scroll;
 `
 
 const ViewersTab: React.FC<{
