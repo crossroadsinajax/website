@@ -93,7 +93,7 @@ class User(AbstractUser):
 
         # TODO: get the hostname dynamically
         stream_link = yarl.URL(
-            f"https://crossroadsajax.church{service_page.url}"
+            f"https://crossroadsajax.church/gathering/{service_page.title}"
         ).with_query(dict(mem=self.token))
         return str(stream_link)
 
