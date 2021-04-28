@@ -467,7 +467,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
 
   scrollToBottom = () => {
     const { chatScrollPaused, tab } = this.state
-    if (tab != "chat") {
+    if (tab == "viewers") {
       return
     }
     if (!chatScrollPaused && this.chatEnd?.parentElement) {
@@ -524,6 +524,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   sendMsg = (msg: string) => {
     if (!msg) {
       return
+    }
+    const { tab } = this.state
+    if (tab == "prayer") {
+      msg += " #p"
     }
     this.props.ws.send({
       type: "chat.message",
@@ -616,7 +620,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           chatEndRef={(ref) => {
             this.chatEnd = ref
           }}
-          onScroll={() => {}}
+          onScroll={this.onChatScroll}
         />
       )
     } else if (tab == "viewers") {
