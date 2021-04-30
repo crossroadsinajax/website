@@ -37,6 +37,7 @@ class UserCreateForm(UserCreationForm):
     class Meta:
         model = User
         fields = (
+            "orgs",
             "username",
             "first_name",
             "last_name",
@@ -51,6 +52,12 @@ class UserAdmin(DjangoUserAdmin):
             "Authentication",
             dict(
                 fields=("token",),
+            ),
+        ),
+        (
+            "Orgs",
+            dict(
+                fields=("orgs",),
             ),
         ),
     )

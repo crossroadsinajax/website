@@ -38,6 +38,7 @@ export type Query = {
   /** The ID of the object */
   service?: Maybe<ServicePageNode>
   services?: Maybe<ServicePageNodeConnection>
+  org?: Maybe<OrgType>
 }
 
 export type QueryServiceArgs = {
@@ -52,6 +53,7 @@ export type QueryServicesArgs = {
   id?: Maybe<Scalars["ID"]>
   title?: Maybe<Scalars["String"]>
   slug?: Maybe<Scalars["String"]>
+  date?: Maybe<Scalars["Date"]>
 }
 
 export type UserType = {
@@ -116,9 +118,16 @@ export type ServicePageNodeEdge = {
   cursor: Scalars["String"]
 }
 
+export type OrgType = {
+  __typename?: "OrgType"
+  name: Scalars["String"]
+  pk: Scalars["Int"]
+}
+
 export type UserQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQuery = { __typename?: "Query" } & {
+  org?: Maybe<{ __typename?: "OrgType" } & Pick<OrgType, "pk" | "name">>
   currentUser?: Maybe<
     { __typename?: "UserType" } & Pick<
       UserType,
@@ -190,6 +199,10 @@ export type ServicePagesQuery = { __typename?: "Query" } & {
 
 export const UserDocument = gql`
   query User {
+    org {
+      pk
+      name
+    }
     currentUser {
       username
       firstName

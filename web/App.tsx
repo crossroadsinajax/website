@@ -29,6 +29,10 @@ type AppProps = {
 
 gql`
   query User {
+    org {
+      pk
+      name
+    }
     currentUser {
       username
       firstName

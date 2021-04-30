@@ -9,6 +9,14 @@ from graphene_django.types import DjangoObjectType
 from church import models
 
 
+class OrgType(DjangoObjectType):
+    pk = graphene.Int(source="pk", required=True)
+
+    class Meta:
+        model = models.Org
+        fields = ["name"]
+
+
 class UserType(DjangoObjectType):
     is_chatmod = graphene.Boolean(source="is_chatmod", required=True)
     groups = graphene.List(graphene.String)
@@ -70,16 +78,21 @@ class Query(graphene.ObjectType):
     current_service = graphene.Field(ServicePageNode, required=True)
     service = relay.Node.Field(ServicePageNode)
     services = DjangoFilterConnectionField(ServicePageNode)
+    org = graphene.Field(OrgType)
 
     def resolve_current_user(self, info, **kwargs) -> Optional[models.User]:
         user = info.context.user
         return user if user.is_authenticated else None
 
     def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
-        return models.ServicePage.current_service_page()
+        return models.ServicePage.objects.filter(org=1).order_by("date").last()
 
     def resolve_services(self, info, **kwargs):
-        return models.ServicePage.objects.in_menu().order_by("-date")
+        return models.ServicePage.objects.in_menu().filter(org=1).order_by("-date")
+
+    def resolve_org(self, info, **kwargs):
+        user = info.context.user
+        return user.orgs.first()
 
 
 schema = graphene.Schema(query=Query)

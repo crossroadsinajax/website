@@ -14,6 +14,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
 from wagtail.core import blocks
 from wagtail.core import fields as wtfields
+from wagtail.core import hooks
 from wagtail.core.models import Orderable, Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.documents.models import Document
@@ -23,9 +24,17 @@ from comments import models as com_models
 from prayer import models as pr_models
 
 
+class Org(models.Model):
+    name = models.CharField(max_length=1024)
+
+    class Meta:
+        ordering = ["name"]
+
+
 class User(AbstractUser):
     token = models.CharField(max_length=32)
     subscribe_daily_email = models.BooleanField(default=False)
+    orgs = models.ManyToManyField(Org, related_name="users")
 
     # override the username validator
     username_validator = UnicodeUsernameValidator()
@@ -38,6 +47,9 @@ class User(AbstractUser):
     #     for key, value in self.__class__.__dict__.items():
     #         if isinstance(value, cached_property):
     #             self.__dict__.pop(key, None)
+
+    class Meta:
+        ordering = ["username"]
 
     @cached_property
     def role_emoji(self):
@@ -271,6 +283,13 @@ class ContentPageMixin:
 
 
 class ServicePage(Page, ContentPageMixin):
+    org = models.ForeignKey(
+        Org,
+        related_name="service_pages",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+    )
     date = models.DateField("Service date")
     description = wtfields.RichTextField(
         blank=True,
@@ -287,17 +306,6 @@ class ServicePage(Page, ContentPageMixin):
         ],
         blank=True,
     )
-
-    # service = wtfields.StreamField([
-    #     ('worship_section', WorshipSectionBlock(name="Worship Section")),
-    #     ('announcements_section', AnnouncementsSectionBlock(name="Announcement Section")),
-    #     ('sermon_section', SermonSectionBlock(name="Sermon Section")),
-    #     ('discussion_section', DiscussionSectionBlock(name="Discussion Section")),
-    #     # TODO
-    #     # - polls/voting?
-    #     # - feedback
-    #     # - discussion
-    # ])
 
     @property
     def getdescription(self):
@@ -350,6 +358,15 @@ class ServicePage(Page, ContentPageMixin):
         context["self"] = self
         context["docs"] = self.documents.all()
         return context
+
+
+@hooks.register("after_create_page")
+def after_service_page_save(request, page):
+    if isinstance(page, ServicePage):
+        user = request.user
+        org = user.orgs.first()
+        page.org = org
+        page.save()
 
 
 @receiver(models.signals.post_save, sender=ServicePage)
