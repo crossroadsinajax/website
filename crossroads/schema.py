@@ -88,7 +88,9 @@ class Query(graphene.ObjectType):
         return models.ServicePage.objects.filter(org=1).order_by("date").last()
 
     def resolve_services(self, info, **kwargs):
-        return models.ServicePage.objects.in_menu().filter(org=1).order_by("-date")
+        user = info.context.user
+        org = user.orgs.first()
+        return models.ServicePage.objects.live().filter(org=org.pk).order_by("-date")
 
     def resolve_org(self, info, **kwargs):
         user = info.context.user
