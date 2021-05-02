@@ -94,8 +94,11 @@ class Query(graphene.ObjectType):
 
     def resolve_services(self, info, **kwargs):
         user = info.context.user
-        org = user.orgs.first()
-        return models.ServicePage.objects.live().filter(org=org.pk).order_by("-date")
+        if user.is_authenticated:
+            org = user.orgs.first()
+        else:
+            org = 1
+        return models.ServicePage.objects.live().filter(org=org).order_by("-date")
 
     def resolve_org(self, info, **kwargs):
         user = info.context.user
