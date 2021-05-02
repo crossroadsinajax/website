@@ -85,7 +85,12 @@ class Query(graphene.ObjectType):
         return user if user.is_authenticated else None
 
     def resolve_current_service(self, info, **kwargs) -> models.ServicePage:
-        return models.ServicePage.objects.filter(org=1).order_by("date").last()
+        user = info.context.user
+        if user.is_authenticated:
+            org = user.orgs.first()
+        else:
+            org = 1
+        return models.ServicePage.objects.filter(org=org).order_by("date").last()
 
     def resolve_services(self, info, **kwargs):
         user = info.context.user
