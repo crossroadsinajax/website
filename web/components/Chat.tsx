@@ -1,6 +1,5 @@
 import moment from "moment"
 import React, { useMemo, useRef, useState } from "react"
-import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -676,23 +675,26 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             marginRight: "unset",
           }}
         >
-          {chatScrollPaused && (
-            <Button
-              className="btn btn-primary form-control"
-              style={{ marginTop: -28, zIndex: 1000 }}
-              onClick={this.onResumeScroll}
-            >
-              ⏸️ chat is paused{" "}
-              {numMissedMessages > 0 && (
-                <span>
-                  {numMissedMessages} new message
-                  {numMissedMessages > 1 ? "s" : ""} below
-                </span>
-              )}
-              {" ⬇️ "}
-            </Button>
-          )}
           <ChatInput onSubmit={this.sendMsg} />
+          {chatScrollPaused && (
+            <p>
+              ⏸️ chat is paused.{" "}
+              {numMissedMessages > 0 && (
+                <>
+                  {numMissedMessages} unread message
+                  {numMissedMessages > 1 ? "s" : ""} below.{" "}
+                </>
+              )}
+              Click{" "}
+              <a
+                style={{ color: "#007bff", cursor: "pointer" }}
+                onClick={this.onResumeScroll}
+              >
+                here
+              </a>{" "}
+              to scroll down.
+            </p>
+          )}
         </div>
       </div>
     )
