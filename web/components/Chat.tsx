@@ -677,23 +677,30 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         >
           <ChatInput onSubmit={this.sendMsg} />
           {chatScrollPaused && (
-            <p>
-              ⏸️ chat is paused.{" "}
-              {numMissedMessages > 0 && (
-                <>
-                  {numMissedMessages} unread message
-                  {numMissedMessages > 1 ? "s" : ""} below.{" "}
-                </>
-              )}
-              Click{" "}
-              <a
-                style={{ color: "#007bff", cursor: "pointer" }}
-                onClick={this.onResumeScroll}
-              >
-                here
-              </a>{" "}
-              to scroll down.
-            </p>
+            <div
+              style={{
+                position: "absolute",
+                marginTop: "80px",
+              }}
+            >
+              <p>
+                ⏸️ chat is paused.{" "}
+                {numMissedMessages > 0 && (
+                  <>
+                    {numMissedMessages} unread message
+                    {numMissedMessages > 1 ? "s" : ""} below.{" "}
+                  </>
+                )}
+                Click{" "}
+                <a
+                  style={{ color: "#007bff", cursor: "pointer" }}
+                  onClick={this.onResumeScroll}
+                >
+                  here
+                </a>{" "}
+                to scroll down.
+              </p>
+            </div>
           )}
         </div>
       </div>
