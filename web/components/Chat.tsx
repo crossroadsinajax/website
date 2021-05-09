@@ -666,24 +666,17 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </Nav.Link>
             </Nav.Item>
           </Nav>
-          {this.getTab()}
-        </Tab.Container>
-        <div
-          className="row"
-          style={{
-            marginLeft: "unset",
-            marginRight: "unset",
-          }}
-        >
-          <ChatInput onSubmit={this.sendMsg} />
           {chatScrollPaused && (
             <div
               style={{
                 position: "absolute",
-                marginTop: "80px",
+                marginTop: 43,
+                marginLeft: 2,
+                zIndex: 999,
+                background: "white",
               }}
             >
-              <p>
+              <p style={{ marginBottom: 0, paddingLeft: 4 }}>
                 ⏸️ chat is paused.{" "}
                 {numMissedMessages > 0 && (
                   <>
@@ -702,6 +695,16 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </p>
             </div>
           )}
+          {this.getTab()}
+        </Tab.Container>
+        <div
+          className="row"
+          style={{
+            marginLeft: "unset",
+            marginRight: "unset",
+          }}
+        >
+          <ChatInput onSubmit={this.sendMsg} />
         </div>
       </div>
     )
