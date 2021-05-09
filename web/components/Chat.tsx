@@ -666,6 +666,35 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </Nav.Link>
             </Nav.Item>
           </Nav>
+          {chatScrollPaused && (
+            <div
+              style={{
+                position: "absolute",
+                marginTop: 43,
+                marginLeft: 2,
+                zIndex: 999,
+                background: "white",
+              }}
+            >
+              <p style={{ marginBottom: 0, paddingLeft: 4 }}>
+                ⏸️ chat is paused.{" "}
+                {numMissedMessages > 0 && (
+                  <>
+                    {numMissedMessages} unread message
+                    {numMissedMessages > 1 ? "s" : ""} below.{" "}
+                  </>
+                )}
+                Click{" "}
+                <a
+                  style={{ color: "#007bff", cursor: "pointer" }}
+                  onClick={this.onResumeScroll}
+                >
+                  here
+                </a>{" "}
+                to scroll down.
+              </p>
+            </div>
+          )}
           {this.getTab()}
         </Tab.Container>
         <div
@@ -676,25 +705,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           }}
         >
           <ChatInput onSubmit={this.sendMsg} />
-          {chatScrollPaused && (
-            <p>
-              ⏸️ chat is paused.{" "}
-              {numMissedMessages > 0 && (
-                <>
-                  {numMissedMessages} unread message
-                  {numMissedMessages > 1 ? "s" : ""} below.{" "}
-                </>
-              )}
-              Click{" "}
-              <a
-                style={{ color: "#007bff", cursor: "pointer" }}
-                onClick={this.onResumeScroll}
-              >
-                here
-              </a>{" "}
-              to scroll down.
-            </p>
-          )}
         </div>
       </div>
     )
