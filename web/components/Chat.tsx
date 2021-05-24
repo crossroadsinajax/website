@@ -1,4 +1,4 @@
-import { getYear, getDayOfYear, fromUnixTime, format } from 'date-fns'
+import { getYear, getDayOfYear, fromUnixTime, format } from "date-fns"
 import React, { useMemo, useRef, useState } from "react"
 import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
@@ -89,7 +89,7 @@ const datefmt = (created: number) => {
   const now = new Date()
   const ts = fromUnixTime(created)
   if (getDayOfYear(now) == getDayOfYear(ts) && getYear(now) == getYear(ts)) {
-    return format(ts, "hh:mma")  
+    return format(ts, "hh:mma")
   }
   return format(ts, "yyyy/MM/dd hh:mmaaa")
 }

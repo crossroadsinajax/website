@@ -48,7 +48,12 @@ const ServicesPage: React.FC<ServicesProps> = () => {
                   </Link>
                 </h5>
                 <div className="card-subtitle">
-                  <p>{format(parse(page.node.date, "yyyy-MM-dd", new Date()), "MMM. d, yyyy")}</p>
+                  <p>
+                    {format(
+                      parse(page.node.date, "yyyy-MM-dd", new Date()),
+                      "MMM. d, yyyy"
+                    )}
+                  </p>
                 </div>
                 <p
                   className="card-text"
