@@ -1,4 +1,4 @@
-import moment from "moment"
+import { getYear, getDayOfYear, fromUnixTime, format } from "date-fns"
 import React, { useMemo, useRef, useState } from "react"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
@@ -85,12 +85,12 @@ const ChatReactSelector: React.FC<{
 }
 
 const datefmt = (created: number) => {
-  const now = moment()
-  const ts = moment.unix(created)
-  if (now.day() != ts.day()) {
-    return ts.format("DD/MM/YY hh:mma")
+  const now = new Date()
+  const ts = fromUnixTime(created)
+  if (getDayOfYear(now) == getDayOfYear(ts) && getYear(now) == getYear(ts)) {
+    return format(ts, "hh:mma")
   }
-  return ts.format("hh:mma")
+  return format(ts, "yyyy/MM/dd hh:mmaaa")
 }
 
 // TODO: move to server side
