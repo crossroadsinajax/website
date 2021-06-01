@@ -91,6 +91,9 @@ export const Bulletin: React.FC<{
     return <div></div>
   }
 
+  // Bulletins can be null.
+  if (!("value" in bulletin)) return <div></div>
+
   var bulletinSection: BulletinSectionProp
   try {
     let bulletinItems: BulletinItemProp[] = []
