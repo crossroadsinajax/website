@@ -360,8 +360,8 @@ class ServicePage(Page, ContentPageMixin):
         return context
 
 
-@hooks.register("after_create_page")
-def after_service_page_save(request, page):
+@hooks.register("after_publish_page")
+def after_service_page_publish(request, page):
     if isinstance(page, ServicePage):
         user = request.user
         org = user.orgs.first()
