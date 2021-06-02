@@ -28,7 +28,7 @@ jobs:
           eval $(ssh-agent)
           ssh-add "$HOME/.ssh/docker"
           echo "crossroadsajax.church $SSH_KNOWN_HOST" >> ~/.ssh/known_hosts
-          ssh kyle@crossroadsajax.church "docker system prune"
+          ssh kyle@crossroadsajax.church "docker system prune -f"
           docker --host "ssh://kyle@crossroadsajax.church" \
             stack deploy --compose-file <(docker-compose \
             -f prod.yml config) --with-registry-auth prod
@@ -60,7 +60,7 @@ jobs:
           eval $(ssh-agent)
           ssh-add "$HOME/.ssh/docker"
           echo "crossroadsajax.church $SSH_KNOWN_HOST" >> ~/.ssh/known_hosts
-          ssh kyle@crossroadsajax.church "docker system prune"
+          ssh kyle@crossroadsajax.church "docker system prune -f"
           docker --host "ssh://kyle@crossroadsajax.church" \
             stack deploy --compose-file <(docker-compose \
             -f staging.yml config) --with-registry-auth staging
