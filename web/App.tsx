@@ -42,12 +42,12 @@ gql`
   }
 `
 
-const Header: React.FC<{
+const CrossroadsHeader: React.FC<{
   user: Maybe<UserType>
 }> = (props) => {
   const { user } = props
   return (
-    <Navbar expand="lg" bg="light" style={{ padding: "0rem 1rem" }}>
+    <Navbar expand="lg" style={{ padding: "0rem 1rem" }}>
       <Container>
         <Navbar.Brand>
           <Link to="/">
@@ -108,7 +108,7 @@ const _Footer = styled.footer`
   }
 `
 
-const Footer: React.FC<{}> = () => {
+const CrossroadsFooter: React.FC<{}> = () => {
   return (
     <_Footer className="mt-5 pt-4 pb-2 bg-light border-top">
       <Container>
@@ -147,14 +147,10 @@ const Footer: React.FC<{}> = () => {
   )
 }
 
-const AppBase: React.FC<AppProps> = (props) => {
-  const { data } = useUserQuery()
-  const { pathname } = useLocation()
-  useLayoutEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
-  const user = data?.currentUser
-
+const CrossroadsApp: React.FC<{
+  user: Maybe<UserType>
+  ws: WebSocketProvider
+}> = ({ user, ws }) => {
   return (
     <React.Fragment>
       <Helmet>
@@ -166,16 +162,16 @@ const AppBase: React.FC<AppProps> = (props) => {
           content="Welcome to Crossroads Community Church!"
         />
       </Helmet>
-      <Header user={user} />
+      <CrossroadsHeader user={user} />
       <Switch>
         <Route path="/gatherings">
           <ServicesPage />
         </Route>
         <Route path="/gathering/:slug">
-          <ServicePage user={user} ws={props.ws} />
+          <ServicePage user={user} ws={ws} />
         </Route>
         <Route path="/services/:slug">
-          <ServicePage user={user} ws={props.ws} />
+          <ServicePage user={user} ws={ws} />
         </Route>
         <Route path="/services">
           <ServicesPage />
@@ -202,12 +198,76 @@ const AppBase: React.FC<AppProps> = (props) => {
           <Signup />
         </Route>
         <Route path="/">
-          <Home ws={props.ws} />
+          <Home ws={ws} />
         </Route>
       </Switch>
-      <Footer />
+      <CrossroadsFooter />
     </React.Fragment>
   )
+}
+
+const MaranathaApp: React.FC<{
+  user: Maybe<UserType>
+  ws: WebSocketProvider
+}> = ({ user, ws }) => {
+  return (
+    <React.Fragment>
+      <Helmet>
+        <title>maranatha</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Welcome to the Maranatha stream!" />
+      </Helmet>
+      <Navbar expand="lg" style={{ padding: "0rem 1rem" }}>
+        <Container>
+          <Navbar.Brand>
+            <a href="https://www.maranathacrc.com">
+              <img
+                src="/static/img/maranatha.jpg"
+                style={{ maxWidth: "300px" }}
+              />
+            </a>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+              {user && (
+                <NavDropdown title={user.username} id="profile-dropdown">
+                  <NavDropdown.Item as={Link} to="/logout">
+                    Log out
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Switch>
+        <Route path="/gathering/:slug">
+          <ServicePage user={user} ws={ws} />
+        </Route>
+        <Route path="/services/:slug">
+          <ServicePage user={user} ws={ws} />
+        </Route>
+      </Switch>
+    </React.Fragment>
+  )
+}
+
+const AppBase: React.FC<AppProps> = (props) => {
+  const { data } = useUserQuery()
+  const { pathname } = useLocation()
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  const user = data?.currentUser
+  const org = data?.org
+
+  if (org && org.name == "maranatha") {
+    return <MaranathaApp user={user} ws={props.ws} />
+  } else {
+    return <CrossroadsApp user={user} ws={props.ws} />
+  }
 }
 
 const RouterApp: React.FC<{
