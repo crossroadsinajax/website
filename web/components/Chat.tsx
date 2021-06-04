@@ -416,10 +416,12 @@ type ChatProps = {
   id: number
 }
 
+type TabType = "chat" | "prayer" | "viewers" | "qna"
+
 type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
-  tab: "chat" | "prayer" | "viewers"
+  tab: TabType
   chatScrollPaused: boolean
   numMissedMessages: number
 }
@@ -528,6 +530,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     if (tab == "prayer") {
       msg += " #p"
     }
+    if (tab == "qna") {
+      msg += " #q"
+    }
     this.props.ws.send({
       type: "chat.message",
       body: msg,
@@ -557,7 +562,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  setTab = (tab: "chat" | "prayer" | "viewers") => {
+  setTab = (tab: TabType) => {
     let callback = () => {}
     if (tab == "chat" || tab == "prayer") {
       callback = this.scrollToBottom
@@ -622,6 +627,21 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           onScroll={this.onChatScroll}
         />
       )
+    } else if (tab == "qna") {
+      component = (
+        <ChatTab
+          user={this.props.user}
+          messages={this.state.messages}
+          filterTag={"q"}
+          onDelete={this.onDelete}
+          onReact={this.onReact}
+          onToggleTag={this.onToggleTag}
+          chatEndRef={(ref) => {
+            this.chatEnd = ref
+          }}
+          onScroll={this.onChatScroll}
+        />
+      )
     } else if (tab == "viewers") {
       component = <ViewersTab viewers={this.state.viewers} />
     }
@@ -655,6 +675,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             <Nav.Item>
               <Nav.Link eventKey="prayer" onClick={() => this.setTab("prayer")}>
                 Prayer
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="qna" onClick={() => this.setTab("qna")}>
+                Q&A
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
