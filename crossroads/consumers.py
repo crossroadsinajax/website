@@ -173,7 +173,7 @@ class Consumer(AsyncWebsocketConsumer):
             await self.accept()
 
     async def disconnect(self, close_code):
-        with tracer.trace("websocket.disconnect") as span:
+        with tracer.trace("ws.disconnect") as span:
             user = await channels.auth.get_user(self.scope)
             span.set_tag("user", user.username)
 
@@ -201,7 +201,7 @@ class Consumer(AsyncWebsocketConsumer):
                     log.error("No type provided for event %r", text_data)
                     return
 
-                root = tracer.active_root_span()
+                root = tracer.current_root_span()
                 root.resource = _type
 
                 user = await channels.auth.get_user(self.scope)
@@ -224,7 +224,7 @@ class Consumer(AsyncWebsocketConsumer):
             if span_id and trace_id:
                 ctx = Context(span_id=span_id, trace_id=trace_id)
             else:
-                ctx = tracer.active()
+                ctx = tracer.current_trace_context()
 
             with tracer.start_span("ws.dispatch", child_of=ctx) as span:
                 span.set_tag(SPAN_MEASURED_KEY)
