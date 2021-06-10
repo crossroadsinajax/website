@@ -15,7 +15,7 @@ click==7.1.2
 constantly==15.1.0
 cryptography==3.4.6
 daphne==3.0.1
-ddtrace @ git+https://github.com/crossroadsinajax/dd-trace-py@1261b2c9afba8ac2a3c9ad11908e1718fe421d7a
+ddtrace==0.50.0rc1
 distlib==0.3.1
 Django==3.1.*
 django-extensions==2.2.9
