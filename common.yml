@@ -42,3 +42,14 @@ services:
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
       - /etc/passwd:/etc/passwd:ro
+    labels:
+      com.datadoghq.ad.logs: >-
+        [{
+          "source": "app",
+          "service": "crossroads-web",
+          "log_processing_rules": [{
+            "type": "multi_line",
+            "name": "log_start_with_date",
+            "pattern": "\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2},\d{3}"
+          }]
+        }]
