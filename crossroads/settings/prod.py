@@ -7,28 +7,6 @@ ALLOWED_HOSTS = [
 ]
 
 
-LOGGING = {
-    "version": 1,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "loggers": {
-        "chat": {"handlers": ["console"], "level": "WARN"},
-        "church": {"handlers": ["console"], "level": "WARN"},
-        "crossroads": {"handlers": ["console"], "level": "WARN"},
-        "django": {
-            "handlers": ["console"],
-            "level": "WARN",
-        },
-        "ddtrace": {"handlers": ["console"], "level": "WARN"},
-        "graphql": {"handlers": ["console"], "level": "WARN"},
-        "graphene": {"handlers": ["console"], "level": "WARN"},
-    },
-}
-
-
 # These are mounted by docker secrets.
 # They are defined in prod.yml.
 def read_secret(secret):

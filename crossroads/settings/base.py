@@ -11,7 +11,7 @@ LOGGING = {
     "version": 1,
     "formatters": {
         "verbose": {
-            "format": "{asctime} {levelname} [{name}:{lineno}] {message}",
+            "format": "{asctime} {levelname} [{name}] [{name}:{lineno}] /datadog_inject/ - {message}",
             "style": "{",
         },
         "simple": {
@@ -24,21 +24,25 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
+        "datadog": {
+            "class": "crossroads.ddlogs.DDHandler",
+            "formatter": "verbose",
+        },
     },
     "loggers": {
-        "graphql": {"handlers": ["console"], "level": "INFO"},
-        "graphene": {"handlers": ["console"], "level": "INFO"},
-        "chat": {"handlers": ["console"], "level": "INFO"},
-        "church": {"handlers": ["console"], "level": "INFO"},
-        "crossroads": {"handlers": ["console"], "level": "INFO"},
+        "graphql": {"handlers": ["console", "datadog"], "level": "INFO"},
+        "graphene": {"handlers": ["console", "datadog"], "level": "INFO"},
+        "chat": {"handlers": ["console", "datadog"], "level": "INFO"},
+        "church": {"handlers": ["console", "datadog"], "level": "INFO"},
+        "crossroads": {"handlers": ["console", "datadog"], "level": "INFO"},
         "django": {
-            "handlers": ["console"],
+            "handlers": ["console", "datadog"],
             "level": "INFO",
         },
-        "ddtrace": {"handlers": ["console"], "level": "INFO"},
+        "ddtrace": {"handlers": ["console", "datadog"], "level": "INFO"},
     },
     "root": {
-        "handlers": ["console"],
+        "handlers": ["console", "datadog"],
         "level": "INFO",
     },
 }
