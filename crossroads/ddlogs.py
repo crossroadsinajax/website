@@ -59,15 +59,19 @@ class LogWriterV1(PeriodicService):
         self._encoder = JSONLogEncoder()
         self._timeout = 2  # type: float
         self._api_key = os.environ.get("DD_API_KEY")
-        assert self._api_key
         self._headers = {
             "DD-API-KEY": self._api_key,
             "Content-Type": self._encoder.content_type,
         }
+        self._enabled = self._api_key is not None
+        if self._enabled:
+            self.start()
 
     def enqueue(self, log):
         # type: (LogEvent) -> None
         with self._lock:
+            if not self._enabled:
+                return
             self._buffer.append(log)
 
     def periodic(self):
@@ -104,7 +108,6 @@ class LogWriterV1(PeriodicService):
 
 
 writer = LogWriterV1()
-writer.start()
 
 
 class DDHandler(logging.StreamHandler):
