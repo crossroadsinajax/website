@@ -5,6 +5,7 @@ version: '2.4'
 services:
   app:
     environment:
+      - DD_API_KEY=
       - POSTMARK_API_KEY=
 
   web:
