@@ -11,7 +11,7 @@ LOGGING = {
     "version": 1,
     "formatters": {
         "verbose": {
-            "format": "{asctime} {levelname} [{name}] [{name}:{lineno}] [dd.service=_service dd.env=_env dd.version=_version dd.trace_id=_trace_id dd.span_id=_span_id] - {message}",
+            "format": "{asctime} {levelname} [{name}] [{name}:{lineno}] /datadog_inject/ - {message}",
             "style": "{",
         },
         "simple": {
