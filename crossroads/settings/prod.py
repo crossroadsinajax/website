@@ -1,3 +1,5 @@
+import os
+
 from .base import *  # noqa
 
 DEBUG = False
@@ -9,10 +11,13 @@ ALLOWED_HOSTS = [
 
 # These are mounted by docker secrets.
 # They are defined in prod.yml.
-def read_secret(secret):
+def read_secret(secret) -> str:
     with open(f"/run/secrets/{secret}") as f:
         return f.read().strip()
 
+
+DD_API_KEY = read_secret("datadog_api_key")
+os.environ["DD_API_KEY"] = DD_API_KEY
 
 SECRET_KEY = read_secret("django_secret")
 

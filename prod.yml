@@ -19,6 +19,7 @@ services:
     secrets:
       - django_secret
       - postmark_api_key
+      - datadog_api_key
     volumes:
       - staticfiles:/app/static
       - /home/kyle/prod/db.sqlite3:/app/db.sqlite3
