@@ -141,6 +141,7 @@ class Consumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         self._sub_consumers = dict(self._sub_consumers)
+        self._connected = False
         super().__init__(*args, **kwargs)
 
     def _subcons(self, event):
@@ -158,6 +159,11 @@ class Consumer(AsyncWebsocketConsumer):
 
         return subcons
 
+    async def send(self, *args, **kwargs):
+        if not self._connected:
+            return
+        return await super().send(*args, **kwargs)
+
     async def connect(self):
         # Occurs when a user connects to the websocket
         self.group_name = "global"
@@ -171,6 +177,7 @@ class Consumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_add(self.group_name, self.channel_name)
             await self.accept()
+            self._connected = True
 
     async def disconnect(self, close_code):
         with tracer.trace("ws.disconnect") as span:
@@ -182,6 +189,7 @@ class Consumer(AsyncWebsocketConsumer):
 
             # Leave room group
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
+            self._connected = False
 
     async def receive(self, text_data: str):
         try:
