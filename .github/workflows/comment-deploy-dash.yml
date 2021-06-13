@@ -6,7 +6,7 @@ on:
 
 jobs:
   comment_deploy_dashboard:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true # yamllint disable-line
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: Comment Deploy Dashboard
     steps:
@@ -15,5 +15,5 @@ jobs:
       - name: Comment Deploy Dashboard
         uses: thollander/actions-comment-pull-request@master
         with:
-          message: "Please watch your deployment here: [Public Dashboard](https://p.datadoghq.com/sb/0aa0fbdbd-5b9d97c4e71bbe63860a7dce0928997a), [Private Dashboard](https://app.datadoghq.com/dashboard/y6w-ivc-yy7), [Prod Dashboard](https://app.datadoghq.com/dashboard/ud8-8k2-fe2)" # yamllint disable-line
+          message: "Please watch your deployment here: [Public Dashboard](https://p.datadoghq.com/sb/0aa0fbdbd-5b9d97c4e71bbe63860a7dce0928997a), [Private Dashboard](https://app.datadoghq.com/dashboard/y6w-ivc-yy7), [Prod Dashboard](https://app.datadoghq.com/dashboard/ud8-8k2-fe2)"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
