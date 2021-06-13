@@ -102,7 +102,10 @@ class LogWriterV1(PeriodicService):
             conn.request("POST", "/v1/input", payload, self._headers)
             resp = get_connection_response(conn)
             if resp.status != 200:
-                print(resp.status, resp.read(), file=sys.stderr)
+                print(
+                    "ddlogs error: %s %s %s" % (resp.status, resp.read(), payload),
+                    file=sys.stderr,
+                )
         finally:
             conn.close()
 
