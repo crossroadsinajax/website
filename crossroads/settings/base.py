@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     "crossroads",
     "prayer",
     "polls",
-    "channels",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",

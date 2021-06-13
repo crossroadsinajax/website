@@ -21,10 +21,32 @@ from . import consumers
 
 django.setup()
 
+
+class NoopLifespanApp:
+    """
+    Needed so that hypercorn doesn't display an error when using channels:
+        https://github.com/django/channels/issues/1216
+    """
+
+    def __init__(self, scope):
+        self.scope = scope
+
+    async def __call__(self, receive, send):
+        if self.scope["type"] == "lifespan":
+            while True:
+                message = await receive()
+                if message["type"] == "lifespan.startup":
+                    await send({"type": "lifespan.startup.complete"})
+                elif message["type"] == "lifespan.shutdown":
+                    await send({"type": "lifespan.shutdown.complete"})
+                    return
+
+
 application = ProtocolTypeRouter(
     {
         # Handle traditional http requests.
         "http": TraceMiddleware(django_asgi_app),
+        "lifespan": NoopLifespanApp,
         # Handle websocket requests.
         "websocket": AuthMiddlewareStack(
             URLRouter(
