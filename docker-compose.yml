@@ -11,6 +11,15 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - postgres_socket:/var/run/postgresql
+
+  db:
+    extends:
+      file: common.yml
+      service: db
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - postgres_socket:/var/run/postgresql
 
   web:
     extends:
@@ -38,3 +47,6 @@ services:
       service: datadog
     environment:
       - DD_LOG_LEVEL=INFO
+
+volumes:
+  postgres_socket:

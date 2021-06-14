@@ -24,8 +24,16 @@ services:
       - postmark_api_key
     volumes:
       - staticfiles:/app/static
-      - /home/kyle/staging/db.sqlite3:/app/db.sqlite3
       - /home/kyle/staging/media:/app/media
+      - postgres_socket:/var/run/postgresql
+
+  db:
+    extends:
+      file: common.yml
+      service: db
+    volumes:
+      - /home/kyle/staging/pg_data:/var/lib/postgresql/data
+      - postgres_socket:/var/run/postgresql
 
   web:
     extends:
@@ -71,6 +79,7 @@ services:
 
 volumes:
   staticfiles:
+  postgres_socket:
 
 secrets:
   datadog_api_key:
