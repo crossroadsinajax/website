@@ -1,6 +1,13 @@
 FROM python:3.9-slim
 
-RUN apt-get update && apt-get install -y git libjpeg-turbo-progs zlib1g-dev gcc fish
+RUN apt-get update && apt-get install -y \
+    git \
+    libjpeg-turbo-progs \
+    libpq-dev \
+    postgresql \
+    python3-dev \
+    zlib1g-dev \
+    gcc fish
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app

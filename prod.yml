@@ -22,8 +22,16 @@ services:
       - datadog_api_key
     volumes:
       - staticfiles:/app/static
-      - /home/kyle/prod/db.sqlite3:/app/db.sqlite3
+      - postgres_socket:/var/run/postgresql
       - /home/kyle/prod/media:/app/media
+
+  db:
+    extends:
+      file: common.yml
+      service: db
+    volumes:
+      - /home/kyle/prod/pg_data:/var/lib/postgresql/data
+      - postgres_socket:/var/run/postgresql
 
   web:
     extends:
@@ -69,6 +77,7 @@ services:
 
 volumes:
   staticfiles:
+  postgres_socket:
 
 secrets:
   datadog_api_key:

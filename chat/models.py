@@ -30,7 +30,7 @@ class ChatMessageTag(models.Model):
 class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    body = models.CharField(max_length=2048)
+    body = models.CharField(max_length=4096)
     chat = models.ForeignKey("Chat", related_name="messages", on_delete=models.CASCADE)
 
     class AggrReacts(TypedDict):

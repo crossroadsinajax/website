@@ -12,12 +12,18 @@ services:
       - DD_SERVICE=crossroads-web
       - DD_LOGS_INJECTION=true
       - DD_TRACE_ANALYTICS_ENABLED=true
-      - DD_TRACE_ASYNCIO_ENABLED=true
       - DD_DJANGO_CACHE_SERVICE_NAME=crossroads-cache
       - DD_DJANGO_DATABASE_SERVICE_NAME=crossroads-web
       - DD_DJANGO_USE_HANDLER_RESOURCE_FORMAT=true
-      - DD_SQLITE_SERVICE=crossroads-db
+      - DD_PSYCOPG_SERVICE=crossroads-db
       - DD_PROFILING_ENABLED=true
+
+  db:
+    image: postgres:13.3
+    environment:
+      - POSTGRES_DB=crossroads
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
 
   web:
     build:
