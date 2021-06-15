@@ -14,18 +14,18 @@ services:
     environment:
       - DD_ENV=staging
       - DJANGO_SETTINGS_MODULE=crossroads.settings.staging
-    # TODO: uvicorn gives "Unsupported upgrade request."
     command: >
       sh -c "python manage.py migrate &&
              python manage.py loaddata groups &&
-             ddtrace-run daphne -b 0.0.0.0 -p 8000 crossroads.asgi:application"
+             ddtrace-run hypercorn --worker-class=uvloop --workers=1 --bind=0.0.0.0:8000 crossroads.asgi:application"
     secrets:
       - django_secret
       - postmark_api_key
+      - datadog_api_key
     volumes:
+      - postgres_socket:/var/run/postgresql
       - staticfiles:/app/static
       - /home/kyle/staging/media:/app/media
-      - postgres_socket:/var/run/postgresql
 
   db:
     extends:
