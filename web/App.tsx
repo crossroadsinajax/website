@@ -129,10 +129,10 @@ const Footer: React.FC<{}> = () => {
           </Col>
           <Col lg="4" xs="12">
             <h4>Location</h4>
-            <p>520 Westney Rd South | Ajax, Ontario | L1S6W6</p>
+            <p>520 Westney Rd South Unit #18 | Ajax, Ontario | L1S6W6</p>
             <p>
-              <a href="mailto:lynn@crossroadsajax.church">
-                lynn@crossroadsajax.church
+              <a href="mailto:lynn@crossroadsinajax.org">
+                lynn@crossroadsinajax.org
               </a>
             </p>
             <p>905-426-4962</p>
