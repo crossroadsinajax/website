@@ -15,7 +15,7 @@ click==7.1.2
 constantly==15.1.0
 cryptography==3.4.6
 daphne==3.0.1
-ddtrace==0.50.0rc1
+ddtrace==0.49.3
 distlib==0.3.1
 Django==3.1.12
 django-extensions==2.2.9
