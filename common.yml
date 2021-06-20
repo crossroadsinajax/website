@@ -17,6 +17,7 @@ services:
       - DD_DJANGO_USE_HANDLER_RESOURCE_FORMAT=true
       - DD_PSYCOPG_SERVICE=crossroads-db
       - DD_PROFILING_ENABLED=true
+      - DD_PROFILING_HEAP_SAMPLE_SIZE=524288
 
   db:
     image: postgres:13.3
