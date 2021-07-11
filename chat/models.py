@@ -174,6 +174,7 @@ class Chat(models.Model):
             for msg in self.messages.select_related("author")
             .prefetch_related("tags")
             .prefetch_related("reacts__user")
+            .order_by("created_at")
         ]
 
     def __json__(self):
