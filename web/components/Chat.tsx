@@ -666,12 +666,10 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </Nav.Link>
             </Nav.Item>
           </Nav>
+          {this.getTab()}
           {chatScrollPaused && (
             <div
               style={{
-                position: "absolute",
-                marginTop: 43,
-                marginLeft: 2,
                 zIndex: 999,
                 background: "white",
               }}
@@ -695,7 +693,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </p>
             </div>
           )}
-          {this.getTab()}
         </Tab.Container>
         <div
           className="row"
