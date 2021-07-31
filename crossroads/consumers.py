@@ -211,7 +211,8 @@ class Consumer(AsyncWebsocketConsumer):
                     return
 
                 root = tracer.current_root_span()
-                root.resource = _type
+                if root:
+                    root.resource = _type
 
                 user = await channels.auth.get_user(self.scope)
                 span.set_tag("user", user.username)
