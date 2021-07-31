@@ -254,6 +254,7 @@ class Consumer(AsyncWebsocketConsumer):
                 with tracer.trace("ws.handle"):
                     await consumer.handle(user, event)
         except StopConsumer:
-            pass
+            # Have to reraise StopConsumer in order to properly close the connection.
+            raise
         except Exception:
             log.exception("failed to dispatch", exc_info=True)
