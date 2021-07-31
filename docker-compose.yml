@@ -12,6 +12,8 @@ services:
     volumes:
       - .:/app
       - postgres_socket:/var/run/postgresql
+    cap_add:
+      - SYS_PTRACE
 
   db:
     extends:
