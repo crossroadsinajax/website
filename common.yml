@@ -10,14 +10,12 @@ services:
       - DD_TRACE_AGENT_URL=http://datadog:8126
       - DD_ENV=dev
       - DD_SERVICE=crossroads-web
-      - DD_LOGS_INJECTION=true
       - DD_TRACE_ANALYTICS_ENABLED=true
       - DD_DJANGO_CACHE_SERVICE_NAME=crossroads-cache
       - DD_DJANGO_DATABASE_SERVICE_NAME=crossroads-web
       - DD_DJANGO_USE_HANDLER_RESOURCE_FORMAT=true
       - DD_PSYCOPG_SERVICE=crossroads-db
       - DD_PROFILING_ENABLED=true
-      - DD_PROFILING_HEAP_SAMPLE_SIZE=524288
 
   db:
     image: postgres:13.3
