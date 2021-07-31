@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Type, Union
 
 import channels
+from channels.exceptions import StopConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import BaseChannelLayer
 from ddtrace import tracer
@@ -239,7 +240,7 @@ class Consumer(AsyncWebsocketConsumer):
 
                 consumer = self._subcons(event)
                 if not consumer:
-                    span._ignore_exception(channels.exceptions.StopConsumer)
+                    span._ignore_exception(StopConsumer)
                     await super().dispatch(event)
                     return
 
@@ -252,5 +253,7 @@ class Consumer(AsyncWebsocketConsumer):
 
                 with tracer.trace("ws.handle"):
                     await consumer.handle(user, event)
+        except StopConsumer:
+            pass
         except Exception:
             log.exception("failed to dispatch", exc_info=True)
