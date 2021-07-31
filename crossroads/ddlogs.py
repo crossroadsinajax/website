@@ -113,17 +113,14 @@ class LogWriterV1(PeriodicService):
 writer = LogWriterV1()
 
 
-class DDHandler(logging.StreamHandler):
-    def __init__(self):
-        super(DDHandler, self).__init__()
-
+class DDHandler(logging.Handler):
     def emit(self, record):
         span = tracer.current_span()
         span_id = str(span.span_id if span else 0)
         trace_id = str(span.trace_id if span else 0)
         msg = self.format(record)
         msg = msg.replace(
-            "/datadog_inject/",
+            "/dd_inject/",
             "[dd.service=%s dd.env=%s dd.version=%s dd.trace_id=%s dd.span_id=%s]"
             % (
                 ddtrace.config.service,
