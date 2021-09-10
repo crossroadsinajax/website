@@ -68,7 +68,7 @@ six==1.15.0
 smmap==3.0.5
 sortedcontainers==2.3.0
 soupsieve==2.2.1
-sqlparse==0.4.1
+sqlparse==0.4.2
 tablib==3.0.0
 tenacity==7.0.0
 toml==0.10.2
