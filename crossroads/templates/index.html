@@ -36,7 +36,8 @@
             service: "{{ RUM_SERVICE }}",
             site: "datadoghq.com",
             trackInteractions: true,
-            version: "{{ RUM_VERSION }}"
+            version: "{{ RUM_VERSION }}",
+            allowedTracingOrigins: ["https://crossroadsajax.church"]
           })
         })
     </script>
