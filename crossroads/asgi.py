@@ -1,7 +1,6 @@
 import os
 
 import django
-from ddtrace.contrib.asgi import TraceMiddleware
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 
@@ -45,7 +44,7 @@ class NoopLifespanApp:
 application = ProtocolTypeRouter(
     {
         # Handle traditional http requests.
-        "http": TraceMiddleware(django_asgi_app),
+        "http": django_asgi_app,
         "lifespan": NoopLifespanApp,
         # Handle websocket requests.
         "websocket": AuthMiddlewareStack(
