@@ -115,7 +115,7 @@ class Service extends React.Component<ServiceProps, {}> {
       <Container fluid>
         {page.editUrl && <Userbar url={page.editUrl} />}
         <Row>
-          <VideoCol className="f-center" md={9}>
+          <VideoCol className="f-center" md={8}>
             {page.streamLink && (
               <ResponsiveEmbed aspectRatio="16by9">
                 <ReactPlayer
@@ -133,7 +133,7 @@ class Service extends React.Component<ServiceProps, {}> {
               </h2>
             )}
           </VideoCol>
-          <ChatCol md={3}>
+          <ChatCol md={4}>
             {user && <Chat user={user} id={page.pk} ws={ws} />}
           </ChatCol>
         </Row>
