@@ -171,7 +171,7 @@ const _ChatMessageCard = styled.div<{
 }>`
   background-color: ${({ tags }) =>
     (tags.includes("pr") && "#f6efe2") ||
-    (tags.includes("q") && "#d2f8d2") ||
+    (tags.includes("gw") && "#d2f8d2") ||
     ""};
   font-size: 14px;
   border-width: 0px 0px 1px 1px;
@@ -419,7 +419,7 @@ type ChatProps = {
 type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
-  tab: "chat" | "prayer" | "viewers"
+  tab: "chat" | "prayer" | "godwink" | "viewers"
   chatScrollPaused: boolean
   numMissedMessages: number
 }
@@ -527,6 +527,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     const { tab } = this.state
     if (tab == "prayer") {
       msg += " #p"
+    } else if (tab == "godwink") {
+      msg += " #gw"
     }
     this.props.ws.send({
       type: "chat.message",
@@ -557,9 +559,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  setTab = (tab: "chat" | "prayer" | "viewers") => {
+  setTab = (tab: "chat" | "prayer" | "viewers" | "godwink") => {
     let callback = () => {}
-    if (tab == "chat" || tab == "prayer") {
+    if (tab == "chat" || tab == "prayer" || tab == "godwink") {
       callback = this.scrollToBottom
     }
     this.setState(
@@ -622,6 +624,21 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           onScroll={this.onChatScroll}
         />
       )
+    } else if (tab == "godwink") {
+      component = (
+        <ChatTab
+          user={this.props.user}
+          messages={this.state.messages}
+          filterTag={"gw"}
+          onDelete={this.onDelete}
+          onReact={this.onReact}
+          onToggleTag={this.onToggleTag}
+          chatEndRef={(ref) => {
+            this.chatEnd = ref
+          }}
+          onScroll={this.onChatScroll}
+        />
+      )
     } else if (tab == "viewers") {
       component = <ViewersTab viewers={this.state.viewers} />
     }
@@ -655,6 +672,14 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             <Nav.Item>
               <Nav.Link eventKey="prayer" onClick={() => this.setTab("prayer")}>
                 Prayer
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="godwink"
+                onClick={() => this.setTab("godwink")}
+              >
+                Godwinks
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
