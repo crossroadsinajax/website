@@ -419,7 +419,7 @@ type ChatProps = {
 type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
-  tab: "chat" | "prayer" | "godwink" | "viewers"
+  tab: "chat" | "prayer" | "praise" | "viewers"
   chatScrollPaused: boolean
   numMissedMessages: number
 }
@@ -527,8 +527,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     const { tab } = this.state
     if (tab == "prayer") {
       msg += " #p"
-    } else if (tab == "godwink") {
-      msg += " #gw"
+    } else if (tab == "praise") {
+      msg += " #praise"
     }
     this.props.ws.send({
       type: "chat.message",
@@ -559,9 +559,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  setTab = (tab: "chat" | "prayer" | "viewers" | "godwink") => {
+  setTab = (tab: "chat" | "prayer" | "viewers" | "praise") => {
     let callback = () => {}
-    if (tab == "chat" || tab == "prayer" || tab == "godwink") {
+    if (tab == "chat" || tab == "prayer" || tab == "praise") {
       callback = this.scrollToBottom
     }
     this.setState(
@@ -624,12 +624,12 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           onScroll={this.onChatScroll}
         />
       )
-    } else if (tab == "godwink") {
+    } else if (tab == "praise") {
       component = (
         <ChatTab
           user={this.props.user}
           messages={this.state.messages}
-          filterTag={"gw"}
+          filterTag={"praise"}
           onDelete={this.onDelete}
           onReact={this.onReact}
           onToggleTag={this.onToggleTag}
@@ -675,11 +675,8 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link
-                eventKey="godwink"
-                onClick={() => this.setTab("godwink")}
-              >
-                Godwinks
+              <Nav.Link eventKey="praise" onClick={() => this.setTab("praise")}>
+                Praise
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
