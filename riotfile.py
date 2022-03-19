@@ -16,7 +16,7 @@ venv = Venv(
         ),
         Venv(
             pkgs={
-                "black": ["==20.8b1"],
+                "black": ["==22.3.0"],
                 "isort": [latest],
             },
             venvs=[
