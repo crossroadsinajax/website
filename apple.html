@@ -1,0 +1,2145 @@
+<head>
+  <script>
+    var ACChat = {}
+    var CSRF = {}
+    CSRF.key = "token"
+    CSRF.value =
+      "c04d48eee000869ed812eee35c6a7a57747c9ddd56215a3968e76840f30602f3639c627f264c6b207a050cb11cb68c65161c0e88445e612a1cfced8ca396eb00c8945c763b07feddbe52157b260cd05179021d406c315cb15bca8149a9c72ee3"
+    var cometURL = document.location.origin + "/WebAPI801/cometd"
+    webChatApp = "null"
+    refapplicationName = "AppleExpert"
+    callTypeAC = "DirectChat"
+    symptomID = "null"
+    affectedProductID = "null"
+    transactionId = "100007012002"
+    webChatLanguage = "en"
+    webChatCountry = "US"
+    caseId = "101058092055"
+    SACcaseId = "null"
+    survey_id = "0"
+    var chatTranscriptEmail = ""
+
+    chatTranscriptEmail = "kyleverhoog\x40gmail.com"
+
+    ACChat.isMako = "N"
+    if (ACChat.isMako === "Y" || ACChat.isMako === "y") {
+      chatTranscriptEmail = ""
+    }
+    var timeZoneOffset = new Date().getTimezoneOffset() + ""
+    document
+      .querySelector("html")
+      .setAttribute(
+        "lang",
+        webChatLanguage.toLowerCase() + "-" + webChatCountry.toUpperCase()
+      )
+    var webChatOrigin = "CAS"
+
+    // Read reconnect limit for chat appplicable only for CAS flow
+    var web_chat_reconnect_limit = "3"
+    web_chat_reconnect_limit = parseInt(web_chat_reconnect_limit)
+
+    var isChatTranscriptEnabled = false
+    isChatTranscriptEnabled = "true"
+
+    if (typeof isChatTranscriptEnabled === "string") {
+      isChatTranscriptEnabled =
+        isChatTranscriptEnabled.toLowerCase() === "true" ? true : false
+    }
+
+    if (
+      webChatOrigin.toUpperCase() === "CSS:GSX" ||
+      webChatOrigin.toUpperCase() === "CSS:RC"
+    ) {
+      isChatTranscriptEnabled = false
+    }
+  </script>
+
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <title>Need help? Just ask.</title>
+  <link
+    rel="stylesheet"
+    href="https://www.apple.com/wss/fonts?families=SF+Pro,v1|SF+Pro+Icons,v1"
+  />
+  <link rel="stylesheet" href="dist/static/css/app.css?v=1581569729886" />
+
+  <script src="js/locale/en.js?v=1585848658841"></script>
+</head>
+<body>
+  <div id="app" role="main" class="container">
+    <div class="text-center fill-height">
+      <div>
+        <audio id="audioNotification">
+          <source
+            src="dist/static/media/chataudionew.c69bbd8.m4a"
+            type="audio/mp4"
+          />
+        </audio>
+        <audio id="silence">
+          <source
+            src="data:audio/x-m4a;base64,AAAAIGZ0eXBNNEEgAAAAAE00QSBtcDQyaXNvbQAAAAAAAAz5bW9vdgAAAGxtdmhkAAAAANIEwiXSBMIlAACsRAAAuAAAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAoF0cmFrAAAAXHRraGQAAAAH0gTCJdIEwiUAAAABAAAAAAAAuAAAAAAAAAAAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAIdbWRpYQAAACBtZGhkAAAAANIEwiXSBMIlAACsRAAAuABVxAAAAAAAImhkbHIAAAAAAAAAAHNvdW4AAAAAAAAAAAAAAAAAAAAAAdNtaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAZdzdGJsAAAAZ3N0c2QAAAAAAAAAAQAAAFdtcDRhAAAAAAAAAAEAAAAAAAAAAAACABAAAAAArEQAAAAAADNlc2RzAAAAAAOAgIAiAAAABICAgBRAFQAYAAAABLAAAfQABYCAgAISEAaAgIABAgAAABhzdHRzAAAAAAAAAAEAAAAuAAAEAAAAAChzdHNjAAAAAAAAAAIAAAABAAAAFQAAAAEAAAADAAAABAAAAAEAAADMc3RzegAAAAAAAAAAAAAALgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAGAAAABgAAAAYAAAAcc3RjbwAAAAAAAAADAAAQAAAAEH4AABD8AAAKBHVkdGEAAAn8bWV0YQAAAAAAAAAiaGRscgAAAAAAAAAAbWRpcmFwcGwAAAAAAAAAAAD/AAACcGlsc3QAAAAfqW5hbQAAABdkYXRhAAAAAQAAAABzaWxlbmNlAAAAGWNwaWwAAAARZGF0YQAAABUAAAAAAAAAABlwZ2FwAAAAEWRhdGEAAAAVAAAAAAAAAAAadG1wbwAAABJkYXRhAAAAFQAAAAAAAAAAACipdG9vAAAAIGRhdGEAAAABAAAAAGlUdW5lcyAxMi4yLjIuMjUAAAC8LS0tLQAAABxtZWFuAAAAAGNvbS5hcHBsZS5pVHVuZXMAAAAUbmFtZQAAAABpVHVuU01QQgAAAIRkYXRhAAAAAQAAAAAgMDAwMDAwMDAgMDAwMDA4NDAgMDAwMDAzN0MgMDAwMDAwMDAwMDAwQUM0NCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMAAAAHctLS0tAAAAHG1lYW4AAAAAY29tLmFwcGxlLmlUdW5lcwAAABtuYW1lAAAAAEVuY29kaW5nIFBhcmFtcwAAADhkYXRhAAAAAAAAAAB2ZXJzAAAAAWFjYmYAAAABYnJhdAAB9ABzcmNxAAAAf2NkY3YAAQcBAAAAoi0tLS0AAAAcbWVhbgAAAABjb20uYXBwbGUuaVR1bmVzAAAAFG5hbWUAAAAAaVR1bk5PUk0AAABqZGF0YQAAAAEAAAAAIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwAAAHXmZyZWUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALfZnJlZQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEcbWRhdCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHCEAA0BoHA=="
+            type="audio/mp4"
+          />
+        </audio>
+      </div>
+      <!---->
+      <div aria-live="polite" role="status"><span class="a11y"></span></div>
+      <div class="text-center liveChatContainer" style="bottom: 0px; top: 68px">
+        <div class="chat-header-block">
+          <h1 class="a11y">AppleCare Chat</h1>
+          <div class="image-block-container">
+            <img
+              src="dist/static/imgs/apple_icon@2x.png"
+              alt="Apple Chat"
+              class="img-icon"
+              style="height: 25px"
+            />
+          </div>
+          <div class="advisor-block">
+            <span
+              ><span class="red-dot"></span>
+              <span tabindex="-1" id="lblConnectionStatus"
+                >You are disconnected</span
+              ></span
+            >
+            <div><!----></div>
+          </div>
+        </div>
+        <div
+          id="chatTranscriptContainer"
+          class="column large-10 large-centered"
+        >
+          <ul id="chatMessageList">
+            <li class="white-background">
+              <div class="pin-caption pin-caption-left timeStamp">
+                <p class="chatStartTime chatStartTimeWithoutBorder">
+                  04/02/2020 1:31 PM
+                </p>
+                <p id="chatConnectedMessage" class="agent-name">
+                  You are chatting with Terri. Your case number is 101058092055.
+                </p>
+              </div>
+              <!---->
+              <p></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="white-background">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Thanks for contacting Apple Support. My name is Terri.
+                    Please give me a moment to look over your information.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">Hi Terri!</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Hi Kyle, How are you today? It looks like you're having an
+                    issue with Repairs &amp; Physical Damage, is that
+                    correct?<br />
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    I'm doing well, hope you are as well 😊
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    Yes, I'm having an issue with my airpods
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    the microphone has stopped working in both of them
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:34 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Thanks for taking your time to report this situation. Let’s
+                    work together in order to reach the best resolution
+                    possible. Rest assured I’ll do my absolute best to assist
+                    you! Do you mind if I ask you a couple of questions?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">go for it</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    May I have your serial number located underneath the
+                    charging case lid?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">sure</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:36 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">FXWYNSBBLX2Y</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Thanks</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:38 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    What type of device is this being setup with?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    the microphone doesn't work for my iPhone 8, macbook pro
+                    2019 or iPhone SE
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:40 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    And What generation are your AirPods?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">I think they are gen 2</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Can you also check your iOS version for me? Go to
+                    Settings&gt;General&gt;About
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    13.3.1 on the iPhone 8; 13.3.1 on the SE
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    and Catalina 10.15.4 on the macbook pro
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">Thanks.</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Have you already tried to reset the device?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">the airpods?</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">yes I have</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:45 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">Yes, Thanks.</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">
+                    So your device is still under Limited Warranty, which I can
+                    look into repair options for you.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">May I have your postal code</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    That would be great thanks. I'm moving into my new apartment
+                    on Sunday, the postal code is 02151
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:48 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">OK congrats on your new place!</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    thanks! haha I picked a great time to move places... 😅
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Ha! Just in time</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:53 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Checking now for you</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:55 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">thanks!</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                1:57 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">You’re so welcome</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Just a few more moments</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:14 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Thanks for holding. We do have DIY repair where we can send
+                    the replacement to you but you’ll have to place an
+                    authorization on your card for the full amount of the device
+                    until we receive the item back or we can look into carry in
+                    service at an authorized service provider.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:15 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Which one work for you?</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:17 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">Ok I see</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    I think the DIY option sounds best given the circumstances
+                    going on
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">OK awesome</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:19 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    This is the amount that we will hold. Non-Return Auth: $
+                    150.78
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    Gotcha. How do I go about shipping the broken pair back?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:20 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    We will include a shipping box for you to send back in
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">Ok perfect, this sounds good</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:22 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Ok awesome</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:23 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">What is your new address?</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:27 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    500 Ocean Avenue, Apartment 514, Revere MA. USA
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    And I don't move in until Sunday, April 5th
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    I'm not sure how fast the shipping is, but just wanted to
+                    make sure that I've moved in to receive it
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:29 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">
+                    OK. Yes, it will take 3-5 days top receive.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">*to</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:31 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Would this be OK?</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:32 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">That should be perfect!</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">OK Awesome</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <div class="rich-link preview">
+                <a
+                  href="https://supportpayment.apple.com/app/654f05fbd26f697bf729ba4ddb6bf61b80dc2d4a/en_US/#/654f05fbd26f697bf729ba4ddb6bf61b80dc2d4a/en_US"
+                  target="_blank"
+                  class="message-text"
+                  ><div class="img-placeholder">
+                    <img
+                      src="dist/static/imgs/apple-mac-icon.png"
+                      alt=""
+                      class="img-preview medium-icon"
+                    />
+                  </div>
+                  <div class="info icon icon-before icon-external">
+                    <p>Apple Inc.</p>
+                    <p class="desc">
+                      https://supportpayment.apple.com/app/654f05fbd26f697bf729ba4ddb6bf61b80dc2d4a/en_US/#/654f05fbd26f697bf729ba4ddb6bf61b80dc2d4a/en_US
+                    </p>
+                  </div>
+                  <span class="a11y">Opens in new window</span></a
+                >
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">Here is your payment link</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">
+                    You can check the repair status at&nbsp;
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <div class="rich-link preview">
+                <a
+                  href="https://mysupport.apple.com/"
+                  target="_blank"
+                  class="message-text"
+                  ><div class="img-placeholder">
+                    <img
+                      src="dist/static/imgs/apple-mac-icon.png"
+                      alt=""
+                      class="img-preview medium-icon"
+                    />
+                  </div>
+                  <div class="info icon icon-before icon-external">
+                    <p>Apple Inc.</p>
+                    <p class="desc">https://mysupport.apple.com/</p>
+                  </div>
+                  <span class="a11y">Opens in new window</span></a
+                >
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    And this is your repair ID: D450120771
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">oh one question</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Sure</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    my airpods were engraved (they were a birthday present to
+                    me) is it possible to get these engraved as well?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:36 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    At this time, they will only send the replacement so they’re
+                    unable to engrave.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:37 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">ah okay 😕</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:39 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Yes.</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:41 PM
+              </div>
+              <!---->
+              <!---->
+              <div class="rich-link preview">
+                <a
+                  href="https://support.apple.com/kb/HT207827"
+                  target="_blank"
+                  class="message-text"
+                  ><div class="img-placeholder">
+                    <img
+                      src="dist/static/imgs/apple-mac-icon.png"
+                      alt=""
+                      class="img-preview medium-icon"
+                    />
+                  </div>
+                  <div class="info icon icon-before icon-external">
+                    <p>Set up your replacement AirPods or charging case</p>
+                    <p class="desc">https://support.apple.com/kb/HT207827</p>
+                  </div>
+                  <span class="a11y">Opens in new window</span></a
+                >
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    Can I assist you further on my end with anything else?
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <p tabindex="0" class="system-timer-message">
+                <span dir="ltr"
+                  ><span class="a11y">System Message</span>
+                  We haven’t heard from you in a while. To keep your chat
+                  session active, please respond to your Apple Advisor and let
+                  us know you are still there.
+                </span>
+              </p>
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    Oh, yeah I have just one more question
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">O</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">OK</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">
+                    If the issue is just on the airpods themselves, is it
+                    possible to keep the old charging case and return the new
+                    one (just swapping the ear pieces themselves)
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">
+                    or are they linked together somehow
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    I only ordered the two AirPods so you just have to mail the
+                    AirPods back only.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">oh okay!</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">perfect</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div class="message-bubble message-bubble-customer">
+                  <div class="message-text">thanks so much Terri</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">I just submitted the payment</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">You’re so welcome, Kyle!<br /></div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    You have a great day and stay safe out there!
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="" class="message-primary client">
+                <div
+                  class="message-bubble message-bubble-customer last-bubble-customer"
+                >
+                  <div class="message-text">you as well, thanks 😊</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <div
+                class="pin-caption pin-caption-left timeStamp timeStampBreathe"
+              >
+                2:47 PM
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">Thanks</div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="pin-caption pin-caption-left disconnectedTimeStamp">
+                <p class="endChatSeparator"></p>
+                <p id="chatEndTime">2:47 PM</p>
+                <p id="chatDisconnectedMessage" class="agent-name">
+                  Terri has left this chat.
+                </p>
+              </div>
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div class="message-bubble message-bubble-agent">
+                  <div class="message-text">
+                    Hello! I hope your conversation with Terri was helpful. If
+                    you have a moment, please take this short survey regarding
+                    your support experience. We truly value your feedback.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <div aria-live="polite" class="message-primary agent">
+                <div
+                  class="message-bubble message-bubble-agent last-bubble-agent"
+                >
+                  <div class="message-text">
+                    You must be 16 years of age or older to participate in the
+                    survey.
+                  </div>
+                </div>
+              </div>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassSameBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="survey-link-container">
+                <a
+                  target="_blank"
+                  href="https://survey.apple.com/efm/survey?s=3D3148E41096A94C08D7D72BDDAB887471&amp;c=en-US&amp;pl=es-MX,pt-BR,fr-CA,zh-CN,ko-KR,zh-TW,de-DE,nl-NL,it-IT,tr-TR,ru-RU,sv-SE"
+                  ><div class="survey-link-bubble">
+                    <img
+                      src="dist/static/imgs/apple-mac-icon.png"
+                      alt="Apple Chat"
+                      class="img-icon"
+                    />
+                    <span dir="ltr"
+                      ><p class="surveyTitle">Support Experience Survey</p>
+                      <p class="surveyDescription">
+                        We look forward to receiving your feedback.
+                      </p></span
+                    >
+                  </div>
+                  <span class="a11y"
+                    >(Survey link opens in new window.)</span
+                  ></a
+                >
+              </div>
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="white-background">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li class="">
+              <!---->
+              <!---->
+              <p class="spacingClassDiffBubble"></p>
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <!---->
+              <div class="spacing"></div>
+            </li>
+            <li>
+              <p class="spacingClassDiffBubble"></p>
+              <div class="transcript-download-link-wrapper">
+                <button
+                  class="download-transcript-link icon icon-after icon-downloadcircle"
+                >
+                  Download the transcript of this conversation
+                </button>
+                <!---->
+                <div class="spacing"></div>
+              </div>
+            </li>
+            <!---->
+            <!---->
+          </ul>
+        </div>
+        <!---->
+        <!---->
+        <!---->
+      </div>
+      <div data-v-5135972c=""></div>
+    </div>
+  </div>
+  <noscript class="jsDisabled"
+    >Please activate Javascript in browser settings.</noscript
+  >
+  <script src="polyfill.min.js"></script>
+  <script
+    type="text/javascript"
+    src="js/lib/jspdf/jspdf.min.js?v=1581569729886"
+  ></script>
+  <script
+    type="text/javascript"
+    src="js/lib/moment/moment.min.js?v=1581569729886"
+  ></script>
+  <script
+    type="text/javascript"
+    src="js/lib/moment/momentMapping.js?v=1581569729886"
+  ></script>
+  <script src="dist/static/js/manifest.js?v=1581569729886"></script>
+  <script src="dist/static/js/vendor.js?v=1581569729886"></script>
+  <script src="dist/static/js/app.js?v=1581569729886"></script>
+  <div
+    class="modal modal-standard"
+    aria-hidden="true"
+    role="dialog"
+    data-modal-close=""
+    tabindex="-1"
+    aria-busy="true"
+  >
+    <div class="content-table">
+      <div class="content-cell" data-modal-close="">
+        <div class="content-wrapper" data-modal-close="">
+          <div class="content-padding large-8 medium-10">
+            <div class="modal-content">
+              <div id="notificationModal">
+                <h2 id="h2_notification" tabindex="-1" class="a11y">
+                  Notify me
+                </h2>
+                <p class="text-center">
+                  We'd like to send you audio notifications during this chat. If
+                  you choose to receive audio notifications, make sure your
+                  speaker volume is turned up.
+                </p>
+                <div class="button-footer">
+                  <button class="button button-secondary audioNotifButton">
+                    No thanks
+                  </button>
+                  <button class="button audioNotifButton">Notify me</button>
+                </div>
+              </div>
+            </div>
+            <button
+              class="modal-close"
+              data-modal-close=""
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal modal-standard custom-modal"
+    aria-hidden="true"
+    role="dialog"
+    data-modal-close=""
+    tabindex="-1"
+    aria-label="End Chat"
+  >
+    <div class="content-table">
+      <div class="content-cell" data-modal-close="">
+        <div class="content-wrapper" data-modal-close="">
+          <div class="content-padding large-8 medium-10">
+            <div class="modal-content">
+              <div id="endChatContent">
+                <h2 class="a11y">End Chat</h2>
+                <p>Are you sure you want to end the chat?</p>
+                <div class="done-modal">
+                  <button id="noEndBtn" class="button button-secondary">
+                    No
+                  </button>
+                  <button id="okEndBtn" class="button">Yes</button>
+                </div>
+              </div>
+            </div>
+            <button
+              class="modal-close"
+              data-modal-close=""
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal modal-standard"
+    aria-hidden="true"
+    role="dialog"
+    data-modal-close=""
+    tabindex="-1"
+    aria-label="Your session has ended. Thanks for chatting with us."
+  >
+    <div class="content-table">
+      <div class="content-cell" data-modal-close="">
+        <div class="content-wrapper" data-modal-close="">
+          <div class="content-padding large-8 medium-10">
+            <div class="modal-content">
+              <div id="reconnectTimerExpiredModal">
+                Your session has ended. Thanks for chatting with us.
+              </div>
+            </div>
+            <button
+              class="modal-close"
+              data-modal-close=""
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
