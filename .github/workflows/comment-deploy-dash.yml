@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Comment Deploy Dashboard
-        uses: thollander/actions-comment-pull-request@master
+        uses: thollander/actions-comment-pull-request@v1
         with:
           message: "Please watch your deployment here: [Public Dashboard](https://p.datadoghq.com/sb/0aa0fbdbd-5b9d97c4e71bbe63860a7dce0928997a), [Private Dashboard](https://app.datadoghq.com/dashboard/y6w-ivc-yy7), [Prod Dashboard](https://app.datadoghq.com/dashboard/ud8-8k2-fe2)"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
