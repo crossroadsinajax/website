@@ -18,6 +18,7 @@ import { Bulletin } from "./components/Bulletin"
 import Chat from "./components/Chat"
 import { Userbar } from "./components/Wagtail"
 import { useServicePageQuery } from "./generated-types"
+import { PollOverlay } from "./components/Poll"
 
 gql`
   query ServicePage($slug: String!) {
@@ -138,6 +139,7 @@ class Service extends React.Component<ServiceProps, {}> {
           </ChatCol>
         </Row>
         <h2>{page.title}</h2>
+        <PollOverlay/>
         <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
         {user && <Bulletin bulletinStr={page.bulletin} />}
