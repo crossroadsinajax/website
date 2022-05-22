@@ -30,7 +30,6 @@ services:
       dockerfile: ./docker/web/Dockerfile
 
   nginx:
-    platform: linux/amd64
     restart: always
 
   datadog:

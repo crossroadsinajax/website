@@ -20,6 +20,7 @@ services:
     command: yarn run dev --host 0.0.0.0 --port 8000
 
   nginx:
+    platform: linux/amd64
     # Edit 8000 to your desired port
     ports:
       - 8000:80
