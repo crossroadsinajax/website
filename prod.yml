@@ -62,6 +62,8 @@ services:
       - 8000:80
     volumes:
       - staticfiles:/static
+    environment:
+      - DD_ENV=prod
 
   datadog:
     extends:
