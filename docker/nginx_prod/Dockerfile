@@ -1,10 +1,11 @@
 FROM nginx:1.17.3
 
-RUN apt-get update && \
-  apt-get install -y wget tar
+RUN apt-get update && apt-get install -y wget tar
 
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY dd-config.json /etc/nginx/dd-config.json
+
 
 # Install nginx-opentracing
 RUN get_latest_release() { \
