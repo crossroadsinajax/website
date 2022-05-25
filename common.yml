@@ -47,3 +47,5 @@ services:
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
       - /etc/passwd:/etc/passwd:ro
+    ports:
+      - "127.0.0.1:8126:8126"
