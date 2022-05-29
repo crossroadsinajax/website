@@ -15,7 +15,7 @@ services:
     command: >
       sh -c "python manage.py migrate &&
              python manage.py loaddata groups &&
-             ddtrace-run uvicorn --host=0.0.0.0 --port=8000 --loop=uvloop --ws=websockets crossroads.asgi:application"
+             ddtrace-run uvicorn --proxy-headers --host=0.0.0.0 --port=8000 --loop=uvloop --ws=websockets crossroads.asgi:application"
     secrets:
       - django_secret
       - postmark_api_key
@@ -66,7 +66,6 @@ services:
 
 volumes:
   staticfiles:
-    name: prod_staticfiles
   postgres_socket:
 
 secrets:
