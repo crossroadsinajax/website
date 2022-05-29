@@ -24,6 +24,8 @@ services:
       - staticfiles:/app/static
       - postgres_socket:/var/run/postgresql
       - /home/kyle/prod/media:/app/media
+    ports:
+      - 8000:80
 
   db:
     extends:
@@ -50,21 +52,6 @@ services:
       restart_policy:
         condition: none
 
-  nginx:
-    extends:
-      file: common.yml
-      service: nginx
-    image: ghcr.io/crossroadsinajax/nginx:${GIT_TAG}
-    build:
-      context: ./docker/nginx_prod
-      dockerfile: ./Dockerfile
-    ports:
-      - 8000:80
-    volumes:
-      - staticfiles:/static
-    environment:
-      - DD_ENV=prod
-
   datadog:
     extends:
       file: common.yml
@@ -78,7 +65,7 @@ services:
       - datadog_api_key
 
 volumes:
-  staticfiles:
+  - staticfiles:/home/kyle/prod/static
   postgres_socket:
 
 secrets:
