@@ -29,9 +29,6 @@ services:
       context: .
       dockerfile: ./docker/web/Dockerfile
 
-  nginx:
-    restart: always
-
   datadog:
     environment:
       - DD_APM_ENABLED=true

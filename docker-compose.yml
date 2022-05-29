@@ -33,9 +33,6 @@ services:
       - /app/node_modules
 
   nginx:
-    extends:
-      file: common.yml
-      service: nginx
     build:
       context: ./docker/nginx_dev
       dockerfile: ./Dockerfile
