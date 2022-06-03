@@ -13,7 +13,8 @@ services:
       - DD_ENV=prod
       - DJANGO_SETTINGS_MODULE=crossroads.settings.prod
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py collectstatic &&
+             python manage.py migrate &&
              python manage.py loaddata groups &&
              ddtrace-run uvicorn --proxy-headers --host=0.0.0.0 --port=8000 --loop=uvloop --ws=websockets crossroads.asgi:application"
     secrets:
