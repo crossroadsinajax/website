@@ -1,5 +1,6 @@
 import secrets
-from typing import List
+from copy import deepcopy
+from typing import Any, Dict, List
 
 import yarl
 from asgiref.sync import async_to_sync
@@ -338,12 +339,22 @@ class ServicePage(Page, ContentPageMixin):
         ]
 
     @property
-    def bulletin_dict(self):
-        # i dont like this
-        if len(self.bulletin._raw_data):
-            return self.bulletin._raw_data[0]
-        else:
-            return {}
+    def bulletin_dict(self) -> Dict[Any, Any]:
+        data = self.bulletin.raw_data[0]
+
+        if "value" in data and "items" in data["value"] and len(data["value"]["items"]):
+            item = data["value"]["items"][0]
+            # Backwards compatibilty cause a wagtail release between 2.12 and 2.16
+            # changed the data format of the items.
+            # items instead of having the data inlined now have them nested in a "value" dictionary.
+            if "type" in item:
+                data = deepcopy(data)
+                new_items = []
+                for i in data["value"]["items"]:
+                    new_items.append(i["value"])
+                data["value"]["items"] = new_items
+            return data
+        return {}
 
     def get_context(self, request):
         context = super().get_context(request)
