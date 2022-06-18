@@ -1,5 +1,6 @@
 import { getYear, getDayOfYear, fromUnixTime, format } from "date-fns"
 import React, { useMemo, useRef, useState } from "react"
+import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
 import Overlay from "react-bootstrap/Overlay"
@@ -8,6 +9,8 @@ import Tooltip from "react-bootstrap/Tooltip"
 import styled from "styled-components"
 import { UserType } from "~/generated-types"
 import WebSocketProvider, { WSMessage } from "~Websocket"
+
+import { ServiceLayout } from "../Service"
 
 const _ChatReactDiv = styled.div<{
   filledIn: boolean
@@ -349,7 +352,6 @@ const ChatTab: React.FC<{
   onDelete: (msg: ChatMessage) => void
   onReact: (msg: ChatMessage, react: string) => void
   onToggleTag: (msg: ChatMessage, tag: string) => void
-  filterTag: string
   chatEndRef: (ref: HTMLDivElement | null) => void
   onScroll: () => void
 }> = ({
@@ -358,23 +360,15 @@ const ChatTab: React.FC<{
   onDelete,
   onReact,
   onToggleTag,
-  filterTag,
   chatEndRef,
   onScroll,
 }) => {
-  let msgs
-  if (filterTag) {
-    msgs = messages.filter((msg) => msg.tags.includes(filterTag))
-  } else {
-    msgs = messages
-  }
-
   return (
     <_ChatMessageContainer
       className="row form-control flex-grow-1"
       onScroll={onScroll}
     >
-      {msgs.map((msg) => (
+      {messages.map((msg) => (
         <MemodChatMessageRC
           user={user}
           key={msg.id}
@@ -410,16 +404,77 @@ const ViewersTab: React.FC<{
   )
 }
 
+type Poll = {
+  version: "0"
+  questions: {
+    title: string
+    answers: string[]
+    correct: number[]
+  }[]
+}
+
+const PollQuestion: React.FC<{}> = ({}) => {
+  return (
+    <>
+      <h2>Who is taller</h2>
+      <Button>Paul</Button>
+      <br />
+      <hr />
+      <Button>Tom</Button>
+    </>
+  )
+}
+
+const PollResults: React.FC<{}> = ({}) => {
+  return (
+    <>
+      <h2>Results</h2>
+      <ul>
+        <li>1. Abi</li>
+        <li>2. Steve</li>
+        <li>3. Carl</li>
+        <li>4. Dave</li>
+        <li>5. Evan</li>
+        <hr />
+        <li>9. Kyle</li>
+      </ul>
+    </>
+  )
+}
+
+const PollLeaderboard: React.FC<{}> = ({}) => {
+  return <></>
+}
+
+const PollWinner: React.FC<{}> = ({}) => {
+  return <></>
+}
+
+const PollTab: React.FC<{}> = ({ setLayout, pollEvents }) => {
+  for (let event in pollEvents) {
+    console.log(event)
+  }
+  return (
+    <>
+      <_ViewersContainer className="row form-control flex-grow-1">
+        <PollResults />
+      </_ViewersContainer>
+    </>
+  )
+}
+
 type ChatProps = {
   ws: WebSocketProvider
   user: UserType
   id: number
+  layout: ServiceLayout
+  setLayout: (layout: ServiceLayout) => void
 }
 
 type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
-  tab: "chat" | "prayer" | "godwink" | "viewers"
+  tab: "chat" | "prayer" | "godwink" | "viewers" | "poll"
   chatScrollPaused: boolean
   numMissedMessages: number
 }
@@ -530,6 +585,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     } else if (tab == "godwink") {
       msg += " #gw"
     }
+    if (msg.startsWith("/poll")) {
+      msg += " #poll"
+    }
     this.props.ws.send({
       type: "chat.message",
       body: msg,
@@ -559,7 +617,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     })
   }
 
-  setTab = (tab: "chat" | "prayer" | "viewers" | "godwink") => {
+  setTab = (tab: "chat" | "prayer" | "viewers" | "godwink" | "poll") => {
     let callback = () => {}
     if (tab == "chat" || tab == "prayer" || tab == "godwink") {
       callback = this.scrollToBottom
@@ -592,13 +650,14 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   getTab = () => {
-    const { tab } = this.state
+    const { tab, messages } = this.state
+    const msgs = messages.filter((m) => !m.tags.includes("poll"))
     let component = null
     if (tab == "chat") {
       component = (
         <ChatTab
           user={this.props.user}
-          messages={this.state.messages}
+          messages={msgs.filter((m) => m.tags)}
           filterTag={""}
           onDelete={this.onDelete}
           onReact={this.onReact}
@@ -613,8 +672,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       component = (
         <ChatTab
           user={this.props.user}
-          messages={this.state.messages}
-          filterTag={"pr"}
+          messages={msgs.filter((m) => m.tags.includes("pr"))}
           onDelete={this.onDelete}
           onReact={this.onReact}
           onToggleTag={this.onToggleTag}
@@ -628,8 +686,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       component = (
         <ChatTab
           user={this.props.user}
-          messages={this.state.messages}
-          filterTag={"gw"}
+          messages={msgs.filter((m) => m.tags.includes("gw"))}
           onDelete={this.onDelete}
           onReact={this.onReact}
           onToggleTag={this.onToggleTag}
@@ -641,6 +698,13 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       )
     } else if (tab == "viewers") {
       component = <ViewersTab viewers={this.state.viewers} />
+    } else if (tab == "poll") {
+      component = (
+        <PollTab
+          setLayout={this.props.setLayout}
+          pollEvents={messages.filter((m) => m.tags.includes("poll"))}
+        />
+      )
     }
     return component
   }
@@ -655,10 +719,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   render() {
+    const { layout } = this.props
     // TODO: there is tab logic mixed in this component which is ok given that
     // it's a one-off use at the moment and the component isn't too complex.
     // It might be worth pulling this into a separate Tabs component in the future.
-    const { chatScrollPaused, numMissedMessages, viewers } = this.state
+    const { chatScrollPaused, numMissedMessages, viewers, tab } = this.state
     const numViewers = viewers.reduce((x: number, v: Viewer) => x + v.count, 0)
     return (
       <div className="d-flex flex-column flex-grow-1 h-100">
@@ -682,6 +747,13 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
                 Godwinks
               </Nav.Link>
             </Nav.Item>
+            {layout == "poll" && (
+              <Nav.Item>
+                <Nav.Link eventKey="poll" onClick={() => this.setTab("poll")}>
+                  Poll
+                </Nav.Link>
+              </Nav.Item>
+            )}
             <Nav.Item>
               <Nav.Link
                 eventKey="viewers"
@@ -726,7 +798,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             marginRight: "unset",
           }}
         >
-          <ChatInput onSubmit={this.sendMsg} />
+          {tab != "poll" && <ChatInput onSubmit={this.sendMsg} />}
         </div>
       </div>
     )
