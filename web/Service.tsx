@@ -177,47 +177,11 @@ class Service extends React.Component<ServiceProps, ServiceState> {
             )}
           </ChatCol>
         </Row>
-        {user && user.isChatmod && (
-          <ModControls setLayout={this.setLayout} layout={layout} />
-        )}
         <h2>{page.title}</h2>
         <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
         {user && <Bulletin bulletinStr={page.bulletin} />}
       </Container>
-    )
-  }
-}
-
-const ModControls: React.FC<{
-  setLayout: (layout: ServiceLayout) => void
-  layout: ServiceLayout
-}> = ({ layout, setLayout }) => {
-  if (layout == "stream") {
-    return (
-      <>
-        <Button
-          onClick={() => {
-            setLayout("poll")
-          }}
-        >
-          start poll
-        </Button>
-      </>
-    )
-  } else {
-    return (
-      <>
-        <Button>next poll question</Button>
-        <Button>show poll results</Button>
-        <Button
-          onClick={() => {
-            setLayout("stream")
-          }}
-        >
-          stop poll
-        </Button>
-      </>
     )
   }
 }
