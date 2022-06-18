@@ -45,7 +45,9 @@ const BulletinSection: React.FC<{
   let items = section.bulletins
   let itemsTpl = []
   for (let i = 0; i < items.length; i++) {
-    itemsTpl.push(<BulletinItem bulletinItem={items[i]} />)
+    itemsTpl.push(
+      <BulletinItem key={`bulletin-item-${i}`} bulletinItem={items[i]} />
+    )
   }
   return (
     <div>

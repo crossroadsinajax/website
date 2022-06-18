@@ -404,6 +404,12 @@ const ViewersTab: React.FC<{
   )
 }
 
+// type PollQuestion = {
+//   title: string
+//   answers: string[]
+//   correct: number[]
+// }
+
 type Poll = {
   version: "0"
   questions: {
@@ -413,14 +419,76 @@ type Poll = {
   }[]
 }
 
-const PollQuestion: React.FC<{}> = ({}) => {
+// State for running a poll
+// this state is modified by various poll events
+type PollState = {
+  active: boolean
+  currentQuestionIdx: number
+  poll: Poll
+  responses: {
+    user: string
+    response: number
+  }[][]
+}
+
+type PollMessageCreate = {
+  type: "create"
+  body: Poll
+}
+
+type PollMessageResponse = {
+  type: "response"
+  body: {
+    questionIdx: number
+    response: string
+  }
+}
+
+type PollMessageStart = {
+  type: "start"
+}
+
+type PollMessageStop = {
+  type: "stop"
+}
+
+type PollMessageNext = {
+  type: "next"
+}
+
+const PollQuestion: React.FC<{
+  title: string
+  questionIdx: number
+  answers: string[]
+  sendMsg: (s: string) => void
+  responses: string[]
+}> = ({ title, answers, sendMsg, questionIdx, responses }) => {
   return (
     <>
-      <h2>Who is taller</h2>
-      <Button>Paul</Button>
-      <br />
-      <hr />
-      <Button>Tom</Button>
+      <h2>{title}</h2>
+      {answers.map((a, i) => (
+        <>
+          <Button
+            key={title + a}
+            onClick={() => {
+              sendMsg(
+                "#poll " +
+                  JSON.stringify({
+                    type: "response",
+                    body: {
+                      questionIdx: questionIdx,
+                      response: i,
+                    },
+                  })
+              )
+            }}
+          >
+            {a}
+          </Button>
+          <br />
+        </>
+      ))}
+      {responses.length} answer{responses.length > 1 && "s"} submitted
     </>
   )
 }
@@ -450,14 +518,32 @@ const PollWinner: React.FC<{}> = ({}) => {
   return <></>
 }
 
-const PollTab: React.FC<{}> = ({ setLayout, pollEvents }) => {
-  for (let event in pollEvents) {
-    console.log(event)
+const PollTab: React.FC<{
+  pollState: PollState
+  sendMsg: (s: string) => void
+}> = ({ pollState, sendMsg }) => {
+  if (!pollState.active) {
+    return (
+      <>
+        <_ViewersContainer className="row form-control flex-grow-1">
+          <h2>Waiting for poll to start</h2>
+        </_ViewersContainer>
+      </>
+    )
   }
+  const curIdx = pollState.currentQuestionIdx
+  const curQuestion = pollState.poll.questions[curIdx]
+  const responses = pollState.responses[curIdx]
   return (
     <>
       <_ViewersContainer className="row form-control flex-grow-1">
-        <PollResults />
+        <PollQuestion
+          title={curQuestion.title}
+          questionIdx={curIdx}
+          answers={curQuestion.answers}
+          responses={responses}
+          sendMsg={sendMsg}
+        />
       </_ViewersContainer>
     </>
   )
@@ -474,6 +560,7 @@ type ChatProps = {
 type ChatState = {
   messages: ChatMessage[]
   viewers: Viewer[]
+  pollState: PollState | null
   tab: "chat" | "prayer" | "godwink" | "viewers" | "poll"
   chatScrollPaused: boolean
   numMissedMessages: number
@@ -483,6 +570,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   state: ChatState = {
     messages: [],
     viewers: [],
+    pollState: null,
     tab: "chat",
     chatScrollPaused: false,
     numMissedMessages: 0,
@@ -533,22 +621,73 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     }
   }
 
+  onPollEvent = (pollState: PollState | null, msg: ChatMessage): PollState => {
+    if (pollState == null) {
+      pollState = {
+        active: false,
+        currentQuestionIdx: 0,
+        poll: {
+          version: "0",
+          questions: [],
+        },
+        responses: [],
+      }
+    }
+    const evt = JSON.parse(msg.body.substring(5))
+    const type = evt.type
+    if (type == "create") {
+      pollState.poll = evt.body
+      for (let i = 0; i < pollState.poll.questions.length; i++) {
+        pollState.responses.push([])
+      }
+    } else if (type == "response") {
+      const idx = evt.body.questionIdx
+      pollState.responses[idx].push({
+        user: msg.author,
+        response: evt.body.response,
+      })
+    } else if (type == "next") {
+    } else if (type == "start") {
+      this.props.setLayout("poll")
+      this.setTab("poll")
+      pollState.active = true
+    } else if (type == "stop") {
+      this.props.setLayout("stream")
+      this.setTab("chat")
+      pollState.active = false
+    }
+    // TODO: this might have to be a copy
+    console.log(pollState)
+    return pollState
+  }
+
   onMessage = (msg: WSMessage) => {
+    let { pollState } = this.state
+
     if (msg.type == "chat.init") {
+      for (let mk in msg.chat.messages) {
+        let m = msg.chat.messages[mk]
+        if (m.tags.includes("poll")) {
+          pollState = this.onPollEvent(pollState, m)
+        }
+      }
       this.setState(
         {
           messages: msg.chat.messages,
+          pollState,
         },
         this.scrollToBottom
       )
     } else if (msg.type == "chat.message") {
       const { chatScrollPaused, numMissedMessages } = this.state
+      pollState = this.onPollEvent(pollState, msg.msg)
       this.setState(
         {
           messages: this.state.messages.concat(msg.msg),
           numMissedMessages: chatScrollPaused
             ? numMissedMessages + 1
             : numMissedMessages,
+          pollState,
         },
         chatScrollPaused ? () => {} : this.scrollToBottom
       )
@@ -584,9 +723,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       msg += " #p"
     } else if (tab == "godwink") {
       msg += " #gw"
-    }
-    if (msg.startsWith("/poll")) {
-      msg += " #poll"
     }
     this.props.ws.send({
       type: "chat.message",
@@ -650,14 +786,16 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   getTab = () => {
+    const { user } = this.props
     const { tab, messages } = this.state
-    const msgs = messages.filter((m) => !m.tags.includes("poll"))
+    // const msgs = messages.filter((m) => !m.tags.includes("poll"))
+    const msgs = messages //.filter((m) => !m.tags.includes("poll"))
     let component = null
     if (tab == "chat") {
       component = (
         <ChatTab
-          user={this.props.user}
-          messages={msgs.filter((m) => m.tags)}
+          user={user}
+          messages={msgs}
           filterTag={""}
           onDelete={this.onDelete}
           onReact={this.onReact}
@@ -671,7 +809,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     } else if (tab == "prayer") {
       component = (
         <ChatTab
-          user={this.props.user}
+          user={user}
           messages={msgs.filter((m) => m.tags.includes("pr"))}
           onDelete={this.onDelete}
           onReact={this.onReact}
@@ -685,7 +823,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     } else if (tab == "godwink") {
       component = (
         <ChatTab
-          user={this.props.user}
+          user={user}
           messages={msgs.filter((m) => m.tags.includes("gw"))}
           onDelete={this.onDelete}
           onReact={this.onReact}
@@ -698,12 +836,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       )
     } else if (tab == "viewers") {
       component = <ViewersTab viewers={this.state.viewers} />
-    } else if (tab == "poll") {
+    } else if (tab == "poll" && this.state.pollState != null) {
       component = (
-        <PollTab
-          setLayout={this.props.setLayout}
-          pollEvents={messages.filter((m) => m.tags.includes("poll"))}
-        />
+        <PollTab pollState={this.state.pollState} sendMsg={this.sendMsg} />
       )
     }
     return component
@@ -719,11 +854,17 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   }
 
   render() {
-    const { layout } = this.props
+    const { user, layout } = this.props
     // TODO: there is tab logic mixed in this component which is ok given that
     // it's a one-off use at the moment and the component isn't too complex.
     // It might be worth pulling this into a separate Tabs component in the future.
-    const { chatScrollPaused, numMissedMessages, viewers, tab } = this.state
+    const {
+      chatScrollPaused,
+      numMissedMessages,
+      viewers,
+      tab,
+      pollState,
+    } = this.state
     const numViewers = viewers.reduce((x: number, v: Viewer) => x + v.count, 0)
     return (
       <div className="d-flex flex-column flex-grow-1 h-100">
@@ -731,7 +872,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           <Nav variant="tabs">
             <Nav.Item>
               <Nav.Link eventKey="chat" onClick={() => this.setTab("chat")}>
-                Chat
+                Chat {numMissedMessages > 0 ? `(${numMissedMessages})` : null}
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
@@ -764,7 +905,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
             </Nav.Item>
           </Nav>
           {this.getTab()}
-          {chatScrollPaused && (
+          {tab != "poll" && chatScrollPaused && (
             <div
               style={{
                 zIndex: 999,
@@ -799,8 +940,68 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
           }}
         >
           {tab != "poll" && <ChatInput onSubmit={this.sendMsg} />}
+          {user.isChatmod && (
+            <PollModControls pollState={pollState} sendMsg={this.sendMsg} />
+          )}
         </div>
       </div>
+    )
+  }
+}
+
+const PollModControls: React.FC<{
+  pollState: PollState | null
+  sendMsg: (msg: string) => void
+}> = ({ pollState, sendMsg }) => {
+  if (pollState == null) {
+    return <></>
+  }
+  if (!pollState.active) {
+    return (
+      <>
+        <Button
+          onClick={() => {
+            sendMsg(
+              "#poll " +
+                JSON.stringify({
+                  type: "start",
+                })
+            )
+          }}
+        >
+          start poll
+        </Button>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <Button
+          onClick={() => {
+            sendMsg(
+              "#poll " +
+                JSON.stringify({
+                  type: "next",
+                })
+            )
+          }}
+        >
+          next poll question
+        </Button>
+        <Button>show poll results</Button>
+        <Button
+          onClick={() => {
+            sendMsg(
+              "#poll " +
+                JSON.stringify({
+                  type: "stop",
+                })
+            )
+          }}
+        >
+          stop poll
+        </Button>
+      </>
     )
   }
 }
