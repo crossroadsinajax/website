@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client"
 import React from "react"
+import Button from "react-bootstrap/Button"
 import Col from "react-bootstrap/Col"
 import Container from "react-bootstrap/Container"
 import ResponsiveEmbed from "react-bootstrap/ResponsiveEmbed"
@@ -18,7 +19,6 @@ import { Bulletin } from "./components/Bulletin"
 import Chat from "./components/Chat"
 import { Userbar } from "./components/Wagtail"
 import { useServicePageQuery } from "./generated-types"
-import { PollOverlay } from "./components/Poll"
 
 gql`
   query ServicePage($slug: String!) {
@@ -65,7 +65,21 @@ interface ServiceProps {
   refetch: () => void
 }
 
-class Service extends React.Component<ServiceProps, {}> {
+type ServiceLayout = "stream" | "poll"
+
+type ServiceState = {
+  videoWidth: number
+  chatWidth: number // videoWidth + chatWidth = 12
+  layout: ServiceLayout
+}
+
+class Service extends React.Component<ServiceProps, ServiceState> {
+  state: ServiceState = {
+    videoWidth: 8,
+    chatWidth: 4,
+    layout: "stream",
+  }
+
   constructor(props: ServiceProps) {
     super(props)
   }
@@ -85,6 +99,22 @@ class Service extends React.Component<ServiceProps, {}> {
     })
   }
 
+  setLayout = (layout: ServiceLayout) => {
+    let videoWidth: number, chatWidth: number
+    if (layout == "stream") {
+      videoWidth = 8
+      chatWidth = 4
+    } else if (layout == "poll") {
+      videoWidth = 5
+      chatWidth = 7
+    }
+    this.setState({
+      layout,
+      videoWidth,
+      chatWidth,
+    })
+  }
+
   onConnect = () => {
     const { page, ws } = this.props
     ws.send({
@@ -101,6 +131,7 @@ class Service extends React.Component<ServiceProps, {}> {
 
   render() {
     const { page, user, ws } = this.props
+    const { videoWidth, chatWidth, layout } = this.state
 
     if (!user) {
       return (
@@ -116,7 +147,7 @@ class Service extends React.Component<ServiceProps, {}> {
       <Container fluid>
         {page.editUrl && <Userbar url={page.editUrl} />}
         <Row>
-          <VideoCol className="f-center" md={8}>
+          <VideoCol className="f-center" md={videoWidth}>
             {page.streamLink && (
               <ResponsiveEmbed aspectRatio="16by9">
                 <ReactPlayer
@@ -134,16 +165,59 @@ class Service extends React.Component<ServiceProps, {}> {
               </h2>
             )}
           </VideoCol>
-          <ChatCol md={4}>
-            {user && <Chat user={user} id={page.pk} ws={ws} />}
+          <ChatCol md={chatWidth}>
+            {user && (
+              <Chat
+                layout={layout}
+                setLayout={this.setLayout}
+                user={user}
+                id={page.pk}
+                ws={ws}
+              />
+            )}
           </ChatCol>
         </Row>
+        {user && user.isChatmod && (
+          <ModControls setLayout={this.setLayout} layout={layout} />
+        )}
         <h2>{page.title}</h2>
-        <PollOverlay/>
         <p className="meta">{page.date}</p>
         <div dangerouslySetInnerHTML={{ __html: page.description }} />
         {user && <Bulletin bulletinStr={page.bulletin} />}
       </Container>
+    )
+  }
+}
+
+const ModControls: React.FC<{
+  setLayout: (layout: ServiceLayout) => void
+  layout: ServiceLayout
+}> = ({ layout, setLayout }) => {
+  if (layout == "stream") {
+    return (
+      <>
+        <Button
+          onClick={() => {
+            setLayout("poll")
+          }}
+        >
+          start poll
+        </Button>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <Button>next poll question</Button>
+        <Button>show poll results</Button>
+        <Button
+          onClick={() => {
+            setLayout("stream")
+          }}
+        >
+          stop poll
+        </Button>
+      </>
     )
   }
 }
