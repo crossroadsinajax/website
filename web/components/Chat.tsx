@@ -429,27 +429,27 @@ type PollState = {
   responses: PollResponse[][]
 }
 
-type PollMessageCreate = {
-  type: "create"
-  body: Poll
-}
-
-type PollMessageResponse = {
-  type: "response"
-  body: PollResponse
-}
-
-type PollMessageStart = {
-  type: "start"
-}
-
-type PollMessageStop = {
-  type: "stop"
-}
-
-type PollMessageNext = {
-  type: "next"
-}
+// type PollMessageCreate = {
+//   type: "create"
+//   body: Poll
+// }
+// 
+// type PollMessageResponse = {
+//   type: "response"
+//   body: PollResponse
+// }
+// 
+// type PollMessageStart = {
+//   type: "start"
+// }
+// 
+// type PollMessageStop = {
+//   type: "stop"
+// }
+// 
+// type PollMessageNext = {
+//   type: "next"
+// }
 
 const uniqueResponses = (resps: PollResponse[]): PollResponse[] => {
   // Get the unique responses, keeping the last submitted response
@@ -768,7 +768,7 @@ const PollQuestionResults: React.FC<{
           }}
         >
           <hr />
-          You have {scores[user.username] || 0} points
+          You have {scores[user.username] || 0} points total
         </div>
       </div>
     </div>
