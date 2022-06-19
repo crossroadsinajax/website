@@ -457,16 +457,17 @@ type PollMessageNext = {
 }
 
 const PollQuestion: React.FC<{
-  title: string
-  questionIdx: number
-  answers: string[]
+  pollState: PollState
   sendMsg: (s: string) => void
-  responses: PollResponse[]
   user: UserType
-}> = ({ title, answers, sendMsg, questionIdx, responses, user }) => {
+}> = ({ pollState, sendMsg, user }) => {
   const [timeRemaining, setTimeRemaining] = useState(30.0)
   const [answered, setAnswered] = useState(false)
   const enabled = timeRemaining > 0 && !answered
+
+  const { responses, poll, currentQuestionIdx } = pollState
+  const question = poll.questions[currentQuestionIdx]
+  const { title, answers, correct } = question
   // Multiple responses could be submitted, store the last response
   // received.
   const uniqueResponses: { [username: string]: PollResponse } = {}
@@ -491,40 +492,119 @@ const PollQuestion: React.FC<{
   })
 
   return (
-    <>
-      <h2>{title}</h2>
-      <h3>{timeRemaining}</h3>
-      {answers.map((a, i) => (
-        <>
-          <Button
-            key={title + a}
-            disabled={!enabled}
-            onClick={() => {
-              sendMsg(
-                "#poll " +
-                  JSON.stringify({
-                    type: "response",
-                    body: {
-                      questionIdx: questionIdx,
-                      response: i,
-                      username: user.username,
-                    },
-                  })
-              )
-              setAnswered(true)
+    <div
+      key={title}
+      style={{
+        display: "flex",
+        backgroundColor: "#F4F8F4",
+        flexDirection: "column",
+        flexWrap: "nowrap",
+        flexGrow: 1,
+        justifyContent: "space-evenly",
+      }}
+    >
+      <div
+        style={{
+          alignSelf: "center",
+        }}
+      >
+        <h3>{title}</h3>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "nowrap",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexBasis: "25%",
+            flexGrow: 1,
+            alignSelf: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              borderRadius: "50%",
+              width: "75px",
+              backgroundColor: "#D2E3D3",
+              lineHeight: "75px",
+              textAlign: "center",
+              fontSize: "1.75rem",
             }}
           >
-            {a}
-          </Button>
-          <br />
-        </>
-      ))}
-      {enabled && "Choose your answer!"}
-      {!enabled && "Your answer has been submitted."}
-      <br />
-      {finalResponses.length}{" "}
-      {finalResponses.length != 1 ? "people have" : "person has"} submitted
-    </>
+            {timeRemaining}
+          </div>
+        </div>
+        <img
+          style={{ maxHeight: 150, flexBasis: "50%", flexGrow: 1 }}
+          src="https://cdn.britannica.com/93/94493-050-35524FED/Toronto.jpg"
+        ></img>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flexBasis: "25%",
+            flexGrow: 1,
+            alignSelf: "center",
+            justifyContent: "center",
+          }}
+        >
+          <h3 style={{ alignSelf: "center" }}>{finalResponses.length}</h3>
+          <h3 style={{ alignSelf: "center" }}>
+            answer{finalResponses.length > 1 ? "s" : ""}
+          </h3>
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {answers.map((a, i) => (
+          <div>
+            <Button
+              style={{
+                minWidth: "50px",
+              }}
+              key={title + a}
+              disabled={!enabled}
+              onClick={() => {
+                sendMsg(
+                  "#poll " +
+                    JSON.stringify({
+                      type: "response",
+                      body: {
+                        questionIdx: currentQuestionIdx,
+                        response: i,
+                        username: user.username,
+                      },
+                    })
+                )
+                setAnswered(true)
+              }}
+            >
+              {a}
+            </Button>
+          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          alignSelf: "center",
+          justifyContent: "center",
+        }}
+      >
+        {enabled && "Choose your answer!"}
+        {!enabled && "Your answer has been submitted."}
+      </div>
+    </div>
   )
 }
 
@@ -551,7 +631,11 @@ const PollQuestionResults: React.FC<{ pollState: PollState }> = ({
 }
 
 const PollLeaderboard: React.FC<{}> = ({}) => {
-  return <></>
+  return (
+    <>
+      <h1>Results</h1>
+    </>
+  )
 }
 
 const PollWinner: React.FC<{}> = ({}) => {
@@ -563,7 +647,8 @@ const PollTab: React.FC<{
   sendMsg: (s: string) => void
   user: UserType
 }> = ({ pollState, sendMsg, user }) => {
-  if (!pollState.active) {
+  const curIdx = pollState.currentQuestionIdx
+  if (!pollState.active || curIdx < 0) {
     return (
       <>
         <_ViewersContainer className="row form-control flex-grow-1">
@@ -572,20 +657,16 @@ const PollTab: React.FC<{
       </>
     )
   }
-  const curIdx = pollState.currentQuestionIdx
-  const curQuestion = pollState.poll.questions[curIdx]
-  const responses = pollState.responses[curIdx]
+  if (curIdx == pollState.poll.questions.length) {
+    return <PollLeaderboard />
+  }
   return (
     <>
-      <_ViewersContainer className="row form-control flex-grow-1">
-        <PollQuestion
-          title={curQuestion.title}
-          questionIdx={curIdx}
-          answers={curQuestion.answers}
-          responses={responses}
-          sendMsg={sendMsg}
-          user={user}
-        />
+      <_ViewersContainer
+        style={{ display: "flex" }}
+        className="row form-control flex-grow-1"
+      >
+        <PollQuestion pollState={pollState} sendMsg={sendMsg} user={user} />
       </_ViewersContainer>
     </>
   )
@@ -667,7 +748,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     if (pollState == null) {
       pollState = {
         active: false,
-        currentQuestionIdx: 0,
+        currentQuestionIdx: -1,
         poll: {
           version: "0",
           questions: [],
@@ -686,6 +767,9 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       const idx = evt.body.questionIdx
       pollState.responses[idx].push(evt.body)
     } else if (type == "next") {
+      if (pollState.currentQuestionIdx < pollState.poll.questions.length) {
+        pollState.currentQuestionIdx += 1
+      }
     } else if (type == "start") {
       this.props.setLayout("poll")
       this.setTab("poll")
@@ -1012,7 +1096,7 @@ const PollModControls: React.FC<{
             )
           }}
         >
-          start poll
+          show poll
         </Button>
       </>
     )
@@ -1029,9 +1113,13 @@ const PollModControls: React.FC<{
             )
           }}
         >
-          next poll question
+          {pollState.currentQuestionIdx < 0 && <>start poll</>}
+          {pollState.currentQuestionIdx >= 0 &&
+            pollState.currentQuestionIdx <
+              pollState.poll.questions.length - 1 && <>next question</>}
+          {pollState.currentQuestionIdx + 1 ==
+            pollState.poll.questions.length && <>end poll</>}
         </Button>
-        <Button>show poll results</Button>
         <Button
           onClick={() => {
             sendMsg(
@@ -1042,7 +1130,7 @@ const PollModControls: React.FC<{
             )
           }}
         >
-          stop poll
+          hide poll
         </Button>
       </>
     )
