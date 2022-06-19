@@ -1,5 +1,5 @@
 import { getYear, getDayOfYear, fromUnixTime, format } from "date-fns"
-import React, { useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 import Nav from "react-bootstrap/Nav"
@@ -419,16 +419,19 @@ type Poll = {
   }[]
 }
 
+type PollResponse = {
+  questionIdx: number
+  response: number
+  username: string
+}
+
 // State for running a poll
 // this state is modified by various poll events
 type PollState = {
   active: boolean
   currentQuestionIdx: number
   poll: Poll
-  responses: {
-    user: string
-    response: number
-  }[][]
+  responses: PollResponse[][]
 }
 
 type PollMessageCreate = {
@@ -438,10 +441,7 @@ type PollMessageCreate = {
 
 type PollMessageResponse = {
   type: "response"
-  body: {
-    questionIdx: number
-    response: string
-  }
+  body: PollResponse
 }
 
 type PollMessageStart = {
@@ -461,15 +461,44 @@ const PollQuestion: React.FC<{
   questionIdx: number
   answers: string[]
   sendMsg: (s: string) => void
-  responses: string[]
-}> = ({ title, answers, sendMsg, questionIdx, responses }) => {
+  responses: PollResponse[]
+  user: UserType
+}> = ({ title, answers, sendMsg, questionIdx, responses, user }) => {
+  const [timeRemaining, setTimeRemaining] = useState(30.0)
+  const [answered, setAnswered] = useState(false)
+  const enabled = timeRemaining > 0 && !answered
+  // Multiple responses could be submitted, store the last response
+  // received.
+  const uniqueResponses: { [username: string]: PollResponse } = {}
+  const finalResponses: PollResponse[] = []
+  for (let r of responses) uniqueResponses[r.username] = r
+  for (let r in uniqueResponses) finalResponses.push(uniqueResponses[r])
+
+  useEffect(() => {
+    if (responses.filter((r) => r.username == user.username).length > 0) {
+      setAnswered(true)
+    }
+    const countdown = setInterval(() => {
+      if (timeRemaining <= 0) {
+        clearInterval(countdown)
+        return
+      }
+      setTimeRemaining(timeRemaining - 1.0)
+    }, 1000)
+    return () => {
+      clearInterval(countdown)
+    }
+  })
+
   return (
     <>
       <h2>{title}</h2>
+      <h3>{timeRemaining}</h3>
       {answers.map((a, i) => (
         <>
           <Button
             key={title + a}
+            disabled={!enabled}
             onClick={() => {
               sendMsg(
                 "#poll " +
@@ -478,9 +507,11 @@ const PollQuestion: React.FC<{
                     body: {
                       questionIdx: questionIdx,
                       response: i,
+                      username: user.username,
                     },
                   })
               )
+              setAnswered(true)
             }}
           >
             {a}
@@ -488,15 +519,24 @@ const PollQuestion: React.FC<{
           <br />
         </>
       ))}
-      {responses.length} answer{responses.length > 1 && "s"} submitted
+      {enabled && "Choose your answer!"}
+      {!enabled && "Your answer has been submitted."}
+      <br />
+      {finalResponses.length}{" "}
+      {finalResponses.length != 1 ? "people have" : "person has"} submitted
     </>
   )
 }
 
-const PollResults: React.FC<{}> = ({}) => {
+const PollQuestionResults: React.FC<{ pollState: PollState }> = ({
+  pollState,
+}) => {
+  const curIdx = pollState.currentQuestionIdx
+  const correct = pollState.poll.questions[curIdx].correct
   return (
     <>
       <h2>Results</h2>
+      The correct answer was {correct[0]}! The current leaderboard is
       <ul>
         <li>1. Abi</li>
         <li>2. Steve</li>
@@ -521,7 +561,8 @@ const PollWinner: React.FC<{}> = ({}) => {
 const PollTab: React.FC<{
   pollState: PollState
   sendMsg: (s: string) => void
-}> = ({ pollState, sendMsg }) => {
+  user: UserType
+}> = ({ pollState, sendMsg, user }) => {
   if (!pollState.active) {
     return (
       <>
@@ -543,6 +584,7 @@ const PollTab: React.FC<{
           answers={curQuestion.answers}
           responses={responses}
           sendMsg={sendMsg}
+          user={user}
         />
       </_ViewersContainer>
     </>
@@ -642,10 +684,7 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       }
     } else if (type == "response") {
       const idx = evt.body.questionIdx
-      pollState.responses[idx].push({
-        user: msg.author,
-        response: evt.body.response,
-      })
+      pollState.responses[idx].push(evt.body)
     } else if (type == "next") {
     } else if (type == "start") {
       this.props.setLayout("poll")
@@ -838,7 +877,11 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       component = <ViewersTab viewers={this.state.viewers} />
     } else if (tab == "poll" && this.state.pollState != null) {
       component = (
-        <PollTab pollState={this.state.pollState} sendMsg={this.sendMsg} />
+        <PollTab
+          pollState={this.state.pollState}
+          sendMsg={this.sendMsg}
+          user={user}
+        />
       )
     }
     return component
