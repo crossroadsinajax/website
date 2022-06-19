@@ -408,6 +408,7 @@ type Poll = {
   version: "0"
   questions: {
     title: string
+    img: string
     answers: string[]
     correct: number[]
   }[]
@@ -433,20 +434,20 @@ type PollState = {
 //   type: "create"
 //   body: Poll
 // }
-// 
+//
 // type PollMessageResponse = {
 //   type: "response"
 //   body: PollResponse
 // }
-// 
+//
 // type PollMessageStart = {
 //   type: "start"
 // }
-// 
+//
 // type PollMessageStop = {
 //   type: "stop"
 // }
-// 
+//
 // type PollMessageNext = {
 //   type: "next"
 // }
@@ -495,7 +496,7 @@ const PollQuestion: React.FC<{
   sendMsg: (s: string) => void
   user: UserType
 }> = ({ pollState, sendMsg, user }) => {
-  const [timeRemaining, setTimeRemaining] = useState(2.0)
+  const [timeRemaining, setTimeRemaining] = useState(20.0)
   const { responses, poll, currentQuestionIdx } = pollState
   const question = poll.questions[currentQuestionIdx]
   const { title, answers } = question
@@ -528,6 +529,8 @@ const PollQuestion: React.FC<{
         flexWrap: "nowrap",
         flexGrow: 1,
         justifyContent: "space-evenly",
+        padding: "0.5em 1em",
+        textAlign: "center",
       }}
     >
       <div
@@ -566,10 +569,23 @@ const PollQuestion: React.FC<{
             {timeRemaining}
           </div>
         </div>
-        <img
-          style={{ maxHeight: 150, flexBasis: "50%", flexGrow: 1 }}
-          src="https://cdn.britannica.com/93/94493-050-35524FED/Toronto.jpg"
-        ></img>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            flexBasis: "50%",
+            flexGrow: 1,
+          }}
+        >
+          <img
+            style={{
+              height: "auto",
+              maxHeight: "175px",
+              maxWidth: "175px",
+            }}
+            src={question.img}
+          ></img>
+        </div>
         <div
           style={{
             display: "flex",
@@ -668,6 +684,7 @@ const PollQuestionResults: React.FC<{
         flexWrap: "nowrap",
         flexGrow: 1,
         justifyContent: "space-evenly",
+        textAlign: "center",
       }}
     >
       <div
@@ -675,7 +692,8 @@ const PollQuestionResults: React.FC<{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-evenly",
-          flexGrow: 1,
+          flexBasis: "50%",
+          padding: "0em 2em",
         }}
       >
         <div
@@ -683,7 +701,7 @@ const PollQuestionResults: React.FC<{
             alignSelf: "center",
           }}
         >
-          <h3>{title}</h3>
+          <h4>{title}</h4>
         </div>
         <div
           style={{
@@ -717,7 +735,7 @@ const PollQuestionResults: React.FC<{
         style={{
           display: "flex",
           flexDirection: "column",
-          flexGrow: 1,
+          flexBasis: "50%",
           justifyContent: "space-evenly",
         }}
       >
@@ -726,7 +744,7 @@ const PollQuestionResults: React.FC<{
             alignSelf: "center",
           }}
         >
-          <h3>Top 5 Leaderboard</h3>
+          <h4>Top 5 Leaderboard</h4>
           <hr />
         </div>
         <div
@@ -775,11 +793,59 @@ const PollQuestionResults: React.FC<{
   )
 }
 
-const PollLeaderboard: React.FC<{}> = ({}) => {
+const PollLeaderboard: React.FC<{
+  pollState: PollState
+  user: UserType
+}> = ({ pollState, user }) => {
+  const [scores] = computeScores(pollState)
+  let sortedScores: [number, string][] = []
+  for (let u in scores) sortedScores.push([scores[u], u])
+  sortedScores.sort((a, b) => b[0] - a[0])
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "0.5em 3em",
+        backgroundColor: "#F4F8F4",
+      }}
+    >
       <h1>Results</h1>
-    </>
+      <div>
+        {sortedScores.slice(0, 10).map(([score, username]) => (
+          <div
+            key={score + username}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <div
+              style={{
+                flexBasis: "50%",
+              }}
+            >
+              {score} points
+            </div>
+            <div
+              style={{
+                flexBasis: "50%",
+              }}
+            >
+              {username}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div>
+        <hr />
+        <h3>
+          You scored <b>{scores[user.username] || 0}</b> points total
+        </h3>
+      </div>
+    </div>
   )
 }
 
@@ -797,7 +863,11 @@ const PollTab: React.FC<{
           style={{ display: "flex" }}
           className="row form-control flex-grow-1"
         >
-          <div>
+          <div
+            style={{
+              padding: "0.5 1em",
+            }}
+          >
             <h2 style={{ justifySelf: "center" }}>
               Waiting for poll to start...
             </h2>
@@ -807,7 +877,7 @@ const PollTab: React.FC<{
               <li>Second to answer correctly scores 4 points and so on</li>
               <li>Fifth and later to answer correctly score 1 point</li>
               <li>Incorrect answers receive 0 points</li>
-              <li>Each question has a time limit of 30 seconds</li>
+              <li>Each question has a time limit of 20 seconds</li>
             </ul>
           </div>
         </_ViewersContainer>
@@ -815,7 +885,11 @@ const PollTab: React.FC<{
     )
   }
   if (curIdx == pollState.poll.questions.length) {
-    return <PollLeaderboard />
+    return (
+      <_ViewersContainer>
+        <PollLeaderboard user={user} pollState={pollState} />
+      </_ViewersContainer>
+    )
   }
   return (
     <>
@@ -906,22 +980,34 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
     }
   }
 
+  newPoll = (): PollState => {
+    return {
+      active: false,
+      currentQuestionIdx: -1,
+      showResults: false,
+      poll: {
+        version: "0",
+        questions: [],
+      },
+      responses: [],
+    }
+  }
+
   onPollEvent = (pollState: PollState | null, msg: ChatMessage): PollState => {
     if (pollState == null) {
-      pollState = {
-        active: false,
-        currentQuestionIdx: -1,
-        showResults: false,
-        poll: {
-          version: "0",
-          questions: [],
-        },
-        responses: [],
-      }
+      pollState = this.newPoll()
     }
-    const evt = JSON.parse(msg.body.substring(5))
+
+    let evt: any = {}
+    try {
+      evt = JSON.parse(msg.body.substring(5))
+    } catch (SyntaxError) {
+      console.error("failed to parse json")
+      return pollState
+    }
     const type = evt.type
     if (type == "create") {
+      pollState = this.newPoll()
       pollState.poll = evt.body
       for (let i = 0; i < pollState.poll.questions.length; i++) {
         pollState.responses.push([])
@@ -1082,14 +1168,13 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
   getTab = () => {
     const { user } = this.props
     const { tab, messages } = this.state
-    // const msgs = messages.filter((m) => !m.tags.includes("poll"))
-    const msgs = messages //.filter((m) => !m.tags.includes("poll"))
+    const msgs = messages
     let component = null
     if (tab == "chat") {
       component = (
         <ChatTab
           user={user}
-          messages={msgs}
+          messages={msgs.filter((m) => !m.tags.includes("poll"))}
           onDelete={this.onDelete}
           onReact={this.onReact}
           onToggleTag={this.onToggleTag}
@@ -1291,7 +1376,7 @@ const PollModControls: React.FC<{
             )
           }}
         >
-          go back
+          go back a question
         </Button>
         <Button
           onClick={() => {
