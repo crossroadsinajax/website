@@ -466,20 +466,27 @@ const uniqueResponses = (resps: PollResponse[]): PollResponse[] => {
 
 const computeScores = (
   pollState: PollState
-): { [username: string]: number } => {
+): { [username: string]: number }[] => {
   // Compute the scores for all the players
+  // Returns the total scores as well as the diff on the latest
   const scores: { [username: string]: number } = {}
+  const diff: { [username: string]: number } = {}
   for (let i = 0; i < pollState.responses.length; i++) {
     const unique = uniqueResponses(pollState.responses[i])
     let score = 5
     for (let j = 0; j < unique.length; j++) {
+      // Assume only one correct answer for now
+      const correctIdx = pollState.poll.questions[i].correct[0]
       const resp = unique[j]
       if (!(resp.username in scores)) scores[resp.username] = 0
-      scores[resp.username] += score
-      if (score > 1) score--
+      if (resp.response == correctIdx) {
+        diff[resp.username] = score
+        scores[resp.username] += score
+        if (score > 1) score--
+      }
     }
   }
-  return scores
+  return [scores, diff]
 }
 
 const PollQuestion: React.FC<{
@@ -487,24 +494,26 @@ const PollQuestion: React.FC<{
   sendMsg: (s: string) => void
   user: UserType
 }> = ({ pollState, sendMsg, user }) => {
-  //const [timeRemaining, setTimeRemaining] = useState(30.0)
-  const [timeRemaining, setTimeRemaining] = useState(1.0)
-  const [answered, setAnswered] = useState(false)
-  const enabled = timeRemaining > 0 && !answered
+  const [timeRemaining, setTimeRemaining] = useState(2.0)
+  // const [timeRemaining, setTimeRemaining] = useState(2.0)
 
   const { responses, poll, currentQuestionIdx } = pollState
   const question = poll.questions[currentQuestionIdx]
   const { title, answers, correct } = question
   const finalResponses = uniqueResponses(responses[currentQuestionIdx])
-  const scores = computeScores(pollState)
+  const [scores, diffs] = computeScores(pollState)
   let sortedScores: [number, string][] = []
   for (let u in scores) sortedScores.push([scores[u], u])
   sortedScores.sort((a, b) => b[0] - a[0])
 
+  const rs = finalResponses.filter((r) => r.username == user.username)
+  let response: PollResponse | null = null
+  if (rs.length > 0) {
+    response = rs[0]
+  }
+  const enabled = timeRemaining > 0 && response == null
+
   useEffect(() => {
-    if (finalResponses.filter((r) => r.username == user.username).length > 0) {
-      setAnswered(true)
-    }
     const countdown = setInterval(() => {
       if (timeRemaining <= 0) {
         clearInterval(countdown)
@@ -516,6 +525,9 @@ const PollQuestion: React.FC<{
       clearInterval(countdown)
     }
   })
+
+  const correctResponse = response != null && response.response == correct[0]
+  const scoreGained = diffs[user.username]
 
   if (timeRemaining > 0) {
     return (
@@ -582,7 +594,7 @@ const PollQuestion: React.FC<{
           >
             <h3 style={{ alignSelf: "center" }}>{finalResponses.length}</h3>
             <h3 style={{ alignSelf: "center" }}>
-              answer{finalResponses.length > 1 ? "s" : ""}
+              answer{finalResponses.length != 1 ? "s" : ""}
             </h3>
           </div>
         </div>
@@ -601,6 +613,11 @@ const PollQuestion: React.FC<{
                   minWidth: "50px",
                 }}
                 key={title + a}
+                variant={
+                  response != null && response.response == i
+                    ? "primary"
+                    : "secondary"
+                }
                 disabled={!enabled}
                 onClick={() => {
                   sendMsg(
@@ -614,7 +631,6 @@ const PollQuestion: React.FC<{
                         },
                       })
                   )
-                  setAnswered(true)
                 }}
               >
                 {a}
@@ -628,8 +644,8 @@ const PollQuestion: React.FC<{
             justifyContent: "center",
           }}
         >
-          {enabled && "Choose your answer!"}
-          {!enabled && "Your answer has been submitted."}
+          {response == null && "Choose your answer!"}
+          {response != null && "Your answer has been submitted."}
         </div>
       </div>
     )
@@ -674,6 +690,20 @@ const PollQuestion: React.FC<{
           >
             {question.answers[correct[0]]}
           </div>
+          <div
+            style={{
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            {response == null && "❌ you did not make a guess!"}
+            {response != null &&
+              !correctResponse &&
+              `❌ you incorrectly guessed "${
+                question.answers[response.response]
+              }"`}
+            {correctResponse && `✅ you got it! +${scoreGained} points`}
+          </div>
         </div>
         <div
           style={{
@@ -687,15 +717,17 @@ const PollQuestion: React.FC<{
               alignSelf: "center",
             }}
           >
-            <h3>Leaderboard</h3>
+            <h3>Top 5 Leaderboard</h3>
+            <hr />
           </div>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
+              textAlign: "center",
             }}
           >
-            {sortedScores.map(([score, username]) => (
+            {sortedScores.slice(0, 5).map(([score, username]) => (
               <div
                 key={score + username}
                 style={{
@@ -704,10 +736,30 @@ const PollQuestion: React.FC<{
                   justifyContent: "space-evenly",
                 }}
               >
-                <div>{score} points</div>
-                <div>{username}</div>
+                <div
+                  style={{
+                    flexBasis: "50%",
+                  }}
+                >
+                  {score} points
+                </div>
+                <div
+                  style={{
+                    flexBasis: "50%",
+                  }}
+                >
+                  {username}
+                </div>
               </div>
             ))}
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+            }}
+          >
+            <hr />
+            You have {scores[user.username] || 0} points
           </div>
         </div>
       </div>
@@ -732,8 +784,23 @@ const PollTab: React.FC<{
   if (!pollState.active || curIdx < 0) {
     return (
       <>
-        <_ViewersContainer className="row form-control flex-grow-1">
-          <h2>Waiting for poll to start</h2>
+        <_ViewersContainer
+          style={{ display: "flex" }}
+          className="row form-control flex-grow-1"
+        >
+          <div>
+            <h2 style={{ justifySelf: "center" }}>
+              Waiting for poll to start...
+            </h2>
+            <h3>Rules</h3>
+            <ul>
+              <li>First to answer correctly scores 5 points</li>
+              <li>Second to answer correctly scores 4 points and so on</li>
+              <li>Fifth and later to answer correctly score 1 point</li>
+              <li>Incorrect answers receive 0 points</li>
+              <li>Each question has a time limit of 30 seconds</li>
+            </ul>
+          </div>
         </_ViewersContainer>
       </>
     )
@@ -998,7 +1065,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
         <ChatTab
           user={user}
           messages={msgs}
-          filterTag={""}
           onDelete={this.onDelete}
           onReact={this.onReact}
           onToggleTag={this.onToggleTag}
