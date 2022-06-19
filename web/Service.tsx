@@ -65,7 +65,7 @@ interface ServiceProps {
   refetch: () => void
 }
 
-type ServiceLayout = "stream" | "poll"
+export type ServiceLayout = "stream" | "poll"
 
 type ServiceState = {
   videoWidth: number
@@ -100,11 +100,9 @@ class Service extends React.Component<ServiceProps, ServiceState> {
   }
 
   setLayout = (layout: ServiceLayout) => {
-    let videoWidth: number, chatWidth: number
-    if (layout == "stream") {
-      videoWidth = 8
+    let videoWidth = 8,
       chatWidth = 4
-    } else if (layout == "poll") {
+    if (layout == "poll") {
       videoWidth = 5
       chatWidth = 7
     }
