@@ -404,12 +404,6 @@ const ViewersTab: React.FC<{
   )
 }
 
-// type PollQuestion = {
-//   title: string
-//   answers: string[]
-//   correct: number[]
-// }
-
 type Poll = {
   version: "0"
   questions: {
@@ -456,27 +450,59 @@ type PollMessageNext = {
   type: "next"
 }
 
+const uniqueResponses = (resps: PollResponse[]): PollResponse[] => {
+  // Get the unique responses, keeping the last submitted response
+  // while preserving the order of the responses.
+  const uniqueResponses: { [username: string]: [number, PollResponse] } = {}
+  for (let i = 0; i < resps.length; i++)
+    uniqueResponses[resps[i].username] = [i, resps[i]]
+  const _finalResponses: [number, PollResponse][] = []
+  for (let r in uniqueResponses) _finalResponses.push(uniqueResponses[r])
+  const finalResponses: PollResponse[] = _finalResponses
+    .sort((a, b) => a[0] - b[0])
+    .map((i) => i[1])
+  return finalResponses
+}
+
+const computeScores = (
+  pollState: PollState
+): { [username: string]: number } => {
+  // Compute the scores for all the players
+  const scores: { [username: string]: number } = {}
+  for (let i = 0; i < pollState.responses.length; i++) {
+    const unique = uniqueResponses(pollState.responses[i])
+    let score = 5
+    for (let j = 0; j < unique.length; j++) {
+      const resp = unique[j]
+      if (!(resp.username in scores)) scores[resp.username] = 0
+      scores[resp.username] += score
+      if (score > 1) score--
+    }
+  }
+  return scores
+}
+
 const PollQuestion: React.FC<{
   pollState: PollState
   sendMsg: (s: string) => void
   user: UserType
 }> = ({ pollState, sendMsg, user }) => {
-  const [timeRemaining, setTimeRemaining] = useState(30.0)
+  //const [timeRemaining, setTimeRemaining] = useState(30.0)
+  const [timeRemaining, setTimeRemaining] = useState(1.0)
   const [answered, setAnswered] = useState(false)
   const enabled = timeRemaining > 0 && !answered
 
   const { responses, poll, currentQuestionIdx } = pollState
   const question = poll.questions[currentQuestionIdx]
   const { title, answers, correct } = question
-  // Multiple responses could be submitted, store the last response
-  // received.
-  const uniqueResponses: { [username: string]: PollResponse } = {}
-  const finalResponses: PollResponse[] = []
-  for (let r of responses) uniqueResponses[r.username] = r
-  for (let r in uniqueResponses) finalResponses.push(uniqueResponses[r])
+  const finalResponses = uniqueResponses(responses[currentQuestionIdx])
+  const scores = computeScores(pollState)
+  let sortedScores: [number, string][] = []
+  for (let u in scores) sortedScores.push([scores[u], u])
+  sortedScores.sort((a, b) => b[0] - a[0])
 
   useEffect(() => {
-    if (responses.filter((r) => r.username == user.username).length > 0) {
+    if (finalResponses.filter((r) => r.username == user.username).length > 0) {
       setAnswered(true)
     }
     const countdown = setInterval(() => {
@@ -491,143 +517,202 @@ const PollQuestion: React.FC<{
     }
   })
 
-  return (
-    <div
-      key={title}
-      style={{
-        display: "flex",
-        backgroundColor: "#F4F8F4",
-        flexDirection: "column",
-        flexWrap: "nowrap",
-        flexGrow: 1,
-        justifyContent: "space-evenly",
-      }}
-    >
+  if (timeRemaining > 0) {
+    return (
       <div
-        style={{
-          alignSelf: "center",
-        }}
-      >
-        <h3>{title}</h3>
-      </div>
-      <div
+        key={title + "question"}
         style={{
           display: "flex",
-          flexDirection: "row",
+          backgroundColor: "#F4F8F4",
+          flexDirection: "column",
           flexWrap: "nowrap",
+          flexGrow: 1,
+          justifyContent: "space-evenly",
         }}
       >
         <div
           style={{
-            display: "flex",
-            flexBasis: "25%",
-            flexGrow: 1,
             alignSelf: "center",
-            justifyContent: "center",
+          }}
+        >
+          <h3>{title}</h3>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
           }}
         >
           <div
             style={{
-              borderRadius: "50%",
-              width: "75px",
-              backgroundColor: "#D2E3D3",
-              lineHeight: "75px",
-              textAlign: "center",
-              fontSize: "1.75rem",
+              display: "flex",
+              flexBasis: "25%",
+              flexGrow: 1,
+              alignSelf: "center",
+              justifyContent: "center",
             }}
           >
-            {timeRemaining}
+            <div
+              style={{
+                borderRadius: "50%",
+                width: "75px",
+                backgroundColor: "#D2E3D3",
+                lineHeight: "75px",
+                textAlign: "center",
+                fontSize: "1.75rem",
+              }}
+            >
+              {timeRemaining}
+            </div>
+          </div>
+          <img
+            style={{ maxHeight: 150, flexBasis: "50%", flexGrow: 1 }}
+            src="https://cdn.britannica.com/93/94493-050-35524FED/Toronto.jpg"
+          ></img>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexBasis: "25%",
+              flexGrow: 1,
+              alignSelf: "center",
+              justifyContent: "center",
+            }}
+          >
+            <h3 style={{ alignSelf: "center" }}>{finalResponses.length}</h3>
+            <h3 style={{ alignSelf: "center" }}>
+              answer{finalResponses.length > 1 ? "s" : ""}
+            </h3>
           </div>
         </div>
-        <img
-          style={{ maxHeight: 150, flexBasis: "50%", flexGrow: 1 }}
-          src="https://cdn.britannica.com/93/94493-050-35524FED/Toronto.jpg"
-        ></img>
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            flexBasis: "25%",
-            flexGrow: 1,
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-evenly",
+          }}
+        >
+          {answers.map((a, i) => (
+            <div key={a + i}>
+              <Button
+                style={{
+                  minWidth: "50px",
+                }}
+                key={title + a}
+                disabled={!enabled}
+                onClick={() => {
+                  sendMsg(
+                    "#poll " +
+                      JSON.stringify({
+                        type: "response",
+                        body: {
+                          questionIdx: currentQuestionIdx,
+                          response: i,
+                          username: user.username,
+                        },
+                      })
+                  )
+                  setAnswered(true)
+                }}
+              >
+                {a}
+              </Button>
+            </div>
+          ))}
+        </div>
+        <div
+          style={{
             alignSelf: "center",
             justifyContent: "center",
           }}
         >
-          <h3 style={{ alignSelf: "center" }}>{finalResponses.length}</h3>
-          <h3 style={{ alignSelf: "center" }}>
-            answer{finalResponses.length > 1 ? "s" : ""}
-          </h3>
+          {enabled && "Choose your answer!"}
+          {!enabled && "Your answer has been submitted."}
         </div>
       </div>
+    )
+  } else {
+    return (
       <div
+        key={title + "answer"}
         style={{
           display: "flex",
+          backgroundColor: "#F4F8F4",
           flexDirection: "row",
-          flexWrap: "wrap",
+          flexWrap: "nowrap",
+          flexGrow: 1,
           justifyContent: "space-evenly",
         }}
       >
-        {answers.map((a, i) => (
-          <div>
-            <Button
-              style={{
-                minWidth: "50px",
-              }}
-              key={title + a}
-              disabled={!enabled}
-              onClick={() => {
-                sendMsg(
-                  "#poll " +
-                    JSON.stringify({
-                      type: "response",
-                      body: {
-                        questionIdx: currentQuestionIdx,
-                        response: i,
-                        username: user.username,
-                      },
-                    })
-                )
-                setAnswered(true)
-              }}
-            >
-              {a}
-            </Button>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+            flexGrow: 1,
+          }}
+        >
+          <div
+            style={{
+              alignSelf: "center",
+            }}
+          >
+            <h3>{title}</h3>
           </div>
-        ))}
+          <div
+            style={{
+              alignSelf: "center",
+              backgroundColor: "#D2E3D3",
+              fontSize: "2rem",
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              textAlign: "center",
+              borderRadius: "5%",
+            }}
+          >
+            {question.answers[correct[0]]}
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+          }}
+        >
+          <div
+            style={{
+              alignSelf: "center",
+            }}
+          >
+            <h3>Leaderboard</h3>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {sortedScores.map(([score, username]) => (
+              <div
+                key={score + username}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <div>{score} points</div>
+                <div>{username}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div
-        style={{
-          alignSelf: "center",
-          justifyContent: "center",
-        }}
-      >
-        {enabled && "Choose your answer!"}
-        {!enabled && "Your answer has been submitted."}
-      </div>
-    </div>
-  )
-}
-
-const PollQuestionResults: React.FC<{ pollState: PollState }> = ({
-  pollState,
-}) => {
-  const curIdx = pollState.currentQuestionIdx
-  const correct = pollState.poll.questions[curIdx].correct
-  return (
-    <>
-      <h2>Results</h2>
-      The correct answer was {correct[0]}! The current leaderboard is
-      <ul>
-        <li>1. Abi</li>
-        <li>2. Steve</li>
-        <li>3. Carl</li>
-        <li>4. Dave</li>
-        <li>5. Evan</li>
-        <hr />
-        <li>9. Kyle</li>
-      </ul>
-    </>
-  )
+    )
+  }
 }
 
 const PollLeaderboard: React.FC<{}> = ({}) => {
@@ -636,10 +721,6 @@ const PollLeaderboard: React.FC<{}> = ({}) => {
       <h1>Results</h1>
     </>
   )
-}
-
-const PollWinner: React.FC<{}> = ({}) => {
-  return <></>
 }
 
 const PollTab: React.FC<{
@@ -779,8 +860,6 @@ export default class Chat extends React.Component<ChatProps, ChatState> {
       this.setTab("chat")
       pollState.active = false
     }
-    // TODO: this might have to be a copy
-    console.log(pollState)
     return pollState
   }
 
