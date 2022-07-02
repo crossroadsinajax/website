@@ -227,7 +227,12 @@ class EMAIL_TEMPLATE:
     SERVICE = "d-93ce2ee9a14b4ed7aa2248bb33a3767f"
 
 
-GRAPHENE = dict(SCHEMA="crossroads.schema.schema", SCHEMA_OUTPUT="web/schema.json")
+GRAPHENE = dict(
+    SCHEMA="crossroads.schema.schema",
+    SCHEMA_OUTPUT="web/schema.json",
+)
+
+SECRET_KEY = os.getenv("DJANGO_SECRET")
 
 POSTMARK_API_KEY = os.getenv("POSTMARK_API_KEY")
 POSTMARK_SENDER = "lynn@crossroadsajax.church"
@@ -238,6 +243,7 @@ repo = git.Repo(search_parent_directories=True)
 VERSION = repo.head.object.hexsha[0:6]
 ddtrace.config.version = VERSION
 
+DD_API_KEY = os.getenv("DD_API_KEY")
 RUM_SERVICE = ddtrace.config.service
 RUM_ENV = ddtrace.config.env
 RUM_VERSION = ddtrace.config.version

@@ -20,6 +20,3 @@ RUN pip install -r requirements.txt
 
 # Can be overridden by a volume mount.
 COPY . /app
-
-# Will output the static files to /app/static.
-RUN python manage.py collectstatic --no-input

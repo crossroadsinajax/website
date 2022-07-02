@@ -7,13 +7,13 @@
 ## running the app
 
 ```bash
-cp docker-compose.override.yml.example docker-compose.override.yml
-
+cp .env.example .env
+# override values in .env if necessary
 docker-compose up -d --build
 ```
 
 The app will run by default on port 8000. This can be configured in
-`docker-compose.override.yml`.
+through the `.env` file.
 
 ## adding a frontend dependency
 
