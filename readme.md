@@ -88,3 +88,16 @@ Note the trailing slashes in these URLs!
 - graphiql explorer: http://localhost:8000/gql/
 - wagtail admin http://localhost:8000/admin/
 - django admin http://localhost:8000/django-admin/
+
+
+# prod
+
+For now deploys are manual.
+
+ssh into the server and then
+
+```
+cd prod
+git pull
+docker-compose up -d --build
+```
