@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     postgresql \
     python3-dev \
     zlib1g-dev \
-    gcc fish
+    gcc
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
