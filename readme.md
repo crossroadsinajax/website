@@ -89,7 +89,6 @@ Note the trailing slashes in these URLs!
 - wagtail admin http://localhost:8000/admin/
 - django admin http://localhost:8000/django-admin/
 
-
 # prod
 
 For now deploys are manual.
