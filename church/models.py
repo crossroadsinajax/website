@@ -134,16 +134,6 @@ class ServiceMediaBlock(AbstractMediaChooserBlock):
         template = "blocks/service_media_block.html"
 
 
-class ServicesIndexPage(Page):
-    intro = wtfields.RichTextField(blank=True)
-
-    content_panels = Page.content_panels + [FieldPanel("intro", classname="full")]
-
-    @classmethod
-    def service_pages(cls):
-        return ServicePage.objects.in_menu().order_by("-date")
-
-
 class IDListBlock(blocks.ListBlock):
     """Adds an ID to list items. Similarly to what's done
     for structblock children.
@@ -173,11 +163,6 @@ class IDStructBlock(blocks.StructBlock):
         # TODO: generate an ID here?
         r = super().get_prep_value(value)
         return r
-
-
-class OfferingBlock(blocks.StructBlock):
-    class Meta:
-        template = "blocks/offering.html"
 
 
 class BulletinItemBlock(blocks.StructBlock):
@@ -399,18 +384,6 @@ class ServicePageDocumentLink(Orderable):
 #     ]
 
 
-class OurBeliefsPage(Page):
-    pass
-
-
-class SundayGatheringsPage(Page):
-    pass
-
-
-class PersonalStoriesPage(Page):
-    pass
-
-
 class DailyReadingPage(Page, ContentPageMixin):
     date = models.DateField("Date")
     video_link = models.URLField(default="", blank=True)
@@ -435,22 +408,3 @@ class DailyReadingPage(Page, ContentPageMixin):
             return f"{ncomments} comment{'s' if ncomments > 1 else ''}"
         else:
             return ""
-
-
-class BasicPage(Page):
-    updated_at = models.DateTimeField(auto_now=True)
-    content = wtfields.RichTextField(blank=True)
-    show_last_updated = models.BooleanField(default=True)
-
-    stream = wtfields.StreamField(
-        [
-            ("offering", OfferingBlock(name="Offering Section")),
-        ],
-        blank=True,
-    )
-
-    content_panels = Page.content_panels + [
-        FieldPanel("show_last_updated"),
-        FieldPanel("content"),
-        StreamFieldPanel("stream"),
-    ]
