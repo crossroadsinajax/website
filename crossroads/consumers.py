@@ -234,7 +234,7 @@ class Consumer(AsyncWebsocketConsumer):
             if span_id and trace_id:
                 ctx = Context(span_id=span_id, trace_id=trace_id)
             else:
-                ctx = tracer.get_call_context()
+                ctx = tracer.current_trace_context()
 
             with tracer.start_span("ws.dispatch", child_of=ctx) as span:
                 span.set_tag(SPAN_MEASURED_KEY)

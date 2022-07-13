@@ -15,14 +15,12 @@ click==7.1.2
 constantly==15.1.0
 cryptography==3.4.6
 daphne==3.0.1
-ddtrace==0.61.1
+ddkypy @ git+https://github.com/Kyle-Verhoog/datadog-python.git@7123265f2dc148ec6567ceda95b267ce4de064bf
 distlib==0.3.1
 Django==3.2.14
 django-extensions==2.2.*
 django-filter==2.4.0
 django-modelcluster==5.3
-django-stubs==1.8.0
-django-stubs-ext==0.2.0
 django-taggit==2.1.0
 django-treebeard==4.5.1
 djangorestframework==3.12.2
@@ -30,7 +28,6 @@ draftjs-exporter==2.1.7
 et-xmlfile==1.0.1
 filelock==3.0.12
 gitdb==4.0.5
-GitPython==3.1.0
 graphene==2.1.9
 graphene-django==2.15.0
 graphql-core==2.3.2
@@ -42,8 +39,6 @@ incremental==21.3.0
 intervaltree==3.1.0
 l18n==2020.6.1
 multidict==5.1.0
-mypy==0.812
-mypy-extensions==0.4.3
 openpyxl==3.0.7
 packaging==20.9
 Pillow==9.1.1
@@ -60,7 +55,7 @@ python-dateutil==2.8.1
 python-postmark @ git+https://github.com/crossroadsinajax/python-postmark.git@f7f4522720b495bdc2f08ef438d1801d0404c887
 pytz==2021.1
 requests==2.25.1
-riot==0.12.1
+riot==0.12.2
 Rx==1.6.1
 service-identity==18.1.0
 singledispatch==3.6.1
@@ -74,11 +69,10 @@ tenacity==7.0.0
 toml==0.10.2
 Twisted==22.4.0
 typed-ast==1.4.3
-typing-extensions==3.10.0.0
 Unidecode==1.2.0
 urllib3==1.26.5
-uvicorn[standard]==0.14.0
-uvloop==0.15.2
+uvicorn[standard]==0.18.2
+uvloop==0.16.0
 virtualenv==20.4.3
 wagtail==2.16.2
 wagtailmedia==0.9.0

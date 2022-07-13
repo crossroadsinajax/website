@@ -2,6 +2,8 @@ import json
 
 from django.conf import settings
 
+from crossroads.dd import ddconfig
+
 
 def settings_processor(request):
     return dict(
@@ -12,8 +14,8 @@ def settings_processor(request):
         ),
         RUM_APP_ID=settings.RUM_APP_ID,
         RUM_CLIENT_TOKEN=settings.RUM_CLIENT_TOKEN,
-        RUM_ENV=settings.RUM_ENV,
-        RUM_SERVICE=settings.RUM_SERVICE,
-        RUM_VERSION=settings.RUM_VERSION,
-        version=settings.VERSION,
+        RUM_ENV=ddconfig.env,
+        RUM_SERVICE=ddconfig.service,
+        RUM_VERSION=ddconfig.version,
+        version=ddconfig.version,
     )

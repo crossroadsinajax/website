@@ -1,8 +1,7 @@
 import os
 from typing import List
 
-import ddtrace
-import git
+from crossroads.dd import ddclient
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -11,12 +10,11 @@ LOGGING = {
     "version": 1,
     "formatters": {
         "verbose": {
-            "format": "{asctime} {levelname} [{name}] [{name}:{lineno}] /dd_inject/ - {message}",
+            "format": "{asctime} {levelname} [{name}] [{name}:{lineno}] - {message}",
             "style": "{",
         },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
+        "datadog": {
+            "format": ddclient.log_format,
         },
     },
     "handlers": {
@@ -25,8 +23,8 @@ LOGGING = {
             "formatter": "verbose",
         },
         "datadog": {
-            "class": "crossroads.ddlogs.DDHandler",
-            "formatter": "verbose",
+            "class": "crossroads.dd.DatadogLogHandler",
+            "formatter": "datadog",
         },
     },
     "loggers": {
@@ -238,12 +236,3 @@ POSTMARK_API_KEY = os.getenv("POSTMARK_API_KEY")
 POSTMARK_SENDER = "lynn@crossroadsajax.church"
 POSTMARK_TEST_MODE = False
 POSTMARK_TRACK_OPENS = False
-
-repo = git.Repo(search_parent_directories=True)
-VERSION = repo.head.object.hexsha[0:6]
-ddtrace.config.version = VERSION
-
-DD_API_KEY = os.getenv("DD_API_KEY")
-RUM_SERVICE = ddtrace.config.service
-RUM_ENV = ddtrace.config.env
-RUM_VERSION = ddtrace.config.version

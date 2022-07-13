@@ -1,7 +1,7 @@
 from riot import Venv, latest
 
 venv = Venv(
-    pys=["3.9"],
+    pys=["3.10"],
     venvs=[
         Venv(
             pkgs={
@@ -64,6 +64,14 @@ venv = Venv(
                     command='yamllint `find . -type f -name "*.yml"`',
                 ),
             ],
+        ),
+        Venv(
+            name="mypy",
+            command="mypy .",
+            pkgs={
+                "mypy": ["==0.961"],
+                "mypy-extensions": ["==0.4.3"],
+            },
         ),
     ],
 )

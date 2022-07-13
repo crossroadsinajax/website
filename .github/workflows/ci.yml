@@ -9,10 +9,10 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: "3.10"
 
       - name: install riot
-        run: pip install riot==0.5
+        run: pip install riot==0.12.2
 
       - name: check formatting
         run: riot run -s check_fmt
@@ -26,11 +26,11 @@ jobs:
       - name: bandit
         run: riot run -s bandit
 
-      - name: install deps
-        run: pip install -r requirements.txt
+      - name: mypy
+        run: riot run -s mypy
 
-      - name: type check
-        run: mypy .
+      - name: install deps
+        run: pip install wheel && pip install -r requirements.txt
 
   web:
     runs-on: ubuntu-latest
