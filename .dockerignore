@@ -5,3 +5,4 @@ node_modules/
 .riot/
 __pycache__
 .mypy_cache/
+pg_data
