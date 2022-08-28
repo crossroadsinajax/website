@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 
 import yarl
@@ -7,6 +8,8 @@ from django.contrib.staticfiles import finders
 from postmark.core import PMMail
 
 from church.models import DailyReadingPage, ServicePage, User
+
+log = logging.getLogger(__name__)
 
 
 def _find_attachments(date: str):
@@ -45,26 +48,30 @@ def send_service(users):
         if not user.email:
             continue
 
-        with tracer.trace("email.send") as span:
-            span.set_tag("user.username", user.username)
-            span.set_tag("user.email", user.email)
-            m = PMMail(
-                to=f"{user.first_name} {user.last_name} <{user.email}>",
-                sender="Lynn Jackson lynn@crossroadsajax.church",
-                template_id="19602506",
-                template_model=dict(
-                    company_name="Crossroads Church",
-                    company_address="520 Westney Rd S, Ajax, ON L1S 6W6",
-                    first_name=user.first_name,
-                    last_name=user.last_name,
-                    date=service_page.date.strftime("%A %B %d, %Y"),
-                    stream_link=user.get_next_service_link(),
-                    guest_stream_link=guest_next_service_link,
-                    services_link=user.get_services_link(),
-                    foreword=service_page.description,  # Note that this is HTML
-                ),
-            )
-            m.send()
+        try:
+            with tracer.trace("email.send") as span:
+                span.set_tag("user.username", user.username)
+                span.set_tag("user.email", user.email)
+                m = PMMail(
+                    to=f"{user.first_name} {user.last_name} <{user.email}>",
+                    sender="Lynn Jackson lynn@crossroadsajax.church",
+                    template_id="19602506",
+                    template_model=dict(
+                        company_name="Crossroads Church",
+                        company_address="520 Westney Rd S, Ajax, ON L1S 6W6",
+                        first_name=user.first_name,
+                        last_name=user.last_name,
+                        date=service_page.date.strftime("%A %B %d, %Y"),
+                        stream_link=user.get_next_service_link(),
+                        guest_stream_link=guest_next_service_link,
+                        services_link=user.get_services_link(),
+                        foreword=service_page.description,  # Note that this is HTML
+                    ),
+                )
+                m.send()
+        except Exception:
+            log.exception("failed to send email to user %r" % user.username)
+            continue
 
 
 def send_daily_reading(users):
