@@ -45,7 +45,9 @@ def send_service(users):
         if not user.email:
             continue
 
-        with tracer.trace("email.send"):
+        with tracer.trace("email.send") as span:
+            span.set_tag("user.username", user.username)
+            span.set_tag("user.email", user.email)
             m = PMMail(
                 to=f"{user.first_name} {user.last_name} <{user.email}>",
                 sender="Lynn Jackson lynn@crossroadsajax.church",
