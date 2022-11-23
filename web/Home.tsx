@@ -101,8 +101,8 @@ const Home: React.FC<HomeProps> = () => {
           <Col lg="4">
             <h2>Join us</h2>
             <p className="lead">
-              We meet virtually every Sunday @ 10:30am and throughout the week
-              right here on our website. We&apos;d love to have you join us!
+              We meet in-person and virtually every Sunday @ 10:30am right here
+              on our website. We&apos;d love to have you join us!
             </p>
             <p>
               <Link to="/signup">
