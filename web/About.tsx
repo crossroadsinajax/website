@@ -13,10 +13,9 @@ const AboutUs: React.FC<{}> = () => {
       <Title text="About us" />
       <h1>About us</h1>
       <p>
-        Crossroads Community Church has been in Ajax since 1995. Since 2009 we
-        have been meeting at Bolton C. Falby Public School, which is at Falby
-        Court in Ajax, ON. Crossroads is a member of the Christian Reformed
-        Church in Canada, a Protestant denomination.
+        Crossroads Community Church has been in Ajax since 1995. Crossroads is a
+        member of the Christian Reformed Church in Canada, a Protestant
+        denomination.
       </p>
       <p>
         The area surrounding Falby Court is a diversely populated area with a
@@ -210,16 +209,15 @@ const Contact: React.FC<{}> = () => {
       <Title text="Contact us" />
       <h1>Contact us</h1>
       <p>
-        <b>During COVID-19</b> we are meeting online only, through our website
-        at 10:30 a.m. EST on Sunday mornings, every Sunday morning! Please feel
-        free to join us by <Link to="/signup">signing up</Link>.
+        We meet every week on Sunday at 10:30 a.m. EST the Ministry Centre
+        (address below) and virtually right here on our website. Please feel
+        free to join in person or virtually by{" "}
+        <Link to="/signup">signing up</Link>.
       </p>
 
       <p>
-        Our Ministry Centre is closed, but our ministry continues. In
-        partnership with Johanne’s House, Southside Foodbank, John Howard
-        Society, and other tremendous organizations, we seek to serve the Ajax
-        community uninterrupted.
+        In partnership with Johanne’s House, Southside Foodbank and other
+        tremendous organizations, we seek to serve the Ajax community.
       </p>
 
       <Row>

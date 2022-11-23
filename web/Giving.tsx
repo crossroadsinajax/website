@@ -68,12 +68,15 @@ const Giving: React.FC<GivingProps> = () => {
               <ul className="list-unstyled mb-4">
                 <li>
                   Send to{" "}
-                  <a href="mailto:lynn@crossroadsinajax.org">
-                    lynn@crossroadsinajax.org
+                  <a href="mailto:donate@crossroadsinajax.org">
+                    donate@crossroadsinajax.org
                   </a>
                 </li>
                 <li>
-                  Notify Lynn via email of the amount and Ministry focus if any.
+                  or send directly to the Deaconate fund{" "}
+                  <a href="mailto:deacons.fund@crossroadsinajax.org">
+                    deacons.fund@crossroadsinajax.org
+                  </a>
                 </li>
               </ul>
             </div>

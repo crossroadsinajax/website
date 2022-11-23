@@ -93,8 +93,8 @@ const ServicesPage: React.FC<ServicesProps> = () => {
         <b>Relevant:</b> Connecting God to the real stuff of your life!
         <br />
         <br />
-        During COVID-19 we are meeting online only right here at 10:30 a.m. EST
-        every Sunday morning! Please feel free to join us by{" "}
+        We meet in-person at our Ministry Centre as well as online right here at
+        10:30 a.m. EST every Sunday morning! Please feel free to join us by{" "}
         <Link to="/signup">signing up</Link>.
       </p>
       {listing}
