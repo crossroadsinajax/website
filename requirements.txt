@@ -8,7 +8,7 @@ attrs==20.3.0
 autobahn==21.3.1
 Automat==20.2.0
 beautifulsoup4==4.8.2
-certifi==2020.12.5
+certifi==2022.12.7
 channels @ git+https://github.com/django/channels.git@4ddf6e70f34790fb7131a10fc5af285dc3dcbeb1
 chardet==4.0.0
 click==7.1.2
