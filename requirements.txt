@@ -13,7 +13,7 @@ channels @ git+https://github.com/django/channels.git@4ddf6e70f34790fb7131a10fc5
 chardet==4.0.0
 click==7.1.2
 constantly==15.1.0
-cryptography==3.4.6
+cryptography==39.0.1
 daphne==3.0.1
 ddkypy @ git+https://github.com/Kyle-Verhoog/datadog-python.git@2c9121b82d2631f0dc0e0853b296c710f0e15c92
 distlib==0.3.1
