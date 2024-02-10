@@ -1,6 +1,27 @@
 # crossroads website
 
-> we'll cross that bridge when we get der
+> the bridge collapsed :(
+
+
+## homepage
+
+![homepage](/screenshots/crossroads-home.png?raw=true)
+
+
+## gatherings
+
+![gatherings](/screenshots/crossroads-gathering.png?raw=true)
+
+
+## sunday service
+
+![stream](/screenshots/crossroads-stream.png?raw=true)
+
+
+## sunday service (prayer requests)
+
+![stream](/screenshots/crossroads-stream-prayer.png?raw=true)
+
 
 # dev
 
